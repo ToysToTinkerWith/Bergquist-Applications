@@ -5,7 +5,7 @@ import "firebase/firestore"
 
 import Job from "./Job"
 import EditClient from "./EditClient"
-import NewJob from "./newJob"
+import NewJob from "./NewJob"
 
 import { Button, Typography, Modal } from "@material-ui/core"
 

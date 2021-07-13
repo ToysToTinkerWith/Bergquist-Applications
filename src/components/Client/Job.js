@@ -38,8 +38,6 @@ class Job extends React.Component {
 
   render() {
 
-    
-
     if (this.state.job) {
 
       const jobstyle = {
@@ -65,7 +63,6 @@ class Job extends React.Component {
 
       jobstyle.backgroundColor = color
 
-      console.log(this.state.job)
       return (
         <div style={jobstyle}>
           <Button style={{float: "right"}} variant="outlined" color="secondary" onClick={() => this.setState({edit: !this.state.edit})}>Edit</Button>
@@ -87,6 +84,8 @@ class Job extends React.Component {
           :
           null
           }
+
+`````````<Button variant="outlined" onClick={() => this.props.checkout(this.state.job)}>Checkout</Button>
 
           {this.state.edit ? 
           <Modal 
