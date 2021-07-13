@@ -41,9 +41,9 @@ class Map extends React.Component {
     this.state = {
       clients: [],
       clientIds: [],
-      zoom: 4,
-      lat: 37,
-      lng: -95,
+      zoom: 10,
+      lat: 48.2,
+      lng: -122.5,
       found: false,
       currentLoc: {
         lat: 0,
@@ -107,7 +107,7 @@ class Map extends React.Component {
           >
 
             {this.state.clients.length > 0 ? this.state.clients.map((client, index) => {
-              return <Marker key={index} width={width} user={this.props.user} zoom={this.state.zoom} lat={client.lat} lng={client.lng} clientId={this.state.clientIds[index]} setPage={this.props.setPage} setClient={this.props.setClient}/>
+              return <Marker key={index} date={this.props.date} width={width} user={this.props.user} zoom={this.state.zoom} lat={client.lat} lng={client.lng} clientId={this.state.clientIds[index]} setPage={this.props.setPage} setClient={this.props.setClient}/>
             }) :  null }
 
             {this.state.found ? 

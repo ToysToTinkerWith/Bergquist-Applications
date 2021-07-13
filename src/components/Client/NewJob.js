@@ -25,6 +25,9 @@ function NewJob(props) {
 
   const handleUpload = (formData) => {
 
+    console.log(pictures)
+    console.log(formData)
+
     firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").add({
       job: formData.job,
       details: formData.details,
@@ -72,7 +75,7 @@ function NewJob(props) {
   const handlePicture = (e) => {
     for (let i = 0; i < e.target.files.length; i++) {
       const newImage = e.target.files[i];
-      newImage["id"] = Math.random();
+      newImage["id"] = Math.random().toString(20);
       setPictures((prevState) => [...prevState, newImage]);
     }
   };
@@ -93,7 +96,7 @@ function NewJob(props) {
       initialValues = {{ 
         job: "",
         details: "",
-        price: "",
+        estimate: "",
         scheduled: ""
     }}
 
@@ -108,6 +111,7 @@ function NewJob(props) {
         setTimeout(() => {
           console.log(values)
           handleUpload(values)
+          props.goBack()
           setSubmitting(false)
 
         }, 400);
@@ -173,8 +177,11 @@ function NewJob(props) {
       />
       <br/>
       <br/>
-    
+        
+      <Button variant="contained" component="label">
       <input type="file" multiple onChange={handlePicture} />
+
+      </Button>
 
       <br />
       <CircularProgress variant="determinate" value={progress} />

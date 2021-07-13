@@ -9,6 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 
 import { Formik, Form } from 'formik';
 import { Button, TextField, Grid, makeStyles } from '@material-ui/core'
+import { setSourceMapRange } from 'typescript';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -45,14 +46,16 @@ function NewClient(props) {
     console.log(formData)
 
     firebase.firestore().collection("clients").add({
-            name: formData.name,
-            address: formData.address,
-            email: formData.email,
-            phone: formData.phone,
-            lat: formData.lat,
-            lng: formData.lng,
-            created: firebase.firestore.FieldValue.serverTimestamp()
+      name: formData.name,
+      address: formData.address,
+      email: formData.email,
+      phone: formData.phone,
+      lat: formData.lat,
+      lng: formData.lng,
+      created: firebase.firestore.FieldValue.serverTimestamp()
     })
+
+    props.setPage("")
       
     
 
@@ -168,8 +171,7 @@ function NewClient(props) {
             <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => locateAddress(values.address, setFieldValue)}
         >Locate Address</Button>
 
-        <div style={{ height: "50vh", width: "100%" }}>
-          <br/>
+        <div style={{ height: "50vh", width: "100%", padding: 20}}>
           <GoogleMapReact
             bootstrapURLKeys={{ key: "AIzaSyBiB3iNngJM_kFWKxSv9a30O3fww7YTiWA"}}
             center={{lat : lat, lng : lng}}

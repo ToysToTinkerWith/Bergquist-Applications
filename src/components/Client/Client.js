@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 
 import firebase from "firebase/app"
 import "firebase/firestore"
@@ -98,7 +98,7 @@ export default class Client extends React.Component {
               overflowY: "auto",
               overflowX: "hidden"
             }}>
-            <NewJob clientId={this.props.clientId} />
+            <NewJob clientId={this.props.clientId} goBack={() => this.setState({page: null})} />
             </Modal>
             :
             null
@@ -106,8 +106,8 @@ export default class Client extends React.Component {
             
     
     
-            {this.state.jobIds.length > 0 ? this.state.jobIds.map(jobId => {
-              return [<Job date={props.date} key={Math.random().toString(36)} clientId={this.props.clientId} jobId={jobId} setPage={setPage} />,
+            {this.state.jobIds.length > 0 ? this.state.jobIds.map((jobId, index) => {
+              return [<Job key={index} date={this.props.date} clientId={this.props.clientId} jobId={jobId} />,
               <br />]
               
             })

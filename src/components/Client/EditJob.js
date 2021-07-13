@@ -24,6 +24,8 @@ function EditJob(props) {
 
   const handleUpdate = (formData) => {
 
+    console.log(pictures)
+
     firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
       job: formData.job,
       details: formData.details,
@@ -35,7 +37,7 @@ function EditJob(props) {
 
       for (let y = 0; y < pictures.length; y++) {
 
-      const uploadTask = storage.ref("images/" + props.clientId + "/" + props.jobId + "/" + pictures[y].name).put(pictures[y])
+      const uploadTask = firebase.storage().ref("images/" + props.clientId + "/" + pictures[y].id).put(pictures[y])
 
       uploadTask.on("state_changed", (snapshot) => {
         const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
@@ -45,7 +47,7 @@ function EditJob(props) {
         alert(error.message)
       },
       () => {
-        firebase.storage().ref("images/" + props.clientId + "/" + props.jobId).child(pictures[y].name).getDownloadURL()
+        firebase.storage().ref("images/" + props.clientId).child(pictures[y].id).getDownloadURL()
   .then(url => {
     console.log(url)
         firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
@@ -63,20 +65,19 @@ function EditJob(props) {
 
   }
 
-
-  const onDrop = (pictureFiles, pictureDataURLs) => {
-    console.log(pictureFiles)
-    console.log(pictureDataURLs)
-    setPictures(pictureFiles)
-  }
+  const handlePicture = (e) => {
+    for (let i = 0; i < e.target.files.length; i++) {
+      const newImage = e.target.files[i];
+      newImage["id"] = Math.random().toString(20);
+      setPictures((prevState) => [...prevState, newImage]);
+    }
+  };
 
   const uploadstyle = {
     backgroundColor: "#FFFFF0",
     borderRadius: "15px",
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-    paddingLeft: "10px",
-    paddingRight: "10px",
-    marginTop: "10px"
+    textAlign: "center"
  
   }
 
@@ -103,6 +104,7 @@ function EditJob(props) {
         setTimeout(() => {
           console.log(values)
           handleUpdate(values)
+          props.setEdit()
           setSubmitting(false)
 
         }, 400);
@@ -173,14 +175,12 @@ function EditJob(props) {
       <br/>
       <br/>
     
-      <ImageUploader
-        withIcon={false}
-        withPreview={true}
-        buttonText="Choose images"
-        onChange={onDrop}
-        imgExtension={[".jpg", ".png", ".jpeg"]}
-        maxFileSize={10485760}
-      />
+      <Button variant="contained" component="label">
+      <input type="file" multiple onChange={handlePicture} />
+
+      </Button>
+      <br />
+
       <CircularProgress variant="determinate" value={progress} />
 
       <br/>

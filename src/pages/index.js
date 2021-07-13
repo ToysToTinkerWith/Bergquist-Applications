@@ -17,6 +17,8 @@ export default function Index() {
 
   const { user } = useAuth()
 
+  const date = new Date()
+
   const [page, setPage] = useState("")
   const [client, setClient] = useState(null)
 
@@ -30,7 +32,7 @@ export default function Index() {
 
     <Nav user={user} setPage={setPage} />
 
-    <Map user={user} setPage={setPage} setClient={setClient} />
+    <Map date={date} user={user} setPage={setPage} setClient={setClient} />
 
     
 
@@ -75,7 +77,7 @@ export default function Index() {
       overflowY: "auto",
       overflowX: "hidden"
     }}>
-    <Client user={user} clientId={client} />
+    <Client date={date} user={user} clientId={client} />
     </Modal>
     
     :
