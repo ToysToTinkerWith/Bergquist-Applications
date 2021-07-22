@@ -4,7 +4,6 @@ import firebase from "firebase/app"
 import FirebaseInit from "../../components/Firebase/FirebaseInit";
 
 import { loadStripe } from "@stripe/stripe-js";
-import Stripe from "stripe";
 import { createCheckoutSession } from "next-stripe/client";
 
 
