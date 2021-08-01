@@ -27,6 +27,12 @@ export default class Client extends React.Component {
     firebase.firestore().collection("clients").doc(this.props.clientId).onSnapshot(doc => {
         let client = doc.data()
 
+        this.setState({
+          client: client
+        })
+
+      })
+
         firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs")
         .onSnapshot((querySnapshot) => {
 
@@ -37,12 +43,11 @@ export default class Client extends React.Component {
         })
 
         this.setState({
-            client: client,
             jobIds: jobIds
         })
 
         })
-      })
+      
   }
 
   

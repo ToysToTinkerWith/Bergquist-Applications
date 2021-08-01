@@ -24,7 +24,7 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
       <CssBaseline />
         <AuthProvider>
-        <Component {...pageProps} />
+        <Component style={{backgroundColor: "#FFFFF0"}}{...pageProps} />
         </AuthProvider>
       </ThemeProvider>
     </React.Fragment>

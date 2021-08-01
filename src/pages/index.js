@@ -7,10 +7,13 @@ import "firebase/firestore"
 import Nav from "../components/Nav"
 import Map from "../components/Map/Map"
 import Auth from "../components/Auth/Auth"
-import NewClient from "../components/Client/NewClient"
 import Client from "../components/Client/Client"
+import Clients from "../components/Client/Clients"
 
-import { Modal, Fab } from "@material-ui/core"
+
+import SignUp from "../components/Auth/SignUp"
+
+import { Modal } from "@material-ui/core"
 
 
 export default function Index() {
@@ -29,14 +32,21 @@ export default function Index() {
       <title>Business</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
-
-    <Nav user={user} setPage={setPage} />
-
-    <Map date={date} user={user} setPage={setPage} setClient={setClient} />
-
     
+    
+    {user ? 
+    <div>
+      <Nav user={user} setPage={setPage} />
+      <Map date={date} user={user} setPage={setPage} setClient={setClient} />
+    </div>
+    
+    
+    :
+    <Auth setPage={setPage}/>
+    }
 
-    {page === "Auth" ?
+
+    {page === "Clients" ?
     <Modal 
     open={true} 
     onClose={() => setPage("")}
@@ -45,14 +55,14 @@ export default function Index() {
       overflowY: "auto",
       overflowX: "hidden"
     }}>
-    <Auth setPage={setPage}/>
+    <Clients user={user} date={date} setClient={setClient} setPage={setPage} />
     </Modal>
     
     :
     null
     }
 
-    {page === "NewClient" ?
+    {page === "NewEmployee" ?
     <Modal 
     open={true} 
     onClose={() => setPage("")}
@@ -61,7 +71,7 @@ export default function Index() {
       overflowY: "auto",
       overflowX: "hidden"
     }}>
-    <NewClient user={user} setPage={setPage} />
+    <SignUp user={user} setPage={setPage} />
     </Modal>
     
     :

@@ -7,8 +7,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { createCheckoutSession } from "next-stripe/client";
 
 
-import Job from "../../components/Client/Job"
-import NewJob from "../../components/Client/NewJob"
+import JobClientView from "../../components/Client/JobClientView"
+import NewJobClientView from "../../components/Client/NewJobClientView"
 
 import { Button, Typography, Modal } from "@material-ui/core"
 
@@ -42,7 +42,7 @@ return {
 }
 }
 
-export const checkout = async (job) => {
+export const checkout = async (job, jobId, clientId) => {
     const session = await createCheckoutSession({
       success_url: window.location.href,
       cancel_url: window.location.href,
@@ -55,9 +55,14 @@ export const checkout = async (job) => {
                 unit_amount: job.estimate * 100,
             },
             quantity: 1,
+            
       }],
       payment_method_types: ["card"],
       mode: "payment",
+      metadata: {
+        jobId: jobId,
+        clientId: clientId
+      }
     });
     const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
     if (stripe) {
@@ -74,8 +79,6 @@ export default function Client({clientId}) {
     const [page, setPage] = useState(null)
 
     const date = new Date()
-
-
 
     useEffect(() => {
         firebase.firestore().collection("clients").doc(clientId).get()
@@ -109,8 +112,6 @@ export default function Client({clientId}) {
         return (
           <div style={clientStyle}>
               <div style={{display: "inline"}}>
-              <Button variant="outlined" color="secondary" onClick={() => 
-                window.location.href = "/"}> Map </Button>
                 <Button style={{float: "right"}} variant="outlined" color="secondary" onClick={() => 
                 setPage("newJob")}>+ Job </Button>
               </div>
@@ -132,7 +133,7 @@ export default function Client({clientId}) {
               overflowY: "auto",
               overflowX: "hidden"
             }}>
-            <NewJob clientId={clientId} goBack={() => setPage(null)} />
+            <NewJobClientView clientId={clientId} goBack={() => setPage(null)} />
             </Modal>
             :
             null
@@ -141,7 +142,7 @@ export default function Client({clientId}) {
     
     
             {jobIds.length > 0 ? jobIds.map((jobId, index) => {
-              return [<Job key={index} date={date} checkout={checkout} clientId={clientId} jobId={jobId} />,
+              return [<JobClientView key={index} date={date} checkout={checkout} clientId={clientId} jobId={jobId} />,
               <br />]
               
             })

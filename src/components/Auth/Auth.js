@@ -1,8 +1,7 @@
 import React, { useState } from "react"
 import LogIn from "./LogIn"
-import SignUp from "./SignUp"
 
-import { Grid } from '@material-ui/core'
+import { Grid, Typography } from '@material-ui/core'
 
 function Auth(props) {
 
@@ -13,11 +12,11 @@ function Auth(props) {
         <br />
 
         <Grid container spacing={3}>
-          <Grid item sm={12} md={6}>
-            <LogIn setPage={props.setPage}/>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h2" color="secondary" align="center"> Business Name </Typography>
           </Grid>
-          <Grid item sm={12} md={6}>
-            <SignUp setPage={props.setPage}/>
+          <Grid item xs={12} sm={6}>
+            <LogIn setPage={props.setPage}/>
           </Grid>
         </Grid>
 

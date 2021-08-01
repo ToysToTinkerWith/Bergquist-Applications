@@ -16,11 +16,9 @@ const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
 
 const fulfillOrder = async (session) => {
 
-    console.log(session)
-
-    return await app.firestore().collection("orders").doc().set({
-        order: "order",
-        new: true
+    return await app.firestore().collection("clients").doc(session.metadata.clientId)
+    .collection("jobs").doc(session.metadata.jobId).update({
+        status: "Paid"
     })
 }
 

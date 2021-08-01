@@ -32,7 +32,7 @@ function NewJob(props) {
       scheduledTo: formData.scheduledTo,
       estimate: formData.estimate,
       imgs: [],
-      status: "Waiting for client approval...",
+      status: "Job recieved, awaiting approval...",
       created: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function(doc) {
 
@@ -156,7 +156,7 @@ function NewJob(props) {
           className={classes.input}
           onChange={handleChange}
           type="number"
-          label="Estimate $"
+          label="Estimate"
           name="estimate"
         />
 
@@ -187,8 +187,8 @@ function NewJob(props) {
       <br/>
       <br/>
         
-      <Button variant="contained" component="label" style={{display: "block"}}>
-      <input type="file" multiple onChange={handlePicture} />
+      <Button variant="contained" component="label">
+      <input type="file" multiple onChange={handlePicture} style={{display: "block"}}/>
 
       </Button>
 

@@ -5,7 +5,16 @@ import "firebase/firestore"
 import "firebase/storage"
 
 import { Formik, Form } from 'formik';
-import { Button, TextField, CircularProgress, makeStyles } from '@material-ui/core'
+import { Button, IconButton, TextField, Avatar, CircularProgress, makeStyles } from '@material-ui/core'
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -29,7 +38,8 @@ function EditJob(props) {
     firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
       job: formData.job,
       details: formData.details,
-      scheduled: formData.scheduled,
+      scheduledFrom: formData.scheduledFrom,
+      scheduledTo: formData.scheduledTo,
       estimate: formData.estimate
     })
 
@@ -71,7 +81,20 @@ function EditJob(props) {
       newImage["id"] = Math.random().toString(20);
       setPictures((prevState) => [...prevState, newImage]);
     }
-  };
+  }
+
+  const deleteImg = (index) => {
+
+    const imgs = props.job.imgs
+
+    imgs.splice(index, 1)
+
+    firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
+      imgs: imgs
+    })
+
+  }
+
 
   const uploadstyle = {
     backgroundColor: "#FFFFF0",
@@ -90,7 +113,9 @@ function EditJob(props) {
         job: props.job.job,
         details: props.job.details,
         estimate: props.job.estimate,
-        scheduled: props.job.scheduled
+        scheduledFrom: props.job.scheduledFrom,
+        scheduledTo: props.job.scheduledTo
+
     }}
 
     validate = {values => {
@@ -162,12 +187,22 @@ function EditJob(props) {
 
 
       <TextField 
-        name="scheduled"
-        label="Schedule"
-        type="date"
+        name="scheduledFrom"
+        label="From"
+        type="datetime-local"
         className={classes.input}
         onChange={handleChange}
-        defaultValue={props.job.scheduled}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+
+        <TextField
+        name="scheduledTo"
+        label="To"
+        type="datetime-local"
+        className={classes.input}
+        onChange={handleChange}
         InputLabelProps={{
           shrink: true,
         }}
@@ -175,15 +210,38 @@ function EditJob(props) {
       <br/>
       <br/>
     
-      <Button variant="contained" component="label">
+      <Button variant="contained" component="label" style={{display: "block"}}>
       <input type="file" multiple onChange={handlePicture} />
-
       </Button>
+
+      <br />
+      <br />
+
+        {props.job.imgs.length > 0 ?
+        props.job.imgs.map((img, index) => {
+          return (
+            <div style={{display: "inline-block", border: "1px solid black", borderRadius: 5, margin: 5}}>
+              <Avatar src={img} alt="img" style={{height: 75, width: 75}}/>
+              <IconButton onClick={() => deleteImg(index)}>
+                <DeleteIcon />
+              </IconButton>   
+            </div>
+
+                
+          )
+          
+            })
+          :
+          null
+          }
+
       <br />
 
       <CircularProgress variant="determinate" value={progress} />
 
       <br/>
+
+
 
       <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting}> Update </Button>
 

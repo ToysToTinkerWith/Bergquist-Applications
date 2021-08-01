@@ -8,8 +8,7 @@ import Geocode from "react-geocode";
 import HomeIcon from '@material-ui/icons/Home';
 
 import { Formik, Form } from 'formik';
-import { Button, TextField, Grid, makeStyles } from '@material-ui/core'
-import { setSourceMapRange } from 'typescript';
+import { Button, TextField, Typography, Grid, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
 
@@ -103,6 +102,10 @@ function NewClient(props) {
 
     validate = {values => {
       const errors = {}
+
+      if (values.lat == 0 && values.lng == 0){
+        errors.lat = "Locate client on map"
+      }
 
       return errors
     }}
@@ -200,7 +203,7 @@ function NewClient(props) {
       <br/>
       <br/>
 
-      
+      <Typography className={classes.error} > {errors.lat} </Typography>
 
       <br/>
 

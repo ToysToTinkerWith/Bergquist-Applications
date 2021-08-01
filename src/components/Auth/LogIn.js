@@ -3,8 +3,8 @@ import React from 'react';
 import firebase from "firebase/app"
 import "firebase/auth"
 
-import { Formik, Field, Form } from 'formik';
-import { Button, Box, TextField, makeStyles } from '@material-ui/core'
+import { Formik, Form } from 'formik';
+import { Button, Typography, TextField, makeStyles } from '@material-ui/core'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "80%",
     margin: 15
+  },
+  error: {
+    color: "red"
   }
 
 }))
@@ -36,10 +39,8 @@ function LogIn(props) {
     backgroundColor: "#FFFFF0",
     borderRadius: "15px",
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-    paddingLeft: "10px",
-    paddingRight: "10px",
-    marginLeft: "10px",
-    marginRight: "10px"
+    padding: 10,
+    margin: 10
   }
 
   return (
@@ -53,16 +54,14 @@ function LogIn(props) {
 
       validate = {values => {
         const errors = {};
-        if (!values.email) {
-          errors.email = 'Required';
+        if (!values.email || !values.password) {
+          errors.email = 'Incomplete Form'
         } 
 
-        if (!values.password) {
-          errors.password = "Required"
 
         return errors
       }}
-      }
+      
 
       onSubmit = {(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -90,7 +89,7 @@ function LogIn(props) {
             name="email"
             onChange={handleChange}
           />
-        {errors.email && touched.email}
+          <br />
           <TextField
             className={classes.root}
             type="password"
@@ -99,8 +98,8 @@ function LogIn(props) {
             onChange={handleChange}
           />
         <br />
+        <Typography className={classes.error}> {errors.email} </Typography>
         <br />
-        {errors.password && touched.password}
         <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting}> Log In </Button>
         <br />
         <br />

@@ -4,14 +4,17 @@ import firebase from "firebase/app"
 import "firebase/firestore"
 import "firebase/auth"
 
-import { Formik, Field, Form } from 'formik';
-import { Button, Box, TextField, makeStyles } from '@material-ui/core'
+import { Formik, Form } from 'formik';
+import { Button, Typography, TextField, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   
   root: {
     width: "80%",
     margin: 15
+  },
+  error: {
+    color: "red"
   }
 
 }))
@@ -29,8 +32,9 @@ function SignUp(props) {
 
     firebase.firestore().collection("profiles").add({
           username: formData.displayName,
-          imageUrl: null,
           uid: authUser.user.uid,
+          email: formData.email,
+          phone: formData.phone
         })
 
   return authUser.user.updateProfile({
@@ -61,39 +65,35 @@ function SignUp(props) {
     <Formik
       initialValues = {{ 
         displayName: "", 
-        email: "", 
+        email: "",
+        phone: "", 
         password: "",
         confPassword: ""
     }}
 
       validate = {values => {
         const errors = {};
-        if (!values.email) {
-          errors.email = 'Required';
-        } 
-        else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+         
+        if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
           errors.email = 'Invalid email address';
         }
 
         if (!values.displayName) {
-          errors.displayName = "Required"
-        }
-        else if (values.displayName.length > 15) {
-          errors.displayName = "Display name cannot be longer than 15 characters"
+          errors.email = "Required"
         }
 
         if (!values.password) {
-          errors.password = "Required"
+          errors.email = "Required"
         }
         else if (values.password.length < 6) {
-          errors.password = "Password must be at least 6 characters long"
+          errors.email = "Password must be at least 6 characters long"
         }
 
         if (!values.confPassword) {
-          errors.confPassword = "Required"
+          errors.email = "Required"
         }
         else if (values.password !== values.confPassword) {
-          errors.confPassword = "Passwords must match"
+          errors.email = "Passwords must match"
         }
 
         return errors
@@ -146,6 +146,7 @@ function SignUp(props) {
             onChange={handleChange}
           />
         <br />
+        <Typography className={classes.error}> {errors.email} </Typography>
         <br />
         <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting}> Sign Up </Button>
         <br />

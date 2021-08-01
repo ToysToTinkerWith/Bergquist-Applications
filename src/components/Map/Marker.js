@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react"
 import firebase from "firebase/app"
 import "firebase/firestore"
 
-import { Avatar, IconButton } from "@material-ui/core"
+import { IconButton } from "@material-ui/core"
 import HomeIcon from '@material-ui/icons/Home';
 
 function Marker(props) {
@@ -17,13 +17,16 @@ function Marker(props) {
       let color
 
       query.forEach(doc => {
-        let jobDate = new Date(doc.data().scheduled + "T16:00")
-        if (props.date > jobDate) {
+        let job = doc.data()
+        const jobDateFrom = new Date(job.scheduledFrom)
+        const jobDateTo = new Date(job.scheduledTo)
+
+        if (props.date > jobDateTo) {
           if (color !== "#42a5f5" && color !== "#ef5350") {
             color = "#66bb6a"
           }
         }
-        else if (props.date > jobDate.setHours(0) ) {
+        else if (props.date > jobDateFrom.setHours(0)) {
           color = "#ef5350"
         }
         else {
@@ -50,7 +53,7 @@ function Marker(props) {
 
     return (
       <div>
-        <IconButton  onClick={() => window.location.href = "/client/" + props.clientId} >
+        <IconButton  onClick={() => [props.setPage("Client"), props.setClient(props.clientId)]} >
           <HomeIcon style={markerstyle}/>
         </IconButton>
       </div>

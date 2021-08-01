@@ -5,12 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import AddIcon from '@material-ui/icons/Add';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
+import RecentActorsIcon from '@material-ui/icons/RecentActors'
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import StorefrontIcon from '@material-ui/icons/Storefront';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
@@ -50,10 +49,17 @@ export default function Nav(props) {
             direction={"down"}
           >
             <SpeedDialAction
-              icon={<AddIcon />}
-              tooltipTitle={"New Client"}
+              icon={<RecentActorsIcon />}
+              tooltipTitle={"Clients"}
               tooltipPlacement="left"
-              onClick={() => props.setPage("NewClient")}
+              onClick={() => props.setPage("Clients")}
+            />
+
+            <SpeedDialAction
+              icon={<SentimentSatisfiedAltIcon />}
+              tooltipTitle={"New Employee"}
+              tooltipPlacement="left"
+              onClick={() => props.setPage("NewEmployee")}
             />
               
             <SpeedDialAction
