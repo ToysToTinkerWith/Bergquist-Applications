@@ -54,7 +54,7 @@ function NewClient(props) {
       created: firebase.firestore.FieldValue.serverTimestamp()
     })
 
-    props.setPage("")
+    props.goBack()
       
     
 

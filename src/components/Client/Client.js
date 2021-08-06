@@ -3,9 +3,9 @@ import React from "react"
 import firebase from "firebase/app"
 import "firebase/firestore"
 
-import Job from "./Job"
+import Job from "../Job/Job"
 import EditClient from "./EditClient"
-import NewJob from "./NewJob"
+import NewJob from "../Job/NewJob"
 
 import { Button, Typography, Modal } from "@material-ui/core"
 

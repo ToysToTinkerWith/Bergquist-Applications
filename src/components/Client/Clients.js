@@ -6,7 +6,7 @@ import "firebase/firestore"
 import NewClient from "./NewClient"
 
 import { DataGrid } from '@material-ui/data-grid'
-import { Button } from '@material-ui/core/'
+import { Button, Modal } from '@material-ui/core'
 
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
@@ -53,13 +53,13 @@ componentDidMount = () => {
             const jobDateTo = new Date(job.scheduledTo)
 
             if (self.props.date > jobDateTo) {
-                client.jobs.push("#c8e6c9") //green
+                client.jobs.push("#81c784") //green
             }
-            else if (self.props.date > jobDateFrom) {
-                client.jobs.push("#ffcdd2") //red
+            else if (self.props.date > jobDateFrom.setHours(0)) {
+                client.jobs.push("#e57373") //red
             }
             else {
-                client.jobs.push("#bbdefb") //blue
+                client.jobs.push("#64b5f6") //blue
             }
 
           })
@@ -140,45 +140,42 @@ const Columns = [
   }
 
 
-  if (this.state.clients.length > 0) {
     return (
     <div style={uploadstyle}>
-        {this.state.newClient ?
-        <Modal 
-        open={true} 
-        onClose={() => this.setState({newClient: false})}
-        style={{
-        marginTop: 75,
-        overflowY: "auto",
-        overflowX: "hidden"
-        }}>
-        <NewClient goBack={this.setState({newClient: false})} />
-        </Modal>
-        :
-        null
-        }
-        <Button 
-        variant="outlined" 
-        style={{float: "right", color: "secondary"}}
         
-        onClick={() => this.setState({newClient: false})}
+        <Button 
+        variant="contained"
+        color="secondary"
+        style={{margin: 10}}
+        
+        onClick={() => this.setState({newClient: true})}
         > 
         +Client 
         </Button>
 
         <DataGrid rows={this.state.clients} columns={Columns} autoHeight={true}/>
+
+        {this.state.newClient ?
+        <Modal 
+        open={true} 
+        onClose={() => this.setState({newClient: false})}
+        style={{
+          marginTop: 75,
+          overflowY: "auto",
+          overflowX: "hidden"
+        }}>
+          <NewClient goBack={() => this.setState({newClient: false})}/>
+        </Modal>
+        
+        :
+        null
+        }
         
     </div>
   )
   }
 
-  else {
-    return (
-      <div>
-      </div>
-    )
-  }
-}
+
   
   
 }
