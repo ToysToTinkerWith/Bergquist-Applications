@@ -86,7 +86,7 @@ class Map extends React.Component {
 
   render() {
 
-    var width = this.state.zoom * 2
+    var width = this.state.zoom
 
     return (
       <div>

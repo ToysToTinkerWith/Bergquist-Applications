@@ -4,13 +4,15 @@ import firebase from "firebase/app"
 import FirebaseInit from "../../components/Firebase/FirebaseInit";
 
 import { loadStripe } from "@stripe/stripe-js";
+import Stripe from "stripe";
 import { createCheckoutSession } from "next-stripe/client";
 
 
-import JobClientView from "../../components/Client/JobClientView"
-import NewJobClientView from "../../components/Client/NewJobClientView"
+import JobClientView from "../../components/Job/JobClientView"
+import NewJobClientView from "../../components/Job/NewJobClientView"
 
 import { Button, Typography, Modal } from "@material-ui/core"
+
 
 export const getStaticPaths = async () => {
     // Return a list of possible value for id
@@ -36,10 +38,20 @@ export const getStaticPaths = async () => {
   
 export const getStaticProps = async (context) =>  {
     const id = context.params.id
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2020-08-27",
+    });
+  
+    const prices = await stripe.prices.list({
+      active: true,
+      limit: 10,
+      expand: ["data.product"],
+    });
+
+    console.log(prices.data)
         
-return {
-    props: {clientId: id}
-}
+  return { props: {clientId: id, products: prices.data}}
 }
 
 export const checkout = async (job, jobId, clientId) => {
@@ -72,7 +84,7 @@ export const checkout = async (job, jobId, clientId) => {
   };
 
   
-export default function Client({clientId}) {
+export default function Client({clientId, products}) {
 
     const [client, setClient] = useState(null)
     const [jobIds, setJobIds] = useState([])
@@ -88,18 +100,19 @@ export default function Client({clientId}) {
         firebase.firestore().collection("clients").doc(clientId).collection("jobs")
         .onSnapshot((querySnapshot) => {
 
-        let jobIds = []
+        setJobIds([])
 
         querySnapshot.forEach(function(doc) {
-            jobIds.push(doc.id)
+            setJobIds(jobIds => ([...jobIds, doc.id]))
         })
 
         setClient(client)
-        setJobIds(jobIds)
 
         })
       })
     }, []);
+
+    console.log(products)
 
 
     if (client) {
@@ -133,7 +146,7 @@ export default function Client({clientId}) {
               overflowY: "auto",
               overflowX: "hidden"
             }}>
-            <NewJobClientView clientId={clientId} goBack={() => setPage(null)} />
+            <NewJobClientView products={products} clientId={clientId} closeModal={() => setPage(null)} />
             </Modal>
             :
             null

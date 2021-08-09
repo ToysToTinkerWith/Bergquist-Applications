@@ -21,7 +21,12 @@ function Marker(props) {
         const jobDateFrom = new Date(job.scheduledFrom)
         const jobDateTo = new Date(job.scheduledTo)
 
-        if (props.date > jobDateTo) {
+        if (job.status == "Waiting for client approval..." || 
+        job.status == "Job recieved, awaiting approval...") {
+          color = "#f5f5f5"
+        }
+
+        else if (props.date > jobDateTo) {
           if (color !== "#42a5f5" && color !== "#ef5350") {
             color = "#66bb6a"
           }
