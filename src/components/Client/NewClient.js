@@ -40,6 +40,32 @@ function NewClient(props) {
 
   const classes = useStyles()
 
+  const getMapOptions = (maps) => {
+
+    return {
+        streetViewControl: true,
+        scaleControl: true,
+        fullscreenControl: false,
+        
+        gestureHandling: "greedy",
+  
+        mapTypeControl: true,
+        mapTypeId: maps.MapTypeId.ROADMAP,
+        mapTypeControlOptions: {
+            style: maps.MapTypeControlStyle.DROPDOWN_MENU,
+            position: maps.ControlPosition.TOP_LEFT,
+            mapTypeIds: [
+                maps.MapTypeId.ROADMAP,
+                maps.MapTypeId.SATELLITE,
+                maps.MapTypeId.HYBRID
+            ]
+        },
+  
+        zoomControl: true,
+        clickableIcons: false
+    };
+  }
+
   const handleUpload = (formData) => {
 
     console.log(formData)
@@ -132,7 +158,7 @@ function NewClient(props) {
       <Form onSubmit={handleSubmit} autoComplete="off" >
 
         <Grid container>
-          <Grid item sm={12} md={6} >
+          <Grid item xs={12} sm={12} md={6} >
             <br />
               <TextField
             className={classes.name}
@@ -169,14 +195,15 @@ function NewClient(props) {
             name="phone"
           />
           </Grid>
-          <Grid item sm={12} md={6} >
+          <Grid item xs={12} sm={12} md={6} >
             <br />
-            <Button className={classes.buttonStyle} variant="outlined" color="secondary" onClick={() => locateAddress(values.address, setFieldValue)}
+            <Button className={classes.buttonStyle} variant="contained" color="secondary" onClick={() => locateAddress(values.address, setFieldValue)}
         >Locate Address</Button>
 
         <div style={{ height: "50vh", width: "100%", padding: 20}}>
           <GoogleMapReact
             bootstrapURLKeys={{ key: "AIzaSyBiB3iNngJM_kFWKxSv9a30O3fww7YTiWA"}}
+            options={getMapOptions}
             center={{lat : lat, lng : lng}}
             zoom={zoom}
             onClick={(event) => {
@@ -207,7 +234,7 @@ function NewClient(props) {
 
       <br/>
 
-      <Button type="submit" color="secondary" variant="outlined" disabled={isSubmitting}> Upload </Button>
+      <Button type="submit" color="secondary" variant="contained" disabled={isSubmitting}> Upload </Button>
 
       <br />
       <br />

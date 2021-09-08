@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
 
+import { useRouter } from 'next/router'
+
 import firebase from "firebase/app"
 import FirebaseInit from "../../components/Firebase/FirebaseInit";
 
@@ -15,12 +17,10 @@ import { Button, Typography, Modal } from "@material-ui/core"
 
 
 export const getStaticPaths = async () => {
-    // Return a list of possible value for id
     FirebaseInit()
     const paths = await firebase.firestore().collection("clients").get()
     .then((query) => {
             const paths = query.docs.map((doc) => {
-            // doc.data() is never undefined for query doc snapshots
             return {params: { id: doc.id }} 
             });
     
@@ -30,7 +30,7 @@ export const getStaticPaths = async () => {
 
     return {
         paths,
-        fallback: false
+        fallback: true
       }
 
     
@@ -48,8 +48,6 @@ export const getStaticProps = async (context) =>  {
       limit: 10,
       expand: ["data.product"],
     });
-
-    console.log(prices.data)
         
   return { props: {clientId: id, products: prices.data}}
 }
@@ -86,6 +84,13 @@ export const checkout = async (job, jobId, clientId) => {
   
 export default function Client({clientId, products}) {
 
+    const router = useRouter()
+
+    if (router.isFallback) {
+      // your loading indicator
+      return <div>loading...</div>
+    }
+
     const [client, setClient] = useState(null)
     const [jobIds, setJobIds] = useState([])
     const [page, setPage] = useState(null)
@@ -98,7 +103,7 @@ export default function Client({clientId, products}) {
         let client = doc.data()
 
         firebase.firestore().collection("clients").doc(clientId).collection("jobs")
-        .onSnapshot((querySnapshot) => {
+        .orderBy("created", "desc").onSnapshot((querySnapshot) => {
 
         setJobIds([])
 
@@ -112,20 +117,17 @@ export default function Client({clientId, products}) {
       })
     }, []);
 
-    console.log(products)
-
 
     if (client) {
 
         const clientStyle = {
-            backgroundColor: "#FFFFF0",
             padding: "10px",
         }
 
         return (
           <div style={clientStyle}>
               <div style={{display: "inline"}}>
-                <Button style={{float: "right"}} variant="outlined" color="secondary" onClick={() => 
+                <Button style={{float: "right"}} variant="contained" color="secondary" onClick={() => 
                 setPage("newJob")}>+ Job </Button>
               </div>
             
@@ -142,11 +144,14 @@ export default function Client({clientId, products}) {
             open={true} 
             onClose={() => setPage(null)}
             style={{
-              marginTop: 75,
               overflowY: "auto",
               overflowX: "hidden"
             }}>
-            <NewJobClientView products={products} clientId={clientId} closeModal={() => setPage(null)} />
+              <div>
+                <Button variant="contained" color="secondary" style={{width: "100%"}} onClick={() => setPage(null)}> Back </Button>
+                <NewJobClientView date={date} products={products} client={client} clientId={clientId} closeModal={() => setPage(null)} />
+              </div>
+            
             </Modal>
             :
             null
@@ -155,9 +160,8 @@ export default function Client({clientId, products}) {
     
     
             {jobIds.length > 0 ? jobIds.map((jobId, index) => {
-              return [<JobClientView key={index} date={date} checkout={checkout} clientId={clientId} jobId={jobId} />,
-              <br />]
-              
+              return <JobClientView key={index} date={date} checkout={checkout} client={client} clientId={clientId} jobId={jobId} />
+                
             })
             :
             null}

@@ -16,10 +16,9 @@ import {
     DayView,
 } from '@devexpress/dx-react-scheduler-material-ui';
 
-import { Formik, Form } from 'formik';
+import { Button, TextField, Typography, Grid, CircularProgress } from '@material-ui/core'
+import { Card, CardContent, CardMedia } from '@material-ui/core'
 
-import { Button, Typography, TextField, Grid, CircularProgress, makeStyles } from '@material-ui/core'
-import { Card, CardActionArea, CardActions, CardContent, CardMedia } from '@material-ui/core'
 
 
 export default class ViewProduct extends React.Component {
@@ -27,12 +26,11 @@ export default class ViewProduct extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          progress: 0,
-          estimate: 0,
-          pictures: [],
           events: [],
           scheduledFrom: null,
-          scheduledTo: null
+          scheduledTo: null,
+          color: "",
+          error: ""
           
         };
     
@@ -49,14 +47,34 @@ export default class ViewProduct extends React.Component {
           clients.forEach(client => {
             firebase.firestore().collection("clients").doc(client.id).collection("jobs")
             .get().then(jobs => {
+
+              
+
               jobs.forEach(job => {
-                  console.log(job.data())
+
+                const jobDateFrom = new Date(job.data().scheduledFrom)
+                const jobDateTo = new Date(job.data().scheduledTo)
+                let color
+
+                  if (this.props.date > jobDateTo) {
+                    color = "#4caf50"
+                  }
+
+                  else if (this.props.date > jobDateFrom.setHours(0)) {
+                    color = "#fdd835"
+                  }
+
+                  else {
+                    color = "#2196f3"
+                  }
+
                 this.setState(oldState => ({
                     events: [...oldState.events, 
                         { 
                             startDate: job.data().scheduledFrom,
                             endDate: job.data().scheduledTo,
-                            title: job.data().job
+                            title: job.data().job,
+                            color: color
                         }]
                    
                   }))
@@ -66,51 +84,58 @@ export default class ViewProduct extends React.Component {
         })
     }
 
-    handleUpload = () => {
+    handleUpload = (estimate, rate) => {
 
-      console.log("hey")
+      const jobDateFrom = new Date(this.state.scheduledFrom)
+      const jobDateTo = new Date(this.state.scheduledTo)
 
+      let collisions = 0
+
+      this.state.events.forEach(event => {
+        let eventDateFrom = new Date(event.startDate)
+        let eventDateTo = new Date(event.endDate)
+
+        if (jobDateFrom > eventDateFrom && jobDateFrom < eventDateTo) {
+          collisions += 1
+        }
+        else if (jobDateTo > eventDateFrom && jobDateTo < eventDateTo) {
+          collisions += 1
+        }
+        else if (jobDateFrom < eventDateFrom && jobDateTo > eventDateTo) {
+          collisions += 1
+        }
+
+      })
+
+      if (!this.state.scheduledTo || !this.state.scheduledFrom) {
+        this.setState({
+          error: "Schedule a valid day and time for the job"
+        })
+      }
+
+      else if (collisions > 0) {
+        this.setState({
+          error: "No overlapping jobs"
+        })
+      }
+
+      else {
         firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").add({
           job: this.props.product.product.name,
           details: this.props.product.product.description,
           scheduledFrom: this.state.scheduledFrom,
           scheduledTo: this.state.scheduledTo,
-          estimate: this.state.estimate,
-          imgs: [],
+          estimate: estimate,
+          status: "Not Paid",
           created: firebase.firestore.FieldValue.serverTimestamp()
         }).then((doc) => {
-        
-            for (let y = 0; y < this.state.pictures.length; y++) {
-    
-            const uploadTask = firebase.storage().ref("images/" + this.props.clientId + "/" + this.state.pictures[y].id).put(this.state.pictures[y])
-    
-            uploadTask.on("state_changed", (snapshot) => {
-              const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-              this.setState({progress: progress})
-            },
-            (error) => {
-              alert(error.message)
-            },
-            () => {
-    
-              firebase.storage().ref("images/" + this.props.clientId).child(this.state.pictures[y].id).getDownloadURL()
-          .then(url => {
-            console.log(url)
-                firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").doc(doc.id).update({
-                  imgs: firebase.firestore.FieldValue.arrayUnion(url)
-                })
-            })
-    
-            })
-    
-          }
           
           this.props.closeModal()
-          console.log("hi")
     
           })
-    
       }
+    
+    }
       
       handlePicture = (e) => {
         for (let i = 0; i < e.target.files.length; i++) {
@@ -138,24 +163,43 @@ export default class ViewProduct extends React.Component {
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
             textAlign: "center",
             padding: 20,
-            margin: 20
          
+          }
+        
+          const errorstyle = {
+            color: "#d32f2f"
           }
     
           var cents = parseInt(this.props.product.unit_amount_decimal)
           var dollars = cents / 100
           var dollarString = dollars.toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-          if (this.state.scheduledFrom && this.state.scheduledTo) {
-            var scheduledFrom = new Date(this.state.scheduledFrom)
-            var scheduledTo = new Date(this.state.scheduledTo)
-            var milDiff = scheduledTo.getTime() - scheduledFrom.getTime()
-            var hourDiff = milDiff / 3600000
-      
-            var estimateCents = parseInt(this.props.product.unit_amount) * hourDiff
-            var estimateDollars = estimateCents / 100
-            var estimateString = estimateDollars.toLocaleString("en-US", {style:"currency", currency:"USD"})
-          }
+          var scheduledFrom = new Date(this.state.scheduledFrom)
+          var scheduledTo = new Date(this.state.scheduledTo)
+          var milDiff = scheduledTo.getTime() - scheduledFrom.getTime()
+          var hourDiff = milDiff / 3600000
+    
+          var estimateCents = parseInt(this.props.product.unit_amount) * hourDiff
+          var estimateDollars = estimateCents / 100
+          var estimateString = estimateDollars.toLocaleString("en-US", {style:"currency", currency:"USD"})
+            
+          
+
+          const Appointment = ({
+            data, children, style, ...restProps
+          }) => (
+
+            <Appointments.Appointment
+              {...restProps}
+              style={{
+                ...style,
+                backgroundColor: data.color,
+                borderRadius: '8px',
+              }}
+            >
+              {children}
+            </Appointments.Appointment>
+          );
 
           
           console.log(this.state)
@@ -163,11 +207,10 @@ export default class ViewProduct extends React.Component {
         return (
         <div style={uploadstyle}>
         <Card style={{padding: 20}}>
-            <CardActionArea>
             <CardMedia
                 component="img"
                 alt={this.props.product.product.name}
-                height="140"
+                height="300"
                 image={this.props.product.product.images[0]}
                 title={this.props.product.product.name}
             />
@@ -184,14 +227,8 @@ export default class ViewProduct extends React.Component {
                 {dollarString + "/hr"} 
                 </Typography>
             </CardContent>
-            </CardActionArea>
-            <CardActions>
-            </CardActions>
          
-    
-    
-          <br/>
-    
+             
           <Grid container>
               <Grid item xs={12} sm={6}>
                 <TextField 
@@ -202,6 +239,10 @@ export default class ViewProduct extends React.Component {
                 InputLabelProps={{
                     shrink: true,
                   }}
+                style={{
+                  width: "50%",
+                  marginBottom: 20
+                }}
                 
                 />
               </Grid>
@@ -214,6 +255,9 @@ export default class ViewProduct extends React.Component {
                 InputLabelProps={{
                     shrink: true,
                   }}
+                style={{
+                  width: "50%",
+                }}
                 
                 />
               </Grid>
@@ -221,7 +265,7 @@ export default class ViewProduct extends React.Component {
     
     
           <Scheduler
-              data={[...this.state.events, {startDate: this.state.scheduledFrom, endDate: this.state.scheduledTo, title: "New Job"}]}
+              data={[...this.state.events, {startDate: this.state.scheduledFrom, endDate: this.state.scheduledTo, title: this.props.product.product.name + " for " + this.props.client.name}]}
             >
            
     
@@ -235,8 +279,8 @@ export default class ViewProduct extends React.Component {
             <WeekView
                 name="work-week"
                 displayName="Work Week"
-                excludedDays={[0, 6]}
-                startDayHour={8}
+                //excludedDays={[0, 6]}
+                startDayHour={10}
                 endDayHour={17}
             />
             
@@ -247,29 +291,25 @@ export default class ViewProduct extends React.Component {
             <Toolbar />
     
             <DateNavigator />
-            <Appointments />
+            <Appointments 
+            appointmentComponent={Appointment}/>
         </Scheduler>
         <hr />
-        <br />
-    
-
-
-          <Typography color="secondary" variant="subtitle" > Upload pictures that help identify the job:</Typography>
- 
+        <br /> 
             
-          <Button variant="contained" component="label">
-          <input type="file" multiple onChange={this.handlePicture} style={{display: "block"}}/>
     
-          </Button>
-
           <Typography color="secondary" gutterBottom variant="h6">
-                {estimateString} 
+                Estimate: {estimateString} 
           </Typography>
     
-          <CircularProgress variant="determinate" value={this.state.progress} />
+
+          <Typography style={errorstyle} color="secondary" variant="body1">
+                {this.state.error} 
+          </Typography>
+          <br />
     
     
-          <Button color="secondary" variant="contained" onClick={() => this.handleUpload()}> Add Job </Button>    
+          <Button color="secondary" variant="contained" onClick={() => this.handleUpload(estimateDollars, dollars)}> Add Job </Button>    
         
     
         </Card>

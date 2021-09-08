@@ -14,28 +14,23 @@ function Marker(props) {
     
     firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").onSnapshot((query) => {
 
-      let color
+      let color = "#66bb6a"
 
       query.forEach(doc => {
         let job = doc.data()
         const jobDateFrom = new Date(job.scheduledFrom)
         const jobDateTo = new Date(job.scheduledTo)
-
-        if (job.status == "Waiting for client approval..." || 
-        job.status == "Job recieved, awaiting approval...") {
-          color = "#f5f5f5"
-        }
-
-        else if (props.date > jobDateTo) {
-          if (color !== "#42a5f5" && color !== "#ef5350") {
+        if (props.date > jobDateTo) {
+          if (color != "#ffee58" || color != "#42a5f5") {
             color = "#66bb6a"
           }
         }
+
         else if (props.date > jobDateFrom.setHours(0)) {
-          color = "#ef5350"
+          color = "#ffee58"
         }
         else {
-          if (color !== "#ef5350") {
+          if (color !== "#ffee58") {
             color = "#42a5f5"
           }
         }
@@ -58,7 +53,7 @@ function Marker(props) {
 
     return (
       <div>
-        <IconButton  onClick={() => [props.setPage("Client"), props.setClient(props.clientId)]} >
+        <IconButton onClick={() => props.setClient()} >
           <HomeIcon style={markerstyle}/>
         </IconButton>
       </div>

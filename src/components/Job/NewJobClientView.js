@@ -12,7 +12,7 @@ import { Button, Typography, Modal, TextField, CircularProgress, makeStyles } fr
 import { Card, CardActionArea, CardActions, CardContent, CardMedia } from '@material-ui/core'
 
  
-function NewJob(props) {
+function NewJobClientView(props) {
 
   const [viewProduct, setViewProduct] = useState(null)
 
@@ -24,6 +24,8 @@ function NewJob(props) {
  
   }
 
+    
+
   return (
 
     <div style={uploadstyle}>
@@ -33,11 +35,14 @@ function NewJob(props) {
       open={true} 
       onClose={() => setViewProduct(null)}
       style={{
-        marginTop: 75,
         overflowY: "auto",
         overflowX: "hidden"
       }}>
-        <ViewProduct product={viewProduct} clientId={props.clientId} closeModal={props.closeModal}/>
+        <div>
+          <Button variant="contained" color="secondary" style={{width: "100%"}} onClick={() => setViewProduct(null)}> Back </Button>
+          <ViewProduct date={props.date} product={viewProduct} client={props.client} clientId={props.clientId} closeModal={props.closeModal}/>
+        </div>
+        
       </Modal>
       :
       null
@@ -48,7 +53,7 @@ function NewJob(props) {
           if (product.product.active) {
             return (
 
-              <Card style={{width: "150", display: "inline-block", margin: 15, border: "1px solid black"}}>
+              <Card style={{width: 300, display: "inline-block", margin: 15, border: "1px solid black"}}>
               <CardActionArea>
                 <CardMedia
                   component="img"
@@ -61,6 +66,12 @@ function NewJob(props) {
                   <Typography color="secondary" gutterBottom variant="h5" component="h2">
                     {product.product.name} 
                   </Typography>
+                  <Typography color="secondary" gutterBottom variant="body1" component="h2">
+                    {product.product.description} 
+                  </Typography>
+                  <Typography color="secondary" gutterBottom variant="body1" component="h2">
+                    {(product.unit_amount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"}) + "/hr"}
+                  </Typography>
                 </CardContent>
               </CardActionArea>
               <CardActions>
@@ -71,7 +82,7 @@ function NewJob(props) {
                 style={{display: "flex", margin: "auto"}}
                 onClick={() => {setViewProduct(product)}}
                 >
-                  Details
+                  Schedule
                 </Button>
                 
               </CardActions>
@@ -92,4 +103,4 @@ function NewJob(props) {
 
 
 
-export default NewJob
+export default NewJobClientView

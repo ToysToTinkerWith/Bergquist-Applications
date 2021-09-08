@@ -4,8 +4,10 @@ import firebase from "firebase/app"
 import "firebase/firestore"
 
 import GoogleMapReact from 'google-map-react'
+
 import Marker from "./Marker"
-import { Fab } from "@material-ui/core"
+import Client from "../Client/Client"
+import { Button, Modal } from "@material-ui/core"
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 
 const getMapOptions = (maps) => {
@@ -41,10 +43,11 @@ class Map extends React.Component {
     this.state = {
       clients: [],
       clientIds: [],
-      zoom: 10,
-      lat: 48.2,
-      lng: -122.5,
+      zoom: 12,
+      lat: 47.6,
+      lng: -122.3,
       found: false,
+      client: null,
       currentLoc: {
         lat: 0,
         lng: 0
@@ -86,11 +89,11 @@ class Map extends React.Component {
 
   render() {
 
-    var width = this.state.zoom
+    var width = this.state.zoom * 2
 
     return (
       <div>
-        <div style={{ height: "100vh",  width: "100%" }}>
+        <div style={{ height: "60vh",  width: "100%"}}>
           <GoogleMapReact
             bootstrapURLKeys={{ key: "AIzaSyBiB3iNngJM_kFWKxSv9a30O3fww7YTiWA"}}
             options={getMapOptions}
@@ -107,23 +110,42 @@ class Map extends React.Component {
           >
 
             {this.state.clients.length > 0 ? this.state.clients.map((client, index) => {
-              return <Marker key={index} date={this.props.date} width={width} user={this.props.user} zoom={this.state.zoom} lat={client.lat} lng={client.lng} clientId={this.state.clientIds[index]} setPage={this.props.setPage} setClient={this.props.setClient}/>
+              return <Marker key={index} date={this.props.date} width={width} lat={client.lat} lng={client.lng} clientId={this.state.clientIds[index]} setClient={() => this.setState({client: this.state.clientIds[index]})}/>
             }) :  null }
 
+            
+
             {this.state.found ? 
-            <PersonPinCircleIcon lat={this.state.currentLoc.lat} lng={this.state.currentLoc.lng} style={{ width: width/2, height: width/2 }}/>
+            <PersonPinCircleIcon lat={this.state.currentLoc.lat} lng={this.state.currentLoc.lng} style={{ width: width*2, height: width*2 }}/>
             :
             null
             }
           
           </GoogleMapReact>
-          <Fab  color="primary" 
-                tooltip="Location"
-                style={{position: "absolute", top: 5, right: 75}}
-                onClick={() => this.getUserLocation()}>
-          <PersonPinCircleIcon />
-          </Fab>
+          
+          
         </div>
+
+        
+
+        {this.state.client ?
+        <Modal 
+        open={true} 
+        onClose={() => this.setState({client: null})}
+        style={{
+          overflowY: "auto",
+          overflowX: "hidden"
+        }}>
+          <div>
+            <Button variant="contained" color="secondary" style={{width: "100%"}} onClick={() => this.setState({client: null})}> Back </Button>
+            <Client products={this.props.products} checkout={this.props.checkout} date={this.props.date} clientId={this.state.client}/>
+          </div>
+          
+        </Modal>
+        
+        :
+        null
+        }
         
 
       </div>

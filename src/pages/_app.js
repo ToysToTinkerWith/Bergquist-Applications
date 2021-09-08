@@ -12,7 +12,6 @@ export default function MyApp(props) {
   const { Component, pageProps } = props;
 
   React.useEffect(() => {
-    // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
@@ -24,7 +23,7 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
       <CssBaseline />
         <AuthProvider>
-        <Component style={{backgroundColor: "#FFFFF0"}}{...pageProps} />
+        <Component {...pageProps} />
         </AuthProvider>
       </ThemeProvider>
     </React.Fragment>
