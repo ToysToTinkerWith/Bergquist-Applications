@@ -125,7 +125,7 @@ export default class ViewProduct extends React.Component {
           details: this.props.product.product.description,
           scheduledFrom: this.state.scheduledFrom,
           scheduledTo: this.state.scheduledTo,
-          estimate: estimate,
+          estimate: estimate.toFixed(2),
           status: "Not Paid",
           created: firebase.firestore.FieldValue.serverTimestamp()
         }).then((doc) => {
@@ -158,7 +158,7 @@ export default class ViewProduct extends React.Component {
 
       render() {
         const uploadstyle = {
-            backgroundColor: "#FFFFF0",
+            backgroundColor: "#3F3D56",
             borderRadius: "15px",
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
             textAlign: "center",
@@ -169,19 +169,27 @@ export default class ViewProduct extends React.Component {
           const errorstyle = {
             color: "#d32f2f"
           }
-    
+
           var cents = parseInt(this.props.product.unit_amount_decimal)
           var dollars = cents / 100
           var dollarString = dollars.toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-          var scheduledFrom = new Date(this.state.scheduledFrom)
-          var scheduledTo = new Date(this.state.scheduledTo)
-          var milDiff = scheduledTo.getTime() - scheduledFrom.getTime()
-          var hourDiff = milDiff / 3600000
+          var estimateString = "$0"
+
+          if (this.state.scheduledFrom && this.state.scheduledTo) {
+            
+
+            var scheduledFrom = new Date(this.state.scheduledFrom)
+            var scheduledTo = new Date(this.state.scheduledTo)
+            var milDiff = scheduledTo.getTime() - scheduledFrom.getTime()
+            var hourDiff = milDiff / 3600000
+      
+            var estimateCents = parseInt(this.props.product.unit_amount) * hourDiff
+            var estimateDollars = estimateCents / 100
+            estimateString = estimateDollars.toLocaleString("en-US", {style:"currency", currency:"USD"})
+          }
     
-          var estimateCents = parseInt(this.props.product.unit_amount) * hourDiff
-          var estimateDollars = estimateCents / 100
-          var estimateString = estimateDollars.toLocaleString("en-US", {style:"currency", currency:"USD"})
+          
             
           
 

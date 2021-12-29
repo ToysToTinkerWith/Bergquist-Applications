@@ -6,92 +6,70 @@ import { Card, Grid, Typography, Avatar } from "@material-ui/core"
 export default function Me(props) {
 
     return (
-        <Card style={{backgroundColor: "#212121", display: "grid"}}>
-            <Grid container justifyContent="center">
-                <Grid item xs={12} sm={12} md={6}>
-                    <Typography 
-                    variant="h2" 
-                    align="center"
-                    color="primary"
-                    style={{
-                        marginTop: "2%",
-                    }}
-                    > 
-                    Bergquist
-                    </Typography>
-                    <Typography 
-                    variant="h5" 
-                    align="center"
-                    color="primary"
-                    > 
-                    Business Applications
-                    </Typography>
-                    <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        margin: "2%",
-                    }}>
-                        <img 
-                        src="React.svg"
-                        style={{
-                            margin: "2%",
-                            width: 100
-                        }}
-                        />
-                        <img 
-                        src="MaterialUI.svg"
-                        style={{
-                            margin: "2%",
-                            width: 80
-                        }}
-                        />
-                        <img 
-                        src="Firebase.svg"
-                        style={{
-                            margin: "2%",
-                            width: 60
-                        }}
-                        />
-                        <img 
-                        src="Stripe.png"
-                        style={{
-                            margin: "2%",
-                            width: 75
-                        }}
-                        />
-                    </div>
+        <Card style={{backgroundColor: ""}}>
                     
-                </Grid>
-                <Grid item xs={12} sm={12} md={6} style={{display: "flex", justifyContent: "center", alignItems: "flex-end"}}>
-                        <Avatar 
-                        src="self.jpg" 
-                        style={{
-                            width: 100,
-                            height: 100,
-                            display: "inline-flex",
-                            margin: "4%"
-                        }}/>
-                        <Avatar 
-                        src="self5.jpg" 
-                        style={{
-                            width: 200,
-                            height: 200,
-                            display: "inline-flex",
-                            marginTop: "4%",
-                            marginBottom: "4%"
-                        }}/>
-                        <Avatar 
-                        src="self3.jpg" 
-                        style={{
-                            width: 100,
-                            height: 100,
-                            display: "inline-flex",
-                            margin: "4%"
-                        }}/>
+                    
+                    <Grid container>
+                        <Grid item xs={12} sm={12} md={8} >
+                            <Typography 
+                                variant="h2" 
+                                align="center"
+                                style={{
+                                    margin: "5%",
+                                    color: "#E6E6E6",
+                                }}
+                                > 
+                                Bergquist Applications
+                                </Typography>
+                                <Typography 
+                                variant="h5" 
+                                align="center"
+                                style={{
+                                    margin: "5%",
+                                    color: "#E6E6E6"
+                                }}
+                                > 
+                                Progressive Web Development
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={4}>
+                                <Grid container>
+                                    <Grid item xs={12} sm={6} md={12} lg={12} style={{padding: "5%"}}>
+                                        <Typography 
+                                        variant="h6" 
+                                        align="center"
+                                        style={{
+                                            color: "#E6E6E6"
+                                        }}
+                                        > 
+                                        360-969-9115
+                                        </Typography>
+                                        <img src="/Phone.svg" style={{display: "flex", margin: "auto", height: 50}}/>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={12} lg={12} style={{padding: "5%"}}>
+                                        <Typography 
+                                        variant="h6" 
+                                        align="center"
+                                        style={{
+                                            color: "#E6E6E6"
+                                        }}
+                                        > 
+                                        abergquist96@gmail.com
+                                        </Typography>
+                                        <img src="/Email.svg" style={{display: "flex", margin: "auto", height: 50}}/>
+                                    </Grid>
+                                </Grid>
+                                    
+                                    
+                            
+                            
+                            
+                        </Grid>
+                    </Grid>
+                    <br />
+                    
+                    
                 
-                </Grid>
-            </Grid>
             <Nav page={props.page} setPage={props.setPage}/>
         </Card>
     )

@@ -1,14 +1,8 @@
-import React, { useEffect, useState } from 'react';
-
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/storage"
-
-
+import React, { useState } from 'react';
 
 import ViewProduct from "../Product/ViewProduct"
 
-import { Button, Typography, Modal, TextField, CircularProgress, makeStyles } from '@material-ui/core'
+import { Button, Typography, Modal } from '@material-ui/core'
 import { Card, CardActionArea, CardActions, CardContent, CardMedia } from '@material-ui/core'
 
  
@@ -17,7 +11,7 @@ function NewJobClientView(props) {
   const [viewProduct, setViewProduct] = useState(null)
 
   const uploadstyle = {
-    backgroundColor: "#FFFFF0",
+    backgroundColor: "#3F3D56",
     borderRadius: "15px",
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     textAlign: "center"
@@ -53,8 +47,7 @@ function NewJobClientView(props) {
           if (product.product.active) {
             return (
 
-              <Card style={{width: 300, display: "inline-block", margin: 15, border: "1px solid black"}}>
-              <CardActionArea>
+              <Card style={{width: 300, height: 400, display: "inline-block", margin: 15}}>
                 <CardMedia
                   component="img"
                   alt={product.product.name}
@@ -66,26 +59,22 @@ function NewJobClientView(props) {
                   <Typography color="secondary" gutterBottom variant="h5" component="h2">
                     {product.product.name} 
                   </Typography>
+                  <Button 
+                  size="small"
+                  color="secondary" 
+                  variant="contained"
+                  style={{display: "flex", margin: "auto"}}
+                  onClick={() => {setViewProduct(product)}}
+                  >
+                    Schedule
+                  </Button>
                   <Typography color="secondary" gutterBottom variant="body1" component="h2">
                     {product.product.description} 
                   </Typography>
-                  <Typography color="secondary" gutterBottom variant="body1" component="h2">
-                    {(product.unit_amount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"}) + "/hr"}
-                  </Typography>
+                  
                 </CardContent>
-              </CardActionArea>
-              <CardActions>
-                <Button 
-                size="small"
-                color="secondary" 
-                variant="contained"
-                style={{display: "flex", margin: "auto"}}
-                onClick={() => {setViewProduct(product)}}
-                >
-                  Schedule
-                </Button>
                 
-              </CardActions>
+                
             </Card>
             )
           }

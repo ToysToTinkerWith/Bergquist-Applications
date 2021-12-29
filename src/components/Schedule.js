@@ -18,8 +18,7 @@ import {
     DayView,
 } from '@devexpress/dx-react-scheduler-material-ui';
 
-import { Modal } from '@material-ui/core'
-import { Card, Button } from '@material-ui/core'
+import { Modal, Button, Typography, Card } from '@material-ui/core'
 
 
 
@@ -82,12 +81,11 @@ export default class Schedule extends React.Component {
 
       render() {
         const uploadstyle = {
-            backgroundColor: "#FFFFF0",
+            backgroundColor: "#3F3D56",
             borderRadius: "15px",
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-            textAlign: "center",
-            padding: 20,
-            margin: 20
+            padding: 10,
+            marginBottom: 40
          
           }
             
@@ -117,9 +115,14 @@ export default class Schedule extends React.Component {
           
         return (
         <div style={uploadstyle}>
-        <Card style={{padding: 20}}>
-    
+        <br />
+        <Typography variant="h4" align="left" color="secondary" style={{color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Schedules </Typography>
+        <Typography variant="body1" style={{color: "#E6E6E6", padding: 20}}> 
+          See what specific jobs are happening on each day. Mark down important events happening within the company that have clickable views, and customizable actions. 
+          Let clients and employees work their schedule around the company.
+        </Typography>
           <Scheduler
+              adaptivityEnabled={true}
               data={this.state.events}
             >
            
@@ -149,8 +152,6 @@ export default class Schedule extends React.Component {
             <Appointments 
             appointmentComponent={Appointment}/>
         </Scheduler>
-
-        </Card>
 
         {this.state.client ?
         <Modal 

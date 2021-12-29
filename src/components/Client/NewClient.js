@@ -105,7 +105,7 @@ function NewClient(props) {
 
 
   const uploadstyle = {
-    backgroundColor: "#FFFFF0",
+    backgroundColor: "#3F3D56",
     borderRadius: "15px",
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     textAlign: "center",
@@ -164,7 +164,7 @@ function NewClient(props) {
             className={classes.name}
             onChange={handleChange}
             type="text"
-            label="Name"
+            label={<Typography style={{color: "#E6E6E6"}}> Name </Typography>}
             name="name"
           />
           <br />
@@ -173,7 +173,7 @@ function NewClient(props) {
             className={classes.name}
             onChange={handleChange}
             type="text"
-            label="Address"
+            label={<Typography style={{color: "#E6E6E6"}}> Address </Typography>}
             name="address"
           />
           <br />
@@ -182,7 +182,7 @@ function NewClient(props) {
             className={classes.name}
             onChange={handleChange}
             type="text"
-            label="Email"
+            label={<Typography style={{color: "#E6E6E6"}}> Email </Typography>}
             name="email"
           />
           <br />
@@ -191,7 +191,7 @@ function NewClient(props) {
             className={classes.name}
             onChange={handleChange}
             type="text"
-            label="Phone"
+            label={<Typography style={{color: "#E6E6E6"}}> Phone </Typography>}
             name="phone"
           />
           </Grid>

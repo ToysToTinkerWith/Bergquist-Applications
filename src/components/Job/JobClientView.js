@@ -7,8 +7,7 @@ import { Typography, TextField, Button, IconButton, Avatar, Modal } from "@mater
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
-import { checkout } from "../../pages/client/[id]";
-import { isThisTypeNode } from "typescript";
+
 
 class Job extends React.Component {
 

@@ -7,7 +7,7 @@ import GoogleMapReact from 'google-map-react'
 
 import Marker from "./Marker"
 import Client from "../Client/Client"
-import { Button, Modal } from "@material-ui/core"
+import { Button, Modal, Card, Typography } from "@material-ui/core"
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 
 const getMapOptions = (maps) => {
@@ -90,6 +90,8 @@ class Map extends React.Component {
   render() {
 
     var width = this.state.zoom * 2
+
+  
 
     return (
       <div>

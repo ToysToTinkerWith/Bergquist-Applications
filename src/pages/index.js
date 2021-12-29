@@ -4,9 +4,11 @@ import { useAuth } from "../components/Firebase/FirebaseAuth"
 
 import "firebase/firestore"
 
-import Me from "../components/Me"
-import Components from "../components/Components"
+import Nav from "../components/Nav"
 import About from "../components/About"
+import Components from "../components/Components"
+import Process from "../components/Process"
+
 
 import { loadStripe } from "@stripe/stripe-js";
 import Stripe from "stripe";
@@ -24,7 +26,7 @@ export const getStaticProps = async () =>  {
     expand: ["data.product"],
   });
       
-return { props: {products: prices.data}}
+return { props: {products: prices.data.reverse()}}
 }
 
 export const checkout = async (job, jobId, clientId) => {
@@ -71,21 +73,28 @@ export default function Index({products}) {
   return (
     <main>
     <Head>
-      <title>Business</title>
+      <title>Bergquist Applications</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+      
     </Head>
 
-    <Me page={page} setPage={setPage}/>
+    <Nav page={page} setPage={setPage}/>
+
+    {page === "About" ?
+    <About setPage={setPage} />
+    :
+    null
+    }
 
     {page === "Components" ?
     <Components products={products} checkout={checkout} user={user} date={date} />
     :
     null
     }
-    
 
-    {page === "About" ?
-    <About />
+    {page === "Process" ?
+    <Process />
     :
     null
     }

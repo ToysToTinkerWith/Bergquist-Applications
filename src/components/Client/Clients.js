@@ -7,10 +7,10 @@ import NewClient from "./NewClient"
 import Client from "./Client"
 
 import { DataGrid } from '@material-ui/data-grid'
-import { Button, Modal, Card } from '@material-ui/core'
+import { Button, Modal, Card, Typography } from '@material-ui/core'
+
 
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-
 
 
 class Clients extends React.Component {
@@ -29,7 +29,7 @@ componentDidMount = () => {
 
     firebase.firestore().collection("clients").onSnapshot(querySnapshot => {
 
-      this.setState({ clients: [], posts: [] })
+      this.setState({ clients: [] })
 
       querySnapshot.forEach(doc => {
 
@@ -83,14 +83,14 @@ componentDidMount = () => {
     
 
 render() {
-  console.log(this.props.date)
 
 const Columns = [
   
   { 
   field: 'name', 
-  headerName: 'Client Name', 
-  width: 200,
+  headerName: <Typography style={{color: "#FFFFFF"}}> Client Name</Typography>, 
+  flex: 1,
+  minWidth: 50, 
   renderCell: (params) => (
         
       <Button
@@ -107,23 +107,40 @@ const Columns = [
   
   { 
   field: 'address', 
-  headerName: 'Address', 
-  width: 200,  
+  headerName: <Typography style={{color: "#FFFFFF"}}> Address</Typography>, 
+  flex: 1,
+  minWidth: 50, 
+  renderCell: (params) => (
+        
+    <Typography style={{color: "#FFFFFF"}}> {params.row.address} </Typography>
+  ),
   },
   { 
   field: 'email', 
-  headerName: 'Email', 
-  width: 200,  
+  headerName: <Typography style={{color: "#FFFFFF"}}> Email</Typography>, 
+  flex: 1,
+  minWidth: 50, 
+  renderCell: (params) => (
+        
+    <Typography style={{color: "#FFFFFF"}}> {params.row.email} </Typography>
+  ),
   },
   { 
     field: 'phone', 
-    headerName: 'Phone', 
-    width: 200,  
+    type: "number",
+    headerName: <Typography style={{color: "#FFFFFF"}}> Phone </Typography>, 
+    flex: 1,
+    minWidth: 50, 
+    renderCell: (params) => (
+        
+      <Typography style={{color: "#FFFFFF"}}> {params.row.phone} </Typography>
+    ),
     },
   { 
     field: 'jobs', 
-    headerName: 'Jobs',
-    width: 200,
+    headerName: <Typography style={{color: "#FFFFFF"}}> Jobs</Typography>,
+    flex: 1,
+    minWidth: 50, 
     renderCell: (params) => (
 
         params.row.jobs.length > 0 ? params.row.jobs.map((job) => {
@@ -144,18 +161,24 @@ const Columns = [
 
 
   const uploadstyle = {
-    backgroundColor: "#FFFFF0",
+    backgroundColor: "#3F3D56",
     borderRadius: "15px",
     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-    width: "100%",
-    height: "60vh"
+    padding: 10,
+    marginBottom: 40
 
   }
 
 
     return (
     <Card style={uploadstyle}>
+      <br />
+        <Typography variant="h4" align="left" style={{color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Data Grids </Typography>
+        <Typography variant="body1" style={{color: "#E6E6E6", padding: 20}}> 
+        Organize and display collections of large data. Sort the data by any field value, and customize the way each field is viewed.
+        List out data from the database and provide means to interact.
         
+        </Typography>
         <Button 
         variant="contained"
         color="secondary"
@@ -166,7 +189,14 @@ const Columns = [
         +Client 
         </Button>
 
-        <DataGrid rows={this.state.clients} columns={Columns} />
+
+        <DataGrid
+        autoHeight
+        pageSize={5}
+        rows={this.state.clients} 
+        columns={Columns} 
+        />
+
 
         {this.state.newClient ?
         <Modal 

@@ -4,23 +4,33 @@ import { ServerStyleSheets } from "@material-ui/core/styles";
 import theme from "../../theme";
 
 export default class MyDocument extends Document {
+
+  static async getInitialProps(ctx) {
+    const initialProps = await Document.getInitialProps(ctx)
+    return { ...initialProps }
+  }
+
   render() {
     return (
       <Html lang="en">
         <Head>
           <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-          <meta name="description" content="" />
+          <meta name="description" content="Bergquist Applications creates web based applications, that aid in data collection, business automation, and user engagement. 
+          Check out how modern web components can be used to completely customize the way businesses interact with their data." />
 
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
-          <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
-          <link rel="icon" type="image/png" href="/favicon.png"/>
+
+          <link rel="icon" href="/images/favicon.ico"/>
+
+
+          
           
         </Head>
-        <body style={{ backgroundColor: theme.palette.primary.main}}>
+        <body style={{ backgroundImage: "linear-gradient(#6C63FF, #FF6584)"}}>
           <Main />
           <NextScript />
         </body>

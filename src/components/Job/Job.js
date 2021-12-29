@@ -205,7 +205,7 @@ class Job extends React.Component {
           <Typography variant="h6" color="secondary"> <b>Start: </b>{new Date(this.state.job.scheduledFrom).toLocaleString()} </Typography>
           <Typography variant="h6" color="secondary"> <b>Finish: </b>{new Date(this.state.job.scheduledTo).toLocaleString()} </Typography>
 
-          <Typography variant="h6" color="secondary"> Estimate: ${this.state.job.estimate} </Typography>
+          <Typography variant="h6" color="secondary"> {"Estimate: $" + this.state.job.estimate} </Typography>
           <Typography variant="h6" color="secondary"> Status: <b>{this.state.status}</b> </Typography>
 
           {this.state.status == "Completed" ?

@@ -65,7 +65,7 @@ export default class Client extends React.Component {
     if (this.state.client) {
 
         const clientStyle = {
-            backgroundColor: "#FFFFF0",
+            backgroundColor: "#3F3D56",
             borderRadius: "15px",
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
             padding: "10px",

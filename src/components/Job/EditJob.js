@@ -5,10 +5,7 @@ import "firebase/firestore"
 import "firebase/storage"
 
 import { Formik, Form } from 'formik';
-import { Button, IconButton, TextField, Grid, Avatar, CircularProgress, makeStyles } from '@material-ui/core'
-
-
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Button, TextField, Grid, makeStyles } from '@material-ui/core'
 
 
 const useStyles = makeStyles((theme) => ({
