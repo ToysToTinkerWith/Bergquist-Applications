@@ -1,7 +1,7 @@
 import React from "react"
 
-import firebase from "firebase/app"
-import "firebase/firestore"
+import { db } from "../../../Firebase/FirebaseInit"
+import { doc, collection, onSnapshot, orderBy, query } from "firebase/firestore"
 
 import Job from "../Job/Job"
 import EditClient from "./EditClient"
@@ -24,33 +24,33 @@ export default class Client extends React.Component {
 
 
   componentDidMount() {
-    firebase.firestore().collection("clients").doc(this.props.clientId).onSnapshot(doc => {
-        let client = doc.data()
 
+    const clientRef = doc(db, "clients", this.props.clientId)
+
+    this.unsubClient = onSnapshot(clientRef, (client) => {
         this.setState({
-          client: client
+          client: client.data()
         })
+    })
 
+    const jobRef = collection(db, "clients", this.props.clientId, "jobs")
+
+    const jobQuery = query(jobRef, orderBy("created", "desc"))
+
+    this.unsubJobs = onSnapshot(jobQuery, (jobSnapshot) => {
+
+      this.setState({
+        jobIds: []
       })
 
-        firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs")
-        .orderBy("created", "desc").onSnapshot((querySnapshot) => {
+      jobSnapshot.forEach((job) => {
+        this.setState(prevState => ({
+          jobIds: [...prevState.jobIds, job.id]
+        }))
+      })
+    })
 
-        this.setState({
-          jobIds: []
-        })
-
-        var jobIds = []
-
-        querySnapshot.forEach(function(doc) {
-            jobIds.push(doc.id)
-        })
-
-        this.setState({
-            jobIds: jobIds
-        })
-
-        })
+    
       
   }
 
@@ -58,9 +58,6 @@ export default class Client extends React.Component {
     
 
   render() {
-
-    console.log(this.props.date)
-
 
     if (this.state.client) {
 

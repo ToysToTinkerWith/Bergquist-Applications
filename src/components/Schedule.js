@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/storage"
+import { db } from "../../Firebase/FirebaseInit"
+import { collection, getDocs } from "firebase/firestore"
 
 import Client from "./Client/Client"
 
@@ -36,16 +35,19 @@ export default class Schedule extends React.Component {
     
 
 
-    componentDidMount() {
-        firebase.firestore().collection("clients").onSnapshot(clients => {
-          clients.forEach(client => {
-              
-            firebase.firestore().collection("clients").doc(client.id).collection("jobs")
-            .get().then(jobs => {
+    async componentDidMount() {
 
-              jobs.forEach(job => {
+      const clientsRef = collection(db, "clients")
 
-                const jobDateFrom = new Date(job.data().scheduledFrom)
+        const clientQuery = await getDocs(clientsRef)
+        clientQuery.forEach( async (client) => {
+
+            let jobsRef = collection(db, "clients", client.id, "jobs")
+
+            let jobsQuery = await getDocs(jobsRef)
+            jobsQuery.forEach((job) => {
+
+              const jobDateFrom = new Date(job.data().scheduledFrom)
                 const jobDateTo = new Date(job.data().scheduledTo)
                 let color
 
@@ -72,10 +74,11 @@ export default class Schedule extends React.Component {
                         }]
                    
                   }))
-              })
+
             })
-          })
+
         })
+
     }
       
 

@@ -1,7 +1,7 @@
 import React from "react"
 
-import firebase from "firebase/app"
-import "firebase/firestore"
+import { db } from "../../../Firebase/FirebaseInit"
+import { collection, onSnapshot } from "firebase/firestore"
 
 import GoogleMapReact from 'google-map-react'
 
@@ -16,6 +16,7 @@ const getMapOptions = (maps) => {
       streetViewControl: true,
       scaleControl: true,
       fullscreenControl: false,
+      scrollwheel: false,
       
       gestureHandling: "greedy",
 
@@ -57,16 +58,27 @@ class Map extends React.Component {
   }
 
   componentDidMount() {
-    firebase.firestore().collection("clients").onSnapshot(snapshot => {
 
-      snapshot.forEach(doc => {
-        this.setState(prevState => ({
-          clients: [...prevState.clients, doc.data()],
-          clientIds: [...prevState.clientIds, doc.id]
-        }))
+    const clientRef = collection(db, "clients")
+
+    this.unsub = onSnapshot(clientRef, (clientSnap) => {
+
+      this.setState({
+          clients: [],
+          clientIds: []
       })
 
-    })
+      clientSnap.forEach((client) => {
+
+          this.setState(prevState => ({
+            clients: [...prevState.clients, client.data()],
+            clientIds: [...prevState.clientIds, client.id]
+          }))
+
+      });
+
+
+  });
 
   }
 

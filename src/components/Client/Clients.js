@@ -3,6 +3,9 @@ import React from "react";
 import firebase from "firebase/app"
 import "firebase/firestore"
 
+import { db } from "../../../Firebase/FirebaseInit"
+import { collection, getDocs, onSnapshot } from "firebase/firestore"
+
 import NewClient from "./NewClient"
 import Client from "./Client"
 
@@ -27,56 +30,63 @@ class Clients extends React.Component {
 
 componentDidMount = () => {
 
-    firebase.firestore().collection("clients").onSnapshot(querySnapshot => {
+    const clientRef = collection(db, "clients")
 
-      this.setState({ clients: [] })
+    this.unsub = onSnapshot(clientRef, (clientSnap) => {
 
-      querySnapshot.forEach(doc => {
+      this.setState({
+        clients: []
+      })
+            
+      clientSnap.forEach(async (client) => {
 
-        let client = doc.data()
-        client.id = doc.id
 
-        if (client.created) {
-          client.created = client.created.toDate()
-        }
+          let clientData = client.data()
+          clientData.id = client.id
 
-        firebase.firestore().collection("clients").doc(doc.id).collection("jobs")
-        .get().then(querySnapshot => {
+          if (clientData.created) {
+            clientData.created = clientData.created.toDate()
+          }
+          
+          const jobsRef = await getDocs(collection(db, "clients", client.id, "jobs"))
 
-          let self = this
+          clientData.jobs = []
 
-          client.jobs = []
+          jobsRef.forEach((job) => {
 
-          querySnapshot.forEach(function(doc) {
-            let job = doc.data()
-            const jobDateFrom = new Date(job.scheduledFrom)
-            const jobDateTo = new Date(job.scheduledTo)
+            const jobDateFrom = new Date(job.data().scheduledFrom)
+            const jobDateTo = new Date(job.data().scheduledTo)
 
-            if (self.props.date > jobDateTo) {
-                client.jobs.push("#81c784") //green
+            if (this.props.date > jobDateTo) {
+                clientData.jobs.push("#81c784") //green
             }
-            else if (self.props.date > jobDateFrom.setHours(0)) {
-                client.jobs.push("#fff176") //yellow
+            else if (this.props.date > jobDateFrom.setHours(0)) {
+                clientData.jobs.push("#fff176") //yellow
             }
             else {
-                client.jobs.push("#64b5f6") //blue
+                clientData.jobs.push("#64b5f6") //blue
             }
 
+             
           })
 
+    
+
           this.setState(prevState => ({
-            clients: [...prevState.clients, client]
+              clients: [...prevState.clients, clientData]
           }))
 
-
-        })
-
-      })
-      
-
-    })
+      });
 
 
+  });
+
+
+
+}
+
+componentWillUnmount() {
+  this.unsub()
 }
     
 

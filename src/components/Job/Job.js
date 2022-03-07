@@ -1,11 +1,14 @@
 import React from "react"
 
-import firebase from "firebase/app"
-import "firebase/firestore"
+import { db } from "../../../Firebase/FirebaseInit"
+import { doc, collection, onSnapshot, orderBy, query, addDoc, serverTimestamp, updateDoc, arrayUnion } from "firebase/firestore"
+
+import { storage } from "../../../Firebase/FirebaseInit"
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 import { Typography, TextField, Button, IconButton, Avatar, Modal } from "@material-ui/core"
 
-import EditJob from "./editJob"
+import EditJob from "./EditJob"
 
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -37,20 +40,20 @@ class Job extends React.Component {
 
   componentDidMount() {
 
-    firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").doc(this.props.jobId).onSnapshot(doc => {
-      
+    const jobRef = doc(db, "clients", this.props.clientId, "jobs", this.props.jobId)
+
+    this.unsubJob = onSnapshot(jobRef, (job) => {
+
+      this.setState({ job: null })
+
       let color = ""
       let status = ""
-      const jobDateFrom = new Date(doc.data().scheduledFrom)
-      const jobDateTo = new Date(doc.data().scheduledTo)
-
-      console.log(jobDateTo)
-      console.log(this.props.date)
-
+      const jobDateFrom = new Date(job.data().scheduledFrom)
+      const jobDateTo = new Date(job.data().scheduledTo)
 
       if (this.props.date > jobDateTo) {
         color = "#c8e6c9" //green
-        if (doc.data().status !== "Paid") {
+        if (job.data().status !== "Paid") {
             status = "Completed"
         }
         else {
@@ -72,32 +75,35 @@ class Job extends React.Component {
       }
       
       this.setState({
-        job: doc.data(),
+        job: job.data(),
         color: color,
         status: status
       })
     })
 
-    firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").doc(this.props.jobId)
-    .collection("messages").orderBy("created").onSnapshot(snapshot => {
+    const messagesRef = collection(db, "clients", this.props.clientId, "jobs", this.props.jobId, "messages")
+
+    const messageQuery = query(messagesRef, orderBy("created", "desc"))
+
+    this.unsubMessages = onSnapshot(messageQuery, (messageSnapshot) => {
       this.setState({
         messages: []
       })
 
       let newMessages = []
-      snapshot.forEach(message => {
+      messageSnapshot.forEach(message => {
         newMessages.push(message.data())
       })
 
       this.setState({
         messages: newMessages
       })
+      
     })
-
 
   }
 
-  sendMessage() {
+  async sendMessage() {
 
     if (this.state.pictures.length == 0 && this.state.message == "") {
       this.setState({
@@ -106,49 +112,53 @@ class Job extends React.Component {
     }
 
     else {
-      firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").doc(this.props.jobId)
-    .collection("messages").add({
-      sender: "Company",
-      message: this.state.message,
-      imgs: [],
-      created: firebase.firestore.FieldValue.serverTimestamp()
-    }).then((doc) => {
 
-        let uploadPictures = this.state.pictures
+      const messageRef = collection(db, "clients", this.props.clientId, "jobs", this.props.jobId, "messages")
+
+      await addDoc(messageRef, {
+        sender: "Company",
+        message: this.state.message,
+        imgs: [],
+        created: serverTimestamp()
+      }).then(doc => {
+
+        const uploadPictures = this.state.pictures
+
+            for (let y = 0; y < uploadPictures.length; y++) {
+
+            const imgRef = ref(storage, "messageImages/" + this.props.clientId + "/" + uploadPictures[y].id)
     
-        for (let y = 0; y < uploadPictures.length; y++) {
+            uploadBytes(imgRef, uploadPictures[y])
 
-        const uploadTask = firebase.storage().ref("images/" + this.props.clientId + "/" + uploadPictures[y].id).put(uploadPictures[y])
+            const uploadTask = uploadBytesResumable(imgRef, uploadPictures[y])
+    
+            uploadTask.on("state_changed", (snapshot) => {
+            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+            },
+            (error) => {
+            alert(error.message)
+            },
+            () => {
 
-        uploadTask.on("state_changed", (snapshot) => {
-        },
-        (error) => {
-          alert(error.message)
-        },
-        () => {
-
-          firebase.storage().ref("images/" + this.props.clientId).child(uploadPictures[y].id).getDownloadURL()
-      .then(url => {
-        console.log(url)
-            firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").doc(this.props.jobId)
-            .collection("messages").doc(doc.id).update({
-              imgs: firebase.firestore.FieldValue.arrayUnion(url)
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                
+                updateDoc(doc, {
+                  imgs: arrayUnion(downloadURL)
+                })
+            });
+    
             })
+    
+        }
+    
         })
 
+        this.setState({
+          message: "",
+          pictures: [],
+          error: ""
         })
-
       }
-
-      this.setState({
-        message: "",
-        pictures: [],
-        error: ""
-      })
-
-      })
-    }
-
 
     
   }
@@ -205,7 +215,7 @@ class Job extends React.Component {
           <Typography variant="h6" color="secondary"> <b>Start: </b>{new Date(this.state.job.scheduledFrom).toLocaleString()} </Typography>
           <Typography variant="h6" color="secondary"> <b>Finish: </b>{new Date(this.state.job.scheduledTo).toLocaleString()} </Typography>
 
-          <Typography variant="h6" color="secondary"> {"Estimate: $" + this.state.job.estimate} </Typography>
+          <Typography variant="h6" color="secondary"> {"Estimate: $" + Number(this.state.job.estimate).toFixed(2).toString()} </Typography>
           <Typography variant="h6" color="secondary"> Status: <b>{this.state.status}</b> </Typography>
 
           {this.state.status == "Completed" ?

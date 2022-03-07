@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react"
 
-import firebase from "firebase/app"
-import "firebase/firestore"
+import { db } from "../../../Firebase/FirebaseInit"
+import { collection, onSnapshot } from "firebase/firestore"
 
 import { IconButton } from "@material-ui/core"
 import HomeIcon from '@material-ui/icons/Home';
@@ -11,15 +11,17 @@ function Marker(props) {
   const [markerColor, setMarkerColor] = useState("")
 
   useEffect(() => {
-    
-    firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").onSnapshot((query) => {
+
+    const jobRef = collection(db, "clients", props.clientId, "jobs")
+
+    const unsub = onSnapshot(jobRef, (jobSnap) => {
 
       let color = "#66bb6a"
 
-      query.forEach(doc => {
-        let job = doc.data()
-        const jobDateFrom = new Date(job.scheduledFrom)
-        const jobDateTo = new Date(job.scheduledTo)
+      jobSnap.forEach((job) => {
+
+        const jobDateFrom = new Date(job.data().scheduledFrom)
+        const jobDateTo = new Date(job.data().scheduledTo)
         if (props.date > jobDateTo) {
           if (color != "#ffee58" || color != "#42a5f5") {
             color = "#66bb6a"
@@ -34,9 +36,11 @@ function Marker(props) {
             color = "#42a5f5"
           }
         }
+
       })
 
       setMarkerColor(color)
+
     })
     
 

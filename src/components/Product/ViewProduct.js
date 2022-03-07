@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/storage"
+import { db } from "../../../Firebase/FirebaseInit"
+import { addDoc, collection, getDocs, serverTimestamp } from "firebase/firestore"
 
 import { ViewState } from '@devexpress/dx-react-scheduler';
 import {
@@ -42,17 +41,19 @@ export default class ViewProduct extends React.Component {
     
 
 
-    componentDidMount() {
-        firebase.firestore().collection("clients").onSnapshot(clients => {
-          clients.forEach(client => {
-            firebase.firestore().collection("clients").doc(client.id).collection("jobs")
-            .get().then(jobs => {
+    async componentDidMount() {
 
-              
+        const clientsRef = collection(db, "clients")
 
-              jobs.forEach(job => {
+        const clientQuery = await getDocs(clientsRef)
+        clientQuery.forEach( async (client) => {
 
-                const jobDateFrom = new Date(job.data().scheduledFrom)
+            let jobsRef = collection(db, "clients", client.id, "jobs")
+
+            let jobsQuery = await getDocs(jobsRef)
+            jobsQuery.forEach((job) => {
+
+              const jobDateFrom = new Date(job.data().scheduledFrom)
                 const jobDateTo = new Date(job.data().scheduledTo)
                 let color
 
@@ -78,13 +79,20 @@ export default class ViewProduct extends React.Component {
                         }]
                    
                   }))
-              })
+
             })
-          })
+
+            
+
+
+          
+
         })
+
+        
     }
 
-    handleUpload = (estimate, rate) => {
+    handleUpload = async (estimate, rate) => {
 
       const jobDateFrom = new Date(this.state.scheduledFrom)
       const jobDateTo = new Date(this.state.scheduledTo)
@@ -120,19 +128,23 @@ export default class ViewProduct extends React.Component {
       }
 
       else {
-        firebase.firestore().collection("clients").doc(this.props.clientId).collection("jobs").add({
+
+        const jobRef = collection(db, "clients", this.props.clientId, "jobs")
+
+        await addDoc(jobRef, {
           job: this.props.product.product.name,
           details: this.props.product.product.description,
           scheduledFrom: this.state.scheduledFrom,
           scheduledTo: this.state.scheduledTo,
           estimate: estimate.toFixed(2),
           status: "Not Paid",
-          created: firebase.firestore.FieldValue.serverTimestamp()
+          created: serverTimestamp()
         }).then((doc) => {
           
           this.props.closeModal()
     
           })
+
       }
     
     }
@@ -210,8 +222,6 @@ export default class ViewProduct extends React.Component {
           );
 
           
-          console.log(this.state)
-
         return (
         <div style={uploadstyle}>
         <Card style={{padding: 20}}>

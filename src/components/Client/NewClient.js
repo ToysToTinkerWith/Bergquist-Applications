@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import firebase from "firebase/app"
-import "firebase/firestore"
+
+import { db } from "../../../Firebase/FirebaseInit"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 
 import GoogleMapReact from 'google-map-react';
 import Geocode from "react-geocode";
@@ -66,23 +67,21 @@ function NewClient(props) {
     };
   }
 
-  const handleUpload = (formData) => {
+  const handleUpload = async (formData) => {
 
-    console.log(formData)
+    const clientRef = collection(db, "clients")
 
-    firebase.firestore().collection("clients").add({
+    await addDoc(clientRef, {
       name: formData.name,
       address: formData.address,
       email: formData.email,
       phone: formData.phone,
       lat: formData.lat,
       lng: formData.lng,
-      created: firebase.firestore.FieldValue.serverTimestamp()
-    })
-
-    props.goBack()
-      
-    
+      created: serverTimestamp()
+    }).then(
+      props.goBack()
+    )
 
   }
 

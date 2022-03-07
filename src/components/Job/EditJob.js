@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/storage"
+import { db } from "../../../Firebase/FirebaseInit"
+import { doc, updateDoc } from "firebase/firestore"
+
 
 import { Formik, Form } from 'formik';
 import { Button, TextField, Grid, makeStyles } from '@material-ui/core'
@@ -20,16 +20,15 @@ function EditJob(props) {
 
   const classes = useStyles()
 
-  const handleUpdate = (formData) => {
+  const handleUpdate = async (formData) => {
 
-    firebase.firestore().collection("clients").doc(props.clientId).collection("jobs").doc(props.jobId).update({
+    const jobRef = doc(db, "clients", props.clientId, "jobs", props.jobId)
+
+    await updateDoc(jobRef, {
       scheduledFrom: formData.scheduledFrom,
       scheduledTo: formData.scheduledTo,
       estimate: formData.estimate
     })
-
-      
- 
 
   }
 

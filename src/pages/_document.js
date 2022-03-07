@@ -14,9 +14,11 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+     
           <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
           <meta name="description" content="Bergquist Applications creates web based applications, that aid in data collection, business automation, and user engagement. 
           Check out how modern web components can be used to completely customize the way businesses interact with their data." />
+          <meta name="keywords" content="Web Application, React, Next.js, Firebase, Stripe, Material UI, About, Components, Projects, Contact" />
 
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link
@@ -31,6 +33,7 @@ export default class MyDocument extends Document {
           
         </Head>
         <body style={{ backgroundImage: "linear-gradient(#6C63FF, #FF6584)"}}>
+
           <Main />
           <NextScript />
         </body>

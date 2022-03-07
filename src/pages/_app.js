@@ -1,6 +1,13 @@
 
-import React from "react";
-import { AuthProvider } from "../components/Firebase/FirebaseAuth";
+import React, { useEffect } from "react";
+import { AuthProvider } from "../../Firebase/FirebaseAuth";
+
+import Script from "next/script"
+import { useRouter } from 'next/router'
+import * as gtag from '../../lib/gtag'
+
+import Nav from "../components/Nav/Nav"
+
 
 import PropTypes from "prop-types";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -10,22 +17,55 @@ import theme from "../../theme";
 import "../style.css"
 
 
-
 export default function MyApp(props) {
   const { Component, pageProps } = props;
 
-  React.useEffect(() => {
+  const router = useRouter()
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      gtag.pageview(url)
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.events])
+
+  useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
 
+
   return (
+    
+    
     <React.Fragment>
+      <Script
+      strategy="afterInteractive"
+      src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}/>
+      <Script
+      id="gtag-init"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{
+        __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gtag.GA_TRACKING_ID}', {
+            page_path: window.location.pathname,
+          });
+        `,
+      }}>
+      
+      </Script>
+
       <ThemeProvider theme={theme}>
       <CssBaseline />
         <AuthProvider>
+        <Nav />
         <Component {...pageProps} />
         </AuthProvider>
       </ThemeProvider>

@@ -1,6 +1,7 @@
 import React from "react";
 
-import firebase from "firebase/app"
+import { db } from "../../../Firebase/FirebaseInit"
+import { collection, getDocs, onSnapshot } from "firebase/firestore"
 
 import { BarChart, XAxis, YAxis, Bar, Tooltip, ResponsiveContainer} from "recharts"
 
@@ -17,39 +18,56 @@ export default class BarGraph extends React.Component {
       }
 
     componentDidMount() {
-    firebase.firestore().collection("clients").onSnapshot(snapshot => {
 
-        snapshot.forEach(doc => {
+        const clientRef = collection(db, "clients")
 
-            let clientData = doc.data()
-            let clientId = doc.id
+        this.unsub = onSnapshot(clientRef, (clientSnap) => {
 
-            firebase.firestore().collection("clients").doc(clientId).collection("jobs").get().then(query => {
+            this.setState({
+                clients: []
+            })
+
+            clientSnap.forEach(async (client) => {
+
+
+                let clientData = client.data()
+                clientData.id = client.id
+                
+                const jobsRef = await getDocs(collection(db, "clients", client.id, "jobs"))
+
                 let jobCount = 0
                 let paidJobs = 0
-                query.forEach(job => {
+
+                jobsRef.forEach((job) => {
+
 
                     jobCount += 1
                     if (job.data().status == "Paid") {
                         paidJobs += 1
                     }
                 })
+
                 clientData.jobCount = jobCount
                 clientData.paidJobs = paidJobs
+
                 this.setState(prevState => ({
-                    clients: [...prevState.clients, clientData],
-                    clientIds: [...prevState.clientIds, clientId]
+                    clients: [...prevState.clients, clientData]
                 }))
-            })
-        
-        })
 
-    })
+            });
 
+
+        });
+
+    }
+
+    componentWillUnmount() {
+        this.unsub()
     }
 
 
     render() {
+
         return (
             <ResponsiveContainer width="95%" height={250}>
             <BarChart data={this.state.clients}>

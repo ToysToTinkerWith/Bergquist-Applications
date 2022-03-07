@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import firebase from "firebase/app"
-import "firebase/firestore"
+
+import { db } from "../../../Firebase/FirebaseInit"
+import { doc, updateDoc } from "firebase/firestore"
 
 import GoogleMapReact from 'google-map-react';
 import Geocode from "react-geocode";
@@ -40,20 +41,20 @@ export default function EditClient(props) {
 
   const classes = useStyles()
 
-  const handleUpload = (formData) => {
+  const handleUpload = async (formData) => {
 
-    console.log(formData)
+    const clientRef = doc(db, "clients", props.clientId)
 
-    firebase.firestore().collection("clients").doc(props.clientId).update({
+    await updateDoc(clientRef, {
       name: formData.name,
       address: formData.address,
       email: formData.email,
       phone: formData.phone,
       lat: formData.lat,
       lng: formData.lng,
-    })
-
-    props.goBack()
+    }).then(
+      props.goBack()
+    )
       
     
 
@@ -127,7 +128,7 @@ export default function EditClient(props) {
       <Form onSubmit={handleSubmit} autoComplete="off" >
 
         <Grid container>
-          <Grid item sm={12} md={6} >
+          <Grid item xs={12} sm={12} md={6} >
             <br />
             <TextField
             className={classes.name}
@@ -168,7 +169,7 @@ export default function EditClient(props) {
             name="phone"
           />
           </Grid>
-          <Grid item sm={12} md={6} >
+          <Grid item xs={12} sm={12} md={6} >
             <br />
             <Button className={classes.buttonStyle} variant="contained" color="secondary" onClick={() => locateAddress(values.address, setFieldValue)}
         >Locate Address</Button>
