@@ -119,8 +119,8 @@ export default class Schedule extends React.Component {
         return (
         <div style={uploadstyle}>
         <br />
-        <Typography variant="h4" align="left" color="secondary" style={{color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Schedules </Typography>
-        <Typography variant="body1" style={{color: "#E6E6E6", padding: 20}}> 
+        <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Schedules </Typography>
+        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
           See what specific jobs are happening on each day. Mark down important events happening within the company that have clickable views, and customizable actions. 
           Let clients and employees work their schedule around the company.
         </Typography>

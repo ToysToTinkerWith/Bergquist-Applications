@@ -183,8 +183,8 @@ const Columns = [
     return (
     <Card style={uploadstyle}>
       <br />
-        <Typography variant="h4" align="left" style={{color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Data Grids </Typography>
-        <Typography variant="body1" style={{color: "#E6E6E6", padding: 20}}> 
+        <Typography variant="h4" align="left" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Data Grids </Typography>
+        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
         Organize and display collections of large data. Sort the data by any field value, and customize the way each field is viewed.
         List out data from the database and provide means to interact.
         

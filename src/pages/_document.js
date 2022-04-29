@@ -1,6 +1,6 @@
 import React from "react";
+import Script from "next/script"
 import Document, { Html, Head, Main, NextScript } from "next/document";
-import { ServerStyleSheets } from "@material-ui/core/styles";
 import theme from "../../theme";
 
 export default class MyDocument extends Document {
@@ -14,19 +14,39 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+
+        <Script type="application/ld+json">
+        
+         "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          "headline": "Analyzing Google Search traffic drops",
+          "datePublished": "2021-07-20T08:00:00+08:00",
+          "dateModified": "2021-07-20T09:20:00+08:00"
+        
+        </Script>
      
           <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+          <meta name="title" content="Bergquist Applications" />
           <meta name="description" content="Bergquist Applications creates web based applications, that aid in data collection, business automation, and user engagement. 
           Check out how modern web components can be used to completely customize the way businesses interact with their data." />
           <meta name="keywords" content="Web Application, React, Next.js, Firebase, Stripe, Material UI, About, Components, Projects, Contact" />
 
           <meta name="theme-color" content={theme.palette.primary.main} />
+
+          <meta property="og:url" content="https://andersbergquist.com/" key="ogurl" />
+          <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/cleaning-7852d.appspot.com/o/MoonIcon.png?alt=media&token=71ebd6c6-330d-48c2-87d9-f74395af2007" key="ogimage" />
+          <meta property="og:image:alt" content="" key="ogimagealt" />
+          <meta property="og:title" content="Bergquist Applications" key="ogtitle" />
+          <meta property="og:description" content="Bergquist Applications creates web based applications, that aid in data collection, business automation, and user engagement. 
+          Check out how modern web components can be used to completely customize the way businesses interact with their data." key="ogdesc" />
+          
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
 
           <link rel="icon" href="/images/favicon.ico"/>
+          <link rel="shortcut icon" href="/images/favicon.ico"/>
 
 
           
@@ -42,45 +62,3 @@ export default class MyDocument extends Document {
   }
 }
 
-MyDocument.getInitialProps = async (ctx) => {
-  // Resolution order
-  //
-  // On the server:
-  // 1. app.getInitialProps
-  // 2. page.getInitialProps
-  // 3. document.getInitialProps
-  // 4. app.render
-  // 5. page.render
-  // 6. document.render
-  //
-  // On the server with error:
-  // 1. document.getInitialProps
-  // 2. app.render
-  // 3. page.render
-  // 4. document.render
-  //
-  // On the client
-  // 1. app.getInitialProps
-  // 2. page.getInitialProps
-  // 3. app.render
-  // 4. page.render
-
-  // Render app and page and get the context of the page with collected side effects.
-  const sheets = new ServerStyleSheets();
-  const originalRenderPage = ctx.renderPage;
-
-  ctx.renderPage = () =>
-    originalRenderPage({
-      enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
-    });
-
-  const initialProps = await Document.getInitialProps(ctx);
-
-  return {
-    ...initialProps,
-    styles: [
-      ...React.Children.toArray(initialProps.styles),
-      sheets.getStyleElement(),
-    ],
-  };
-};

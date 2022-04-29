@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import { Button, Typography, Grid, Card, Popover, Fab } from '@material-ui/core';
+import { Button, Typography, Grid, Card, Popover, Fab } from '@mui/material';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -12,25 +12,39 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 
 
-export default function WhatWeDo(props) {
+export default class WhatWeDo extends React.Component {
 
-    const [anchor, setAnchor] = useState(null)
+    constructor(props) {
+        super(props)
+        this.state = {
+            anchor: null
+        }
+        this.handleClick = this.handleClick.bind(this)
+        this.handleClose = this.handleClose.bind(this)
+    }
 
-    const handleClick = (event) => {
-        setAnchor(event.currentTarget);
+    handleClick = (event) => {
+        this.setState({
+            anchor: event.currentTarget
+        })
       };
 
-    const handleClose = () => {
-        setAnchor(null);
+    handleClose = () => {
+        this.setState({
+            anchor: null
+        })
     };
 
-    const open = Boolean(anchor);
+    render() {
+    
+    const open = Boolean(this.state.anchor);
 
     return (
-        <div style={{padding: 20, zIndex: 5000}}>
+        <div style={{padding: 20, paddingRight: 40, zIndex: 5}}>
             <Fab
+            variant="circular"
             style={{backgroundColor: "#3F3D56", color: "#E6E6E6"}}
-            onClick={handleClick} 
+            onClick={this.handleClick} 
             >
               <img src="/Moon.svg" style={{width: "100%"}} />
            
@@ -39,8 +53,8 @@ export default function WhatWeDo(props) {
             <Popover
               id={"popover1"}
               open={open}
-              anchorEl={anchor}
-              onClose={handleClose}
+              anchorEl={this.state.anchor}
+              onClose={this.handleClose}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -50,22 +64,27 @@ export default function WhatWeDo(props) {
                     <div style={{backgroundColor: "#3F3D56", margin: 10, borderRadius: 15}}> 
                         <ListItem>
                             <Button href="/" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6"}}> <b>About</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6"}}> <b>Home</b>  </Typography>
+                        </Button>
+                        </ListItem>
+                        <ListItem>
+                            <Button href="/about" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/about" ? "#6C63FF" : "#E6E6E6"}}> <b>About</b>  </Typography>
                         </Button>
                         </ListItem>
                         <ListItem>
                             <Button href="/components" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6"}}> <b>Components</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6"}}> <b>Components</b>  </Typography>
                             </Button>
                         </ListItem>
                         <ListItem>
                             <Button href="/projects" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{color: window.location.pathname == "/projects" ? "#6C63FF" : "#E6E6E6"}}> <b>Projects</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/projects" ? "#6C63FF" : "#E6E6E6"}}> <b>Projects</b>  </Typography>
                             </Button>
                         </ListItem>
                         <ListItem>
                             <Button href="/contact" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6"}}> <b>Contact</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6"}}> <b>Contact</b>  </Typography>
                             </Button>
                         </ListItem>
                     </div>
@@ -76,6 +95,9 @@ export default function WhatWeDo(props) {
 
         </div>
     )
+    }
+
+    
 }
 
 

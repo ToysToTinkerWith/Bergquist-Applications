@@ -1,155 +1,184 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 
 
 import Popper from "./Popper"
 
-import { Button, Typography, Grid } from '@material-ui/core';
+import { Button, Typography, Grid } from '@mui/material';
 
 
 
-export default function Nav(props) {
+export default class Nav extends React.Component {
 
-  const [windowDimensions, setWindowDimensions] = useState({width: 600, height: 0})
-  const [scrollTop, setScrollTop] = useState(0);
-  
+  constructor(props) {
+    super(props)
+    this.state = {
+      windowDimensions: {width: 600, height: 0},
+      scrollTop: 0
 
-  useEffect(() => {
-    const onScroll = e => {
-      setScrollTop(e.target.documentElement.scrollTop);
-    };
-    window.addEventListener("scroll", onScroll);
+    }
+    this.onScroll = this.onScroll.bind(this)
+    this.handleResize = this.handleResize.bind(this)
+}
 
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [scrollTop]);
-  
+onScroll = (e) => {
+  this.setState({
+    scrollTop: e.target.documentElement.scrollTop
+  })
+}
 
-  useEffect(() => {
+handleResize = () => {
+  const { innerWidth: width, innerHeight: height } = window;
+    
+  this.setState({
+    windowDimensions: {width: innerWidth, height: innerHeight}
+  })
+}
+
+  componentDidMount() {
+    
+    window.addEventListener("scroll", this.onScroll);
 
     const { innerWidth: width, innerHeight: height } = window;
-    setWindowDimensions({width: innerWidth, height: innerHeight});
+    this.setState({
+      windowDimensions: {width: innerWidth, height: innerHeight}
+    })
 
-    function handleResize() {
-      const { innerWidth: width, innerHeight: height } = window;
-        
-      setWindowDimensions({width: innerWidth, height: innerHeight});
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-
-
-    return (
     
-      <div style={{ backgroundImage: "url('Space.svg')", backgroundSize: "80%", display: "flex", justifyContent: "space-evenly"}}>
-        {scrollTop > 50 ?
-        <div style={{position: "fixed", top: 20, right: 10}}>
-        <Popper />
-        </div>
-        :
-        null
-        }
-        <Grid container>
-          <Grid item xs={4} sm={4} md={4} style={{padding: "2%", display: "flex"}}>
-            <Button style={{textTransform: "unset"}} href="/" >
-            <Typography 
-              variant="h4" 
-              align="left"
-              style={{
-                  color: "#E6E6E6",
-                  marginLeft: 80
-              }}
-              > 
-              <b>Bergquist Applications</b>
-            </Typography>
-            </Button>
-          </Grid>
-          <Grid item xs={8} sm={8} md={8} style={{display: "flex", justifyContent: "flex-end", padding: "2%"}}>
-            
-            {windowDimensions.width < 700 ?
-              <Popper setPage={props.setPage} page={props.page} />
-              :
-              <>
-                <Button 
-                variant="text"
-                style={{
-                  color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6",
-                  paddingLeft: 20,
-                  paddingRight: 20,
-                  textTransform: "unset"
-                }}
-     
-                href="/"
-                
-                > 
-                <Typography variant="body1">
-                <b>About</b>
-                </Typography>
-                </Button>
-                <Button 
-                variant="text"
-                style={{
-                  color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6",
-                  paddingLeft: 20,
-                  paddingRight: 20,
-                  textTransform: "unset"
-  
-                }}
-          
-                href="/components"
-      
-                > 
-                <Typography variant="body1">
-                <b>Components</b>
-                </Typography>
-                </Button>
-                <Button 
-                variant="text"
-                style={{
-                  color: window.location.pathname == "/projects" ? "#6C63FF" : "#E6E6E6",
-                  paddingLeft: 20,
-                  paddingRight: 20,
-                  textTransform: "unset"
-  
-                }}
-  
-                  href="/projects"
-  
-                > 
-                <Typography variant="body1">
-                <b>Projects</b>
-                </Typography>
-                </Button>
-                <Button 
-                  variant="text"
-                  style={{
-                    color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6",
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    textTransform: "unset"
-                  }}
-                  href="/contact"
-                  > 
-                  <Typography variant="body1">
-                  <b>Contact</b>
-                  </Typography>
-                </Button>
-              </>
-              
-              }
-  
-            
-          </Grid>
-        </Grid>
-        
-        
+
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll)
+    window.removeEventListener('resize', this.handleResize)
+  }
+
+
+render() {
+  return (
+    
+    <div style={{ backgroundImage: "url('Space.svg')", backgroundSize: "80%", display: "flex", justifyContent: "space-evenly"}}>
+      {this.state.scrollTop > 50 ?
+      <div style={{position: "fixed", top: 20, right: 10}}>
+      <Popper />
       </div>
-  
-    )
-  
-    
-  
+      :
+      null
+      }
+      <Grid container>
+        <Grid item xs={4} sm={4} md={4} style={{padding: "2%", display: "flex"}}>
+          <Button style={{textTransform: "unset", marginLeft: 80}} href="/" >
+          <Typography 
+            variant="h4" 
+            align="left"
+            style={{
+              fontFamily: "MoonBold",
+                color: "#E6E6E6",
+                
+            }}
+            > 
+            <b>Bergquist Applications</b>
+          </Typography>
+          </Button>
+        </Grid>
+        <Grid item xs={8} sm={8} md={8} style={{display: "flex", justifyContent: "flex-end", padding: "2%"}}>
+          
+          {this.state.windowDimensions.width < 800 ?
+            <Popper />
+            :
+            <>
+              <Button 
+              variant="text"
+              style={{
+                color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6",
+                paddingLeft: 20,
+                paddingRight: 20,
+                textTransform: "unset"
+              }}
+   
+              href="/"
+              
+              > 
+              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
+              <b>Home </b>
+              </Typography>
+              </Button>
+              <Button 
+              variant="text"
+              style={{
+                color: window.location.pathname == "/about" ? "#6C63FF" : "#E6E6E6",
+                paddingLeft: 20,
+                paddingRight: 20,
+                textTransform: "unset"
+              }}
+   
+              href="/about"
+              
+              > 
+              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
+              <b>About </b>
+              </Typography>
+              </Button>
+              <Button 
+              variant="text"
+              style={{
+                color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6",
+                paddingLeft: 20,
+                paddingRight: 20,
+                textTransform: "unset"
 
+              }}
+        
+              href="/components"
+    
+              > 
+              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
+              <b>Components</b>
+              </Typography>
+              </Button>
+              <Button 
+              variant="text"
+              style={{
+                color: window.location.pathname == "/projects" ? "#6C63FF" : "#E6E6E6",
+                paddingLeft: 20,
+                paddingRight: 20,
+                textTransform: "unset"
+
+              }}
+
+                href="/projects"
+
+              > 
+              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
+              <b>Projects</b>
+              </Typography>
+              </Button>
+              <Button 
+                variant="text"
+                style={{
+                  color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6",
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  textTransform: "unset"
+                }}
+                href="/contact"
+                > 
+                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
+                <b>Contact</b>
+                </Typography>
+              </Button>
+            </>
+            
+            }
+
+          
+        </Grid>
+      </Grid>
+      
+      
+    </div>
+
+  )
+}
   
 }

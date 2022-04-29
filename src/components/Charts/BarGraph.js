@@ -69,7 +69,7 @@ export default class BarGraph extends React.Component {
     render() {
 
         return (
-            <ResponsiveContainer width="95%" height={250}>
+            <ResponsiveContainer width="95%" height={250} margin={0}>
             <BarChart data={this.state.clients}>
             <XAxis 
             dataKey="name" 

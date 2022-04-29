@@ -7,11 +7,13 @@ import { useRouter } from 'next/router'
 import * as gtag from '../../lib/gtag'
 
 import Nav from "../components/Nav/Nav"
+import Footer from "../components/Footer"
+
 
 
 import PropTypes from "prop-types";
-import { ThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../../theme";
 
 import "../style.css"
@@ -67,6 +69,7 @@ export default function MyApp(props) {
         <AuthProvider>
         <Nav />
         <Component {...pageProps} />
+        <Footer />
         </AuthProvider>
       </ThemeProvider>
     </React.Fragment>
