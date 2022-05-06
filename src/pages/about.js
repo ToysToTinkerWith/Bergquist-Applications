@@ -51,29 +51,26 @@ export default class About extends React.Component {
                     borderRadius: "15px",
                     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
                     padding: 10,
-                    marginBottom: 40
+                    marginBottom: 20
                 }}
                 >
                                         <br />
 
-                    <Grid container alignItems="center">
-                                <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('BusinessAuto.svg')", backgroundSize: "cover"}}>
+                    <Grid container alignItems="center" >
+                                <Grid item xs={12} sm={6} md={6} style={{backgroundImage: "url('BusinessAuto.svg')", backgroundSize: "cover"}}>
                                     
                                     <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> About me </Typography>
-                                    <img src="/Anders.jpg" style={{display: "flex", margin: "auto", marginTop: 40, marginBottom: 40,  width: "60%", height: "auto", borderRadius: 5000, border: "5px solid #FF6584"}} />
+                                    <img src="/Anders.jpg" style={{display: "flex", margin: "auto", marginTop: 40, marginBottom: 40,  width: "60%", height: "auto",  borderRadius: 5000, border: "5px solid #FF6584"}} />
                                     <Typography variant="h6" align="center" color="secondary" style={{color: "#E6E6E6", fontFamily: "MoonBold", paddingLeft: 40, paddingRight: 40, paddingBottom: 40}}> Anders Bergquist </Typography>
     
                                     </Grid>
-                                    <Grid item xs={12} sm={12} md={6} >
+                                    <Grid item xs={12} sm={6} md={6} >
                                         <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
                                         My name is <b>Anders Bergquist</b>. I am a bachelor in computer science with a passion for building web applications and websites. From years of experience in the field, I have learned the importance of building robust, scalable, and user-friendly applications. I have recently decided to start my own company, Bergquist Applications, where I can work with business partners, to deliver on web applications that exceed their expectations. In continuing to research and develop new technologies, I am eager to work with you to deliver the best possible experience for your business or personal needs. 
      
                                         </Typography>
     
-                                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                        I started this business because I came upon some of the best web frameworks that exist in development today. With the help of so many great tools, I can offer a complete custom interaction between the frontend application, and the servers. The server that Firebase offers is owned by Google, and has industry leading performance in backend mangement. You will be added as an owner to this server which will give you a dashboard to view all your user authentication, database collections, hosting information, or any other analytics you wish to keep to track of website performance.
-                                        </Typography>
-    
+                                        
                                         
     
     
@@ -81,7 +78,10 @@ export default class About extends React.Component {
                                   
                                     
                                 </Grid>
-                                <br />
+                                <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
+                                        I started this business because I came upon some of the best web frameworks that exist in development today. With the help of so many great tools, I can offer a complete custom interaction between the frontend application, and the servers. The server that Firebase offers is owned by Google, and has industry leading performance in backend mangement. You will be added as an owner to this server which will give you a dashboard to view all your user authentication, database collections, hosting information, and analytics to keep to track of website performance.
+                                        </Typography>
+    
                                 <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
                                 Bergquist Applications is a single-person company. I take full responsibilty for the functionality of your application. If the product is not to your liking, then we will make the necessary adjustments to deliver the desired experience. The goal is to build a product that exceeds your expectations, and I am excited to work with you to get there. 
                                 </Typography>
@@ -96,8 +96,7 @@ export default class About extends React.Component {
                     backgroundColor: "#3F3D56",
                     borderRadius: "15px",
                     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: 10,
-                    marginBottom: 40
+                    padding: 10
                 }}
                 >
                                         <br />
@@ -110,7 +109,7 @@ export default class About extends React.Component {
                                         <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> My Services </Typography>
                                         <img src="/WebApps.svg" style={{display: "flex", margin: "auto", marginTop: 40, marginBottom: 40,  width: "60%", height: "auto"}} />
 
-                                        <Typography variant="h6" align="center" color="secondary" style={{color: "#E6E6E6", fontFamily: "MoonBold", paddingLeft: 40, paddingRight: 40, paddingBottom: 40}}> Web Applications </Typography>
+                                        <Typography variant="h5" align="center" color="secondary" style={{color: "#E6E6E6", fontFamily: "MoonBold", paddingLeft: 40, paddingRight: 40, paddingBottom: 40}}> Web Applications </Typography>
                                         
         
                                         </Grid>
@@ -133,50 +132,15 @@ export default class About extends React.Component {
                                     
                                     </Grid>
                                 <br />
-                                <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                Please call, text, or email me at my contact information below. Let me know the needs of your web application. I am open to any conversation about how a web application can improve your business.
-                                </Typography>
 
-                                <Grid container>
-                                    <Grid item xs={6} style={{padding: "5%"}}>
-                                        <Typography 
-                                        variant="h6" 
-                                        align="center"
-                                        style={{
-                                            fontFamily: "MoonBold",
-                                            color: "#E6E6E6"
-                                        }}
-                                        > 
-                                        360-969-9115
-                                        </Typography>
-                                        <Button href="tel:+13609699115" style={{display: "flex", margin: "auto"}}>
-                                            <img src="/Phone.svg" style={{width: 50}} />
-                                        </Button>
-                                    </Grid>
-                                    <Grid item xs={6} style={{padding: "5%"}}>
-                                        <Typography 
-                                        variant="h6" 
-                                        align="center"
-                                        style={{
-                                            fontFamily: "MoonBold",
-                                            color: "#E6E6E6"
-                                        }}
-                                        > 
-                                        abergquist96@gmail.com
-                                        </Typography>
-                                        <Button href="mailto:abergquist96@gmail.com" style={{display: "flex", margin: "auto", height: 50}}>
-                                            <img src="/Email.svg" style={{width: 50}}/>
-                                        </Button>
-                                        
-                                    </Grid>
-                                    </Grid>
+                                
 
 
                                     <Grid container alignItems="center">
                                         <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('BusinessAuto.svg')", backgroundSize: "cover"}}>
                                         <img src="/Tutoring.svg" style={{display: "flex", margin: "auto", marginTop: 40, marginBottom: 40,  width: "60%", height: "auto"}} />
 
-                                        <Typography variant="h6" align="center" color="secondary" style={{color: "#E6E6E6", fontFamily: "MoonBold", paddingLeft: 40, paddingRight: 40, paddingBottom: 40}}> Web Tutoring  </Typography>
+                                        <Typography variant="h5" align="center" color="secondary" style={{color: "#E6E6E6", fontFamily: "MoonBold", paddingLeft: 40, paddingRight: 40, paddingBottom: 40}}> Web Tutoring  </Typography>
 
         
                                         </Grid>
@@ -199,6 +163,45 @@ export default class About extends React.Component {
                                     
                                     </Grid>
                                 <br />
+
+                                <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
+                                Please call, text, or email me at my contact information below. Let me know the needs of your web application, or if you would like to schedule a tutoring session. I am open to any conversation about web development.
+                                </Typography>
+
+                                <Grid container>
+                                    <Grid item xs={12} sm={12} md={6} style={{padding: "5%"}}>
+                                        <Typography 
+                                        variant="h6" 
+                                        align="center"
+                                        style={{
+                                            fontFamily: "MoonBold",
+                                            color: "#E6E6E6"
+                                        }}
+                                        > 
+                                        360-969-9115
+                                        </Typography>
+                                        <Button href="tel:+13609699115" style={{display: "flex", margin: "auto"}}>
+                                            <img src="/Phone.svg" style={{width: 50}} />
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={6} style={{padding: "5%"}}>
+                                        <Typography 
+                                        variant="h6" 
+                                        align="center"
+                                        style={{
+                                            fontFamily: "MoonBold",
+                                            color: "#E6E6E6"
+                                        }}
+                                        > 
+                                        abergquist96@gmail.com
+                                        </Typography>
+                                        <Button href="mailto:abergquist96@gmail.com" style={{display: "flex", margin: "auto", height: 50}}>
+                                            <img src="/Email.svg" style={{width: 50}}/>
+                                        </Button>
+                                        
+                                    </Grid>
+                                    </Grid>
+
     
                 </Card>
 

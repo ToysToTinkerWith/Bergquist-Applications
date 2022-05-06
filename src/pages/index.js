@@ -13,13 +13,6 @@ export default class Index extends React.Component {
 
     render() {
 
-        const aboutStyle = {
-            
-            padding: "2%",
-        
-        }
-
-
         return (
             <div>
                 <Head>
@@ -30,7 +23,7 @@ export default class Index extends React.Component {
 
                 
                 </Head>
-                <div style={aboutStyle}>
+                <div style={{padding: 20}}>
 
      
                         
@@ -38,7 +31,12 @@ export default class Index extends React.Component {
                             <br />
 
 
-                            <Card style={{backgroundColor: "#3F3D56", margin: "2%", padding: "2%", marginBottom: 0, height: "100%", borderRadius: 15}}>
+                            <Card style={{
+                                backgroundColor: "#3F3D56",
+                                borderRadius: "15px",
+                                boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                                padding: 10
+                            }}>
                             <br />
                             <Typography variant="h4" align="left" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}>  <b>Progressive Web Development</b> </Typography>
                             <Typography variant="body1" style={{color: "#E6E6E6", padding: 20, fontFamily: "MoonBold"}}> 
@@ -48,15 +46,20 @@ export default class Index extends React.Component {
                             </Typography>
                             <Typography variant="body1" style={{color: "#E6E6E6", padding: 20, fontFamily: "MoonBold"}}> 
                             As the internet has progressed, so too, have the tools to build more creative, more powerful applications. When better tools become available, Bergquist Applications researches and develops them for use, in future and current Bergquist applications. 
-                            Some components to look forward to are decentralized blockchain options, and artificial inteligence agents.
+                            
                             </Typography>
                             
                             
                             </Card>
                             <br />
-                            <br />
                             
-                        <Card style={{backgroundColor: "#3F3D56", margin: "2%", padding: "2%", marginBottom: 0, height: "100%", borderRadius: 15}}>
+                            
+                        <Card style={{
+                            backgroundColor: "#3F3D56",
+                            borderRadius: "15px",
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: 10
+                        }}>
                             <br />
                             
                             
@@ -69,7 +72,7 @@ export default class Index extends React.Component {
                                     </Typography>
                                     <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
                                     Bergquist Applications works off of popular marketing strategies, aiming for simple, yet effective communication. Aesthetic and functional components can be customized until they best serve the business model, and updates can be made live within minutes.
-                                    Think of a something with the depth of Facebook or Amazon.
+                                    
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('UserEngage.svg')", backgroundSize: "cover"}}>
@@ -123,8 +126,7 @@ export default class Index extends React.Component {
                                 </Grid>
                                 
                             </Grid>
-                            <br />
-                            <br />
+                            
                         </Card>
                         
                       
@@ -132,9 +134,16 @@ export default class Index extends React.Component {
 
                 
                     
-                <Grid container style={{marginBottom: "4%"}}>
-                    <Grid item xs={12} sm={6} md={3} style={{paddingTop: 20}}>
-                        <Card style={{backgroundColor: "#3F3D56", margin: "4%", height: "100%", borderRadius: 15}}>
+                <Grid container >
+                    <Grid item xs={12} sm={6} md={6} lg={3} >
+                        <Card style={{
+                            backgroundColor: "#3F3D56",
+                            borderRadius: "15px",
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: 10,
+                            margin: 20,
+                            height: "95%"
+                        }}>
                         <img src="React.svg" style={{ display: "flex", margin: "auto", marginTop: 20, width: 100}}/>
                         <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>React</b> </Typography>
                         <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 
@@ -142,9 +151,20 @@ export default class Index extends React.Component {
                         We couple Next.js with React for more server-side features. With the combination of the two frameworks, we are able to create web applications that are ready for production.
                         </Typography>
                         </Card>
+                        
+                        
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3} style={{paddingTop: 20}}>
-                    <Card style={{backgroundColor: "#3F3D56", margin: "4%", height: "100%", borderRadius: 15}}>
+                   
+
+                    <Grid item xs={12} sm={6} md={6} lg={3} >
+                    <Card style={{
+                            backgroundColor: "#3F3D56",
+                            borderRadius: "15px",
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: 10,
+                            margin: 20,
+                            height: "95%"
+                        }}>
                         <img src="MaterialUI.svg" style={{ display: "flex", margin: "auto", marginTop: 20, width: 85}}/>
                         <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>Material UI</b> </Typography>
     
@@ -155,8 +175,15 @@ export default class Index extends React.Component {
     
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3} style={{paddingTop: 20}}>
-                    <Card style={{backgroundColor: "#3F3D56", margin: "4%", height: "100%", borderRadius: 15}}>
+                    <Grid item xs={12} sm={6} md={6} lg={3}>
+                    <Card style={{
+                            backgroundColor: "#3F3D56",
+                            borderRadius: "15px",
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: 10,
+                            margin: 20,
+                            height: "95%"
+                        }}>
                         <img src="Firebase.svg" style={{ display: "flex", margin: "auto", marginTop: 20, width: 60}}/>
                         <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>Firebase</b> </Typography>
                         <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 
@@ -167,8 +194,15 @@ export default class Index extends React.Component {
     
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3} style={{paddingTop: 20}}>
-                    <Card style={{backgroundColor: "#3F3D56", margin: "4%", height: "100%", borderRadius: 15}}>
+                    <Grid item xs={12} sm={6} md={6} lg={3}>
+                    <Card style={{
+                            backgroundColor: "#3F3D56",
+                            borderRadius: "15px",
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                            padding: 10,
+                            margin: 20,
+                            height: "95%"
+                        }}>
                         <img src="Stripe.png" style={{ display: "flex", margin: "auto", marginTop: 20, width: 75}}/>
                         <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>Stripe</b> </Typography>
                         <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 

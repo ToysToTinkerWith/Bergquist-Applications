@@ -83,7 +83,7 @@ render() {
         </Grid>
         <Grid item xs={8} sm={8} md={8} style={{display: "flex", justifyContent: "flex-end", padding: "2%"}}>
           
-          {this.state.windowDimensions.width < 800 ?
+          {this.state.windowDimensions.width < 1000 ?
             <Popper />
             :
             <>
@@ -139,18 +139,35 @@ render() {
               <Button 
               variant="text"
               style={{
-                color: window.location.pathname == "/projects" ? "#6C63FF" : "#E6E6E6",
+                color: window.location.pathname == "/applications" ? "#6C63FF" : "#E6E6E6",
                 paddingLeft: 20,
                 paddingRight: 20,
                 textTransform: "unset"
 
               }}
 
-                href="/projects"
+                href="/applications"
 
               > 
               <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-              <b>Projects</b>
+              <b>Applications</b>
+              </Typography>
+              </Button>
+              <Button 
+              variant="text"
+              style={{
+                color: window.location.pathname == "/pricing" ? "#6C63FF" : "#E6E6E6",
+                paddingLeft: 20,
+                paddingRight: 20,
+                textTransform: "unset"
+
+              }}
+
+                href="/pricing"
+
+              > 
+              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
+              <b>Pricing</b>
               </Typography>
               </Button>
               <Button 

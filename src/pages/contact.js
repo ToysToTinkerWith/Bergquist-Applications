@@ -3,10 +3,72 @@ import React, { useEffect } from "react"
 
 import Head from "next/head"
 
-import { Typography, Card, Grid, Button } from "@mui/material"
+import getStripe from '../../lib/get-stripe';
+import Stripe from "stripe";
+
+import { Typography, Card, Grid, Button, TextField } from "@mui/material"
 
 export default class Contact extends React.Component{
-    
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            amount: null
+        }
+        this.redirectToCheckout = this.redirectToCheckout.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+    }
+
+    redirectToCheckout = async () => {
+        // Create Stripe checkout
+        const response = await fetch('/api/checkout-sessions', {
+          method: "POST",
+          body: JSON.stringify({
+            success_url: window.location.href,
+            cancel_url: window.location.href,
+            line_items: [{
+                price_data: {
+                    currency: "usd",
+                    product_data: {
+                        name: "Bergquist Applications Services",
+                    },
+                    unit_amount: this.state.amount * 100,
+                },
+                quantity: 1,
+                
+          }],
+            payment_method_types: ["card"],
+            mode: "payment",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          }
+            
+        });
+      
+        const session = await response.json()
+        console.log(session)
+      
+      
+      
+        // Redirect to checkout
+        const stripe = await getStripe();
+        await stripe.redirectToCheckout({ sessionId: session.id });
+      };
+
+    handleChange(event) {
+    const target = event.target;
+    let value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    if (value < 0) {
+        value = 0
+    }
+
+    this.setState({
+    [name]: value
+    });
+    }
 
     render() {
         return (
@@ -17,9 +79,9 @@ export default class Contact extends React.Component{
                     <meta name="description" content="Help Bergquist Applications understand the business model, and budget, to explore affordable options for improvement." />
                     <meta name="keywords" content="Message, Phone, Email, Functional Architecture, Funtional Build, Design Architecture, Design Build" />
                     
-                    <meta property="og:url" content="https://andersbergquist.com/content" key="ogcontenturl" />
-                    <meta property="og:title" content="Content" key="ogcontent" />
-                    <meta property="og:description" content="Help Bergquist Applications understand the business model, and budget, to explore affordable options for improvement." key="ogcontentdesc" />
+                    <meta property="og:url" content="https://andersbergquist.com/contact" key="ogcontacturl" />
+                    <meta property="og:title" content="Contact" key="ogcontact" />
+                    <meta property="og:description" content="Help Bergquist Applications understand the business model, and budget, to explore affordable options for improvement." key="ogcontactdesc" />
                     </Head>
                 
                 <Card style={{
@@ -27,7 +89,7 @@ export default class Contact extends React.Component{
                     borderRadius: "15px",
                     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
                     padding: 10,
-                    marginBottom: 40
+                    marginBottom: 20
                 }}
                 >
                     <Grid container >
@@ -42,7 +104,7 @@ export default class Contact extends React.Component{
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={6} >
                                         <Grid container>
-                                        <Grid item xs={12} sm={6} md={12} lg={6} style={{padding: "5%"}}>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} style={{padding: "5%"}}>
                                             <Typography 
                                             variant="h6" 
                                             align="center"
@@ -57,7 +119,7 @@ export default class Contact extends React.Component{
                                                 <img src="/Phone.svg" style={{width: 50}} />
                                             </Button>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={12} lg={6} style={{padding: "5%"}}>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} style={{padding: "5%"}}>
                                             <Typography 
                                             variant="h6" 
                                             align="center"
@@ -87,82 +149,72 @@ export default class Contact extends React.Component{
                     
     
                 </Card>
+
                 <Card style={{
                     backgroundColor: "#3F3D56",
                     borderRadius: "15px",
                     boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
                     padding: 10,
-                    marginBottom: 40
                 }}
                 >
-                    <Grid container >
-                    <Grid item xs={12} sm={12} md={12} lg={6}>
-                        <br />
-                        <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Functional Architecture </Typography>
-    
-                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                        Join Bergquist Applications in a collaborative <b>FigJam File</b>, where marketers, designers, and developers come together, to design a custom data model for the company.
-                        Highlighting stages where customers can interact with the app, what data is captured from each process, and important use cases for the company.
-                        Be hands on throughout the process and work with Bergquist Applications, in creating a flow representation that will save the business time, and store useful data for the future.
-                        </Typography>
-                        
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={6}>
-                        <Button variant="contained" color="secondary" style={{fontFamily: "MoonBold", color: "#FFFFFF", margin: 20}} href="https://www.figma.com/file/9Bmlo5GB3CD9TqktEOiFae/Diagramming-basics-(Community)" > FigJam File </Button>
-                            <img src="./DesignProcess.svg" alt="Design" style={{display: "flex", margin: "auto", width: "100%", verticalAlign: "middle", maxHeight: 250, padding: 10}}/>
-                        </Grid>
-                        
-                    </Grid>
-                    <br />
-                                <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Functional Build </Typography>
-                                
-                                <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                Everything laid out in the functional architecture, will be implemented in code. This builds the application with all the backend features,
-                                including the cloud database, user authentication, and payment processing. A deployment link is provided to view the app as it gets developed, encouraging the business to test out features soon after they get added.
-                                Projects are broken down into smaller builds, that can be developed and paid off separately, and businesses can move forward at their own pace. With each phase brings new conversations, and we never move
-                                on until all parties are satisfied.
-                                </Typography>
-                        
-                       
-                    
-    
-                </Card>
-                <Card style={{
-                    backgroundColor: "#3F3D56",
-                    borderRadius: "15px",
-                    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: 10,
-                    marginBottom: 40
-                }}
-                >
-                    <Grid container >
-                    <Grid item xs={12} sm={12} md={12} lg={6}>
-                        <br />
-                        <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Design Architecture </Typography>
-                        
-                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                        In a <b>Figma Design File</b>, Bergquist Applications and the business get to share design ideas, on how to market the business, and how to guide users towards the right product for them. We have our own graphics libraries and
-                        tools to generate content, but hope to collaborate within the business for direction. This cost will be minimal depending on how involved the company is with supplying design assets. 
-                        </Typography>
-                        
-    
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={6}>
-                        <Button variant="contained" color="secondary" style={{fontFamily: "MoonBold", color: "#FFFFFF", margin: 20}} href="https://www.figma.com/file/X44kf59bL8tK9Gmsuu0LJt/Wireframing-in-Figma" > Figma Design File </Button>
-                            <img src="./WireFraming.svg" alt="Design" style={{display: "flex", margin: "auto", width: "100%", verticalAlign: "middle", maxHeight: 250, padding: 10}}/>
-                        </Grid>
-                        
-                    </Grid>
-                    <br />
-                            <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Design Build </Typography>
-                           
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                            Once everyone is happy with the feel and layout of the design architecture, we code it into the build to be responsive to all screen sizes. Choosing to animate certain aspects of the design file
-                            adds complexity, but is effective in communicating ideas and captivating the audience. All builds can be incrementally scaled in size and complexity, and as the business evolves, upgrades can be made to
-                            improve on existing features. Bergquist Applications is here to make sure each business capitalizes on all the lastest tech, in the ever expanding internet space.
-                            </Typography>
-                                            
-                     
+                    <Grid container alignItems="center">
+                                <Grid item xs={12} sm={12} md={6}>
+                                    <br />
+                                    <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> Pay Bergquist Applications </Typography>
+                                    <Typography variant="h5" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20, paddingLeft: 40, paddingRight: 40}}> Pay in United States Dollar </Typography>
+                                    <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> $ </Typography>
+
+
+                                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
+                                    Bergquist Applications uses the Stripe API to accept online payments. Stripe is constantly adding new features to the API, allowing me to add new features to all Bergquist Applications. 
+                                    </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={6} >
+                                    <TextField
+                                        onChange={this.handleChange}
+                                        value={this.state.amount}
+                                        type="number"
+                                        label="Amount $"
+                                        name="amount"
+                                        autoComplete="false"
+                                        color="primary"
+                                        sx={{"& .MuiOutlinedInput-root":{"& > fieldset": {border: '2px solid #6C63FF'}}}}
+                                        style={{
+                                        display: "flex",
+                                        margin: "auto",
+                                        width: "70%"
+                                        }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        style={{display: "flex", margin: "auto", marginTop: 40}}
+                                        onClick={() => this.redirectToCheckout()}>
+                                        Pay
+                                    </Button>
+
+                                    </Grid>
+                                    
+                                </Grid>
+                               
+
+                                <Grid container >
+                                <Grid item xs={12} sm={12} md={6}alignItems="center">
+                                    <br />
+                                    <Typography variant="h5" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20, paddingLeft: 40, paddingRight: 40 }}> Pay in Algorand </Typography>
+                                    <img src="./AlgoWhite.svg" alt="Design" style={{display: "flex", height: 40, padding: 10, marginLeft: 30}}/>
+
+                                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
+                                    Bergquist Applications also accepts payments in Algorand. Algorand is a carbon negative cryptocurrency that is bringing new and exciting features to finance. This form of payment allows users to pay for goods and services peer to peer.                                    
+                                    </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('BusinessAuto.svg')", backgroundSize: "cover"}} >
+                                        
+                                    <img src="./AlgoQR.png" alt="Design" style={{display: "flex", margin: "auto", width: "100%", maxWidth: 284, padding: 10}}/>
+                                    
+                                    </Grid>
+                                    
+                                </Grid>
+                                <br />
                     
     
                 </Card>

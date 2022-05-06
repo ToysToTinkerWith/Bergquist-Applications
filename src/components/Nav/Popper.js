@@ -78,8 +78,13 @@ export default class WhatWeDo extends React.Component {
                             </Button>
                         </ListItem>
                         <ListItem>
-                            <Button href="/projects" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/projects" ? "#6C63FF" : "#E6E6E6"}}> <b>Projects</b>  </Typography>
+                            <Button href="/applications" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/applications" ? "#6C63FF" : "#E6E6E6"}}> <b>Applications</b>  </Typography>
+                            </Button>
+                        </ListItem>
+                        <ListItem>
+                            <Button href="/pricing" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/pricing" ? "#6C63FF" : "#E6E6E6"}}> <b>Pricing</b>  </Typography>
                             </Button>
                         </ListItem>
                         <ListItem>

@@ -218,7 +218,7 @@ class Job extends React.Component {
           <Typography variant="h6" color="secondary"> {"Estimate: $" + Number(this.state.job.estimate).toFixed(2).toString()} </Typography>
           <Typography variant="h6" color="secondary"> Status: <b>{this.state.status}</b> </Typography>
 
-          {this.state.status == "Completed" ?
+          {/* {this.state.status == "Completed" ?
           <Button 
           variant="contained" 
           color="secondary"
@@ -230,7 +230,7 @@ class Job extends React.Component {
           </Button>
           :
           null
-          }
+          } */}
 
           {this.state.messages.length > 0 ? this.state.messages.map(message => {
 
