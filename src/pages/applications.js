@@ -3,49 +3,57 @@ import React, { useEffect } from "react"
 
 import Head from "next/head"
 
-
 import { Typography, Card, Grid, Button } from "@mui/material"
+
+import HomeAni from "../components/Animations/HomeAni"
+
 
 export default class Applications extends React.Component {
    
     render() {
         return (
-            <div style={{padding: 20}}>
+            <div>
                 <Head>
                     <title>Applications</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <meta name="description" content="Applications ongoing or completed, being built and maintained by Bergquist Applications." />
                     <meta name="keywords" content="Websites, Clients, Real World Businesses, Examples" />
     
-                    <meta property="og:url" content="https://andersbergquist.com/applications" key="ogapplicationsurl" />
-                    <meta property="og:title" content="Applications" key="ogapplications" />
-                    <meta property="og:description" content="Applications ongoing or completed, being built and maintained by Bergquist Applications." key="ogprojectsdesc" />
+                    
                     </Head>
-                
-                <Card style={{
-                    backgroundColor: "#3F3D56",
-                    borderRadius: "15px",
-                    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: 10,
-                    marginBottom: 20
-                }}
-                >
+
+                    <Typography variant="h2" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%"}}>  Applications </Typography>
+
+
+                <Grid container >
+                    <Grid item xs={12} sm={8} md={8}>
+
+                    <Typography variant="h3" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%"}}>  Built by Bergquist Applications </Typography>
+
+                    </Grid>
+                    <Grid item xs={12} sm={4} md={4} >
+                    <img src="Applications.svg" alt="Firebase" style={{padding: "5%", width: "100%"}} />
+
+                    </Grid>
+                </Grid>
+               
                                         <br />
     
-                    <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> <b>Datagnome</b> </Typography>
+                    <Typography variant="h3" align="left" color="secondary" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%"}}> Datagnome </Typography>
     
                     <Grid container alignItems="center">
                     <Grid item xs={12} sm={12} md={6}>
-                        <Button style={{margin: 40}} onClick={() => window.open("https://data-gnome.com/")}>
+                        <Button style={{padding: 40, display: "grid"}} onClick={() => window.open("https://data-gnome.com/")}>
                         <img src="/DataGnome.png" style={{display: "flex", margin: "auto", width: "80%"}}/>
-                        
+                        <Typography variant="h6" align="center" color="secondary" style={{fontFamily: "Chango", color: "#E6E6E6", padding: 40}}> data-gnome.com </Typography>
+
                         </Button>
 
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} >
                             
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                            DataGnome is the next generation of plant monitoring. The business produces smart plant sensors, that not only monitors plant health, but also helps the grower understand the cause of any problems the plants might be having. The sensors use data from the plant itself, and data from its environment, to help you diagnose whatever is wrong, and give the most effective tips for improving the plants’ health. DataGnome is a great fit for any gardeners, growers, and farmers, who want to create a better enviornment for their plants, and improve their yields cycle after cycle.
+                            <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6", padding: 20}}> 
+                            DataGnome is the next generation of plant monitoring. The business produces smart plant sensors, that not only monitors plant health, but also helps the grower understand the cause of any problems the plants might be having.
                             
                             </Typography>
                             
@@ -55,45 +63,42 @@ export default class Applications extends React.Component {
                         </Grid>
                         
                     </Grid>
-                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
+
+                    <div style={{backgroundColor: "#3F3D56", padding: "5%"}}>
+
+                    <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6", padding: 20}}> 
                     The web application serves to inform the client about the Datagnome product, and ultimately lead the customer to a point of sale. Bergquist Applications had the privillage or working with the CEO of Datagnome, Kaylin Hartley, and a professional content creator, Terra Johnson. Together, we produced a beautiful application, that is still evolving to better suit the needs of Datagnome.
                     </Typography>
+
+                    <br />
     
-                    <Button variant="contained" color="secondary" href="mailto:terra@joycodigital.com" style={{marginLeft: 40}}>
-                    <Typography  align="left"  style={{fontFamily: "MoonBold", fontSize: "14px", fontWeight: 600, color: "#FFFFFF"}}> 
-                    Designer : terrajohnston0@icloud.com 
+                    <Button variant="contained" color="secondary" href="mailto:terra@joycodigital.com" >
+                    <Typography  variant="h6" align="left"  style={{fontFamily: "Chango", color: "#E6E6E6"}}> 
+                    terra johnston
                     </Typography>
                     </Button>
                     <br />
                     <br />
     
-                    
-    
-                </Card>
-                <Card style={{
-                    backgroundColor: "#3F3D56",
-                    borderRadius: "15px",
-                    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    padding: 10,
-                }}
-                >
+                    </div>
                     <br />
     
-                    <Typography variant="h4" align="left" color="secondary" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}> <b>Bluebird Enterprises</b> </Typography>
+                    <Typography variant="h3" align="left" color="secondary" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%"}}> Bluebird Enterprises </Typography>
     
                     <Grid container alignItems="center">
                     <Grid item xs={12} sm={12} md={6}>
-                        <Button style={{margin: 40}} onClick={() => window.open("https://bluebirdyoutube.com/")}>
+                        <Button style={{padding: 40, display: "grid", width: "100%"}} onClick={() => window.open("https://bluebirdyoutube.com/")}>
                         <img src="/Bluebird.png" style={{display: "flex", margin: "auto", width: "80%"}}/>
-    
+                        <Typography variant="h6" align="center" color="secondary" style={{fontFamily: "Chango", color: "#E6E6E6", padding: 40}}> bluebirdyoutube.com </Typography>
+
                         </Button>
     
                         
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} >
                             
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                            Bluebird Enterprises is custom automobile fabrication and engineering. The company designs, manufactures, and installs automotive technology, systems, and builds. The Bluebird Enterprises YouTube Channel is home to a wide variety of how to videos, restoration guides, and product testing. With such strong showcasing of the company's work, Bluebird Enterprises establishes technical credibilty amongst its base, and furthers it's reach to new audiences. 
+                            <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6", padding: 20}}> 
+                            Bluebird Enterprises is custom automobile fabrication and engineering. The company designs, manufactures, and installs automotive technology, systems, and builds. 
                             
                             </Typography>
                             
@@ -103,21 +108,37 @@ export default class Applications extends React.Component {
                         </Grid>
                         
                     </Grid>
-                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
+
+                    <div style={{backgroundColor: "#3F3D56", padding: "5%"}}>
+
+                    <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6", padding: 20}}> 
                     The web application serves to reinforce the brand of Bluebird Enterprises, and to highlight the work done in the company. Bergquist Applications pulls data from the Bluebird Enterprises YouTube Channel, to display in an exciting fashion that fits the language of Bluebird Enterprises. The CEO, and long time friend, Anthony Kovic, is very much aware of the power of video in the current digital age.
                     </Typography>
+                    <br />
     
-                    <Button variant="contained" color="secondary" style={{marginLeft: 40}} onClick={() => window.open("https://www.youtube.com/channel/UCBHgoZGid_dlZ48bZy9VNsQ")}>
-                    <Typography  align="left"  style={{fontFamily: "MoonBold", fontSize: "14px", fontWeight: 600, color: "#FFFFFF"}}> 
+                    <Button variant="contained" color="secondary" style={{}} onClick={() => window.open("https://www.youtube.com/channel/UCBHgoZGid_dlZ48bZy9VNsQ")}>
+                    <Typography variant="h6" align="left"  style={{fontFamily: "Chango", color: "#E6E6E6"}}> 
                     Bluebird Enterprises YouTube
                     </Typography>
                     </Button>
-                    <br />
-                    <br />
-    
-                    
-    
-                </Card>
+
+                    </div>
+                    <Typography variant="h3" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", margin: "5%"}}>  Get Started  </Typography>
+
+                    <Grid alignItems="center" container style={{padding: "5%"}}>
+                        <Grid item xs={12} sm={12} md={6}>
+                        <HomeAni />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6}>
+                        <Typography variant="h4" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%"}}>  Contact Bergquist Applications today to explore options for business or personal success  </Typography>
+
+                        <Button onClick={() => window.location.href="/contact"} style={{display: "flex", margin: "auto", backgroundColor: "#6C63FF", padding: 10, borderRadius: 15}}> 
+                        <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6"}}> Contact </Typography>
+                        </Button>
+
+
+                        </Grid>
+                    </Grid>
                 
             </div>
             

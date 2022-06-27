@@ -1,25 +1,10 @@
 ::-webkit-scrollbar {
     display: none;
   }
-  
 
   @font-face {
-    font-family: 'SaturdayMoon';
-    src: local('SaturdayMoon'), url("/fonts/SaturdayMoon.ttf") format('truetype');
-    /* other formats include: 'woff2', 'truetype, 'opentype',
-                              'embedded-opentype', and 'svg' */
-  }
-
-  @font-face {
-    font-family: 'SpaceNeon';
-    src: local('SpaceNeon'), url("/fonts/SpaceNeon.ttf") format('truetype');
-    /* other formats include: 'woff2', 'truetype, 'opentype',
-                              'embedded-opentype', and 'svg' */
-  }
-
-  @font-face {
-    font-family: 'Decadence';
-    src: local('Decadence'), url("/fonts/Decadence.ttf") format('truetype');
+    font-family: 'Chango';
+    src: local('Chango'), url("/fonts/Chango.ttf") format('truetype');
     /* other formats include: 'woff2', 'truetype, 'opentype',
                               'embedded-opentype', and 'svg' */
   }

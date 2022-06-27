@@ -26,10 +26,10 @@ export default class MyDocument extends Document {
         </Script>
      
           <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-          <meta name="title" content="Bergquist Applications" />
-          <meta name="description" content="Bergquist Applications creates web based applications, that aid in data collection, business automation, and user engagement. 
+          <meta name="title" content="Bergquist Applications | " />
+          <meta name="description" content="Creates website applications equipped with a dynamic database. 
           Check out how modern web components can be used to completely customize the way businesses interact with their data." />
-          <meta name="keywords" content="Web Application, React, Next.js, Firebase, Stripe, Material UI, About, Components, Projects, Contact" />
+          <meta name="keywords" content="Modern Web Development, Website, Web Application" />
 
           <meta name="theme-color" content={theme.palette.primary.main} />
 
@@ -37,7 +37,7 @@ export default class MyDocument extends Document {
           <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/cleaning-7852d.appspot.com/o/MoonIcon.png?alt=media&token=71ebd6c6-330d-48c2-87d9-f74395af2007" key="ogimage" />
           <meta property="og:image:alt" content="" key="ogimagealt" />
           <meta property="og:title" content="Bergquist Applications" key="ogtitle" />
-          <meta property="og:description" content="Bergquist Applications creates web based applications, that aid in data collection, business automation, and user engagement. 
+          <meta property="og:description" content="Creates website applications equipped with a dynamic database. 
           Check out how modern web components can be used to completely customize the way businesses interact with their data." key="ogdesc" />
           
           <link

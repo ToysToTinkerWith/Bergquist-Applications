@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { motion } from "framer-motion"
+
 
 import Popper from "./Popper"
 
@@ -58,32 +60,26 @@ render() {
   return (
     
     <div style={{ backgroundImage: "url('Space.svg')", backgroundSize: "80%", display: "flex", justifyContent: "space-evenly"}}>
-      {this.state.scrollTop > 50 ?
-      <div style={{position: "fixed", top: 20, right: 10}}>
+      {this.state.scrollTop > 200 ?
+      <motion.div animate={{opacity: [0, 1]}} style={{position: "fixed", top: 20, right: 10, zIndex: 10}}>
       <Popper />
-      </div>
+      </motion.div>
       :
       null
       }
       <Grid container>
-        <Grid item xs={4} sm={4} md={4} style={{padding: "2%", display: "flex"}}>
-          <Button style={{textTransform: "unset", marginLeft: 80}} href="/" >
-          <Typography 
-            variant="h4" 
-            align="left"
-            style={{
-              fontFamily: "MoonBold",
-                color: "#E6E6E6",
-                
-            }}
-            > 
-            <b>Bergquist Applications</b>
-          </Typography>
+        <Grid item xs={12} sm={4} md={4} style={{padding: "2%", display: "flex"}}>
+          <Button style={{textTransform: "unset"}} href="/" >
+          <img src="NavLogo.svg" style={{ width: "100%"}}/>
+
+          
+
           </Button>
         </Grid>
-        <Grid item xs={8} sm={8} md={8} style={{display: "flex", justifyContent: "flex-end", padding: "2%"}}>
+        
+        <Grid item xs={12} sm={8} md={8} style={{display: "flex", justifyContent: "flex-end", padding: "2%"}}>
           
-          {this.state.windowDimensions.width < 1000 ?
+          {this.state.windowDimensions.width < 1250 ?
             <Popper />
             :
             <>
@@ -99,41 +95,41 @@ render() {
               href="/"
               
               > 
-              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-              <b>Home </b>
+              <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+              Home
               </Typography>
               </Button>
               <Button 
               variant="text"
               style={{
-                color: window.location.pathname == "/about" ? "#6C63FF" : "#E6E6E6",
+                color: window.location.pathname == "/how" ? "#6C63FF" : "#E6E6E6",
                 paddingLeft: 20,
                 paddingRight: 20,
                 textTransform: "unset"
               }}
    
-              href="/about"
+              href="/how"
               
               > 
-              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-              <b>About </b>
+              <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+              How it Works
               </Typography>
               </Button>
               <Button 
               variant="text"
               style={{
-                color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6",
+                color: window.location.pathname == "/services" ? "#6C63FF" : "#E6E6E6",
                 paddingLeft: 20,
                 paddingRight: 20,
                 textTransform: "unset"
 
               }}
         
-              href="/components"
+              href="/services"
     
               > 
-              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-              <b>Components</b>
+              <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+              Services
               </Typography>
               </Button>
               <Button 
@@ -149,25 +145,25 @@ render() {
                 href="/applications"
 
               > 
-              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-              <b>Applications</b>
+              <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+              Applications
               </Typography>
               </Button>
               <Button 
               variant="text"
               style={{
-                color: window.location.pathname == "/pricing" ? "#6C63FF" : "#E6E6E6",
+                color: window.location.pathname == "/team" ? "#6C63FF" : "#E6E6E6",
                 paddingLeft: 20,
                 paddingRight: 20,
                 textTransform: "unset"
 
               }}
 
-                href="/pricing"
+                href="/team"
 
               > 
-              <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-              <b>Pricing</b>
+              <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+              The Team
               </Typography>
               </Button>
               <Button 
@@ -180,8 +176,22 @@ render() {
                 }}
                 href="/contact"
                 > 
-                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                <b>Contact</b>
+                <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+                Contact
+                </Typography>
+              </Button>
+              <Button 
+                variant="text"
+                style={{
+                  color: window.location.pathname == "/future" ? "#6C63FF" : "#E6E6E6",
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  textTransform: "unset"
+                }}
+                href="/future"
+                > 
+                <Typography variant="body1" align="center" style={{fontFamily: "Chango"}}>
+                Future
                 </Typography>
               </Button>
             </>

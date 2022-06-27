@@ -41,7 +41,6 @@ export default function Footer(props) {
     let nextPageLink = ""
 
     
-console.log(window.location.pathname)
     if (window.location.pathname == "/") {
         nextDis = "Learn about the developer"
         nextPage = "About"
@@ -81,73 +80,26 @@ console.log(window.location.pathname)
 
     return (
     
-      <div style={{ backgroundImage: "url('Space.svg')", backgroundSize: "80%", display: "flex", justifyContent: "space-evenly"}}>
+      <div style={{ backgroundImage: "url('World.svg')", backgroundSize: "150%", justifyContent: "space-evenly"}}>
         
         <Grid container>
-          <Grid item xs={12} sm={5} md={5} style={{padding: "2%", display: "grid"}}>
+          <Grid item xs={12} sm={6} md={6} style={{padding: "2%"}}>
               
-            <Button style={{textTransform: "unset", margin: "auto", display: "grid"}} href="/" >
-            <Typography 
-              variant="h4" 
-              align="left"
-              style={{
-                fontFamily: "MoonBold",
-                  color: "#E6E6E6",
-                  
-              }}
-              > 
-              <b>Bergquist Applications</b>
-            </Typography>
-            <br />
-            <img src="/Moon.svg" style={{display: "flex", width: "30%", height: "auto"}} />
+            <Button style={{}} href="/" >
+            
+            <img src="/NavLogo.svg" style={{display: "flex", width: "100%", height: "auto"}} />
 
             </Button>
             
           </Grid>
-          <Grid item xs={12} sm={4} md={4} style={{padding: "2%", display: "flex"}}>
-            <Button style={{display: "grid", margin: "auto", textTransform: "unset", marginLeft: 80}} href={nextPageLink} >
-            <Typography 
-              variant="h6" 
-              align="left"
-              style={{
-                fontFamily: "MoonBold",
-                  color: "#E6E6E6",
-                  
-              }}
-              > 
-              Up Next
-            </Typography>
-            <Typography 
-              variant="h6" 
-              align="left"
-              style={{
-                fontFamily: "MoonBold",
-                  color: "#E6E6E6",
-                  
-              }}
-              > 
-              {nextPage}
-            </Typography>
-            <Typography 
-              variant="subtitle2" 
-              align="left"
-              style={{
-                fontFamily: "MoonBold",
-                  color: "#E6E6E6",
-                  
-              }}
-              > 
-              {nextDis}
-            </Typography>
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={3} md={3} style={{display: "grid", margin: "auto", padding: "2%"}}>
+          
+          <Grid item xs={12} sm={6} md={6} style={{display: "grid", margin: "auto", padding: "2%"}}>
 
               <>
                 <Button 
                 variant="text"
                 style={{
-                  color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6",
+                  color: window.location.pathname == "/" ? "#E6E6E6" : "#E6E6E6",
                   paddingLeft: 20,
                   paddingRight: 20,
                   textTransform: "unset"
@@ -156,47 +108,47 @@ console.log(window.location.pathname)
                 href="/"
                 
                 > 
-                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                <b>Home </b>
+                <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                Home
                 </Typography>
                 </Button>
                 <Button 
                 variant="text"
                 style={{
-                  color: window.location.pathname == "/about" ? "#6C63FF" : "#E6E6E6",
+                  color: window.location.pathname == "/how" ? "#E6E6E6" : "#E6E6E6",
                   paddingLeft: 20,
                   paddingRight: 20,
                   textTransform: "unset"
                 }}
      
-                href="/about"
+                href="/how"
                 
                 > 
-                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                <b>About </b>
+                <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                How it Works
                 </Typography>
                 </Button>
                 <Button 
                 variant="text"
                 style={{
-                  color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6",
+                  color: window.location.pathname == "/services" ? "#E6E6E6" : "#E6E6E6",
                   paddingLeft: 20,
                   paddingRight: 20,
                   textTransform: "unset"
   
                 }}
           
-                href="/components"
+                href="/services"
       
                 > 
-                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                <b>Components</b>
+                <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                Services
                 </Typography>
                 </Button>
                 <Button 
                 variant="text"
                 style={{
-                  color: window.location.pathname == "/applications" ? "#6C63FF" : "#E6E6E6",
+                  color: window.location.pathname == "/applications" ? "#E6E6E6" : "#E6E6E6",
                   paddingLeft: 20,
                   paddingRight: 20,
                   textTransform: "unset"
@@ -206,44 +158,62 @@ console.log(window.location.pathname)
                   href="/applications"
   
                 > 
-                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                <b>Applications</b>
+                <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                Applications
                 </Typography>
                 </Button>
                 <Button 
                 variant="text"
                 style={{
-                  color: window.location.pathname == "/pricing" ? "#6C63FF" : "#E6E6E6",
+                  color: window.location.pathname == "/team" ? "#E6E6E6" : "#E6E6E6",
                   paddingLeft: 20,
                   paddingRight: 20,
                   textTransform: "unset"
                 }}
      
-                href="/pricing"
+                href="/team"
                 
                 > 
-                <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                <b>Pricing </b>
+                <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                The Team
                 </Typography>
                 </Button>
                 <Button 
                   variant="text"
                   style={{
-                    color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6",
+                    color: window.location.pathname == "/contact" ? "#E6E6E6" : "#E6E6E6",
                     paddingLeft: 20,
                     paddingRight: 20,
                     textTransform: "unset"
                   }}
                   href="/contact"
                   > 
-                  <Typography variant="body1" style={{fontFamily: "MoonBold"}}>
-                  <b>Contact</b>
+                  <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                  Contact
+                  </Typography>
+                </Button>
+                <Button 
+                  variant="text"
+                  style={{
+                    color: window.location.pathname == "/future" ? "#E6E6E6" : "#E6E6E6",
+                    paddingLeft: 20,
+                    paddingRight: 20,
+                    textTransform: "unset"
+                  }}
+                  href="/future"
+                  > 
+                  <Typography variant="body1" style={{fontFamily: "Chango"}}>
+                  Future
                   </Typography>
                 </Button>
               </>
             
           </Grid>
         </Grid>
+
+        <Typography variant="body1" style={{fontFamily: "Chango", color: "#FFFFFF", padding: "2%"}}>
+                Copyright &copy; 2022 Bergquist Applications. All Rights Reserved.
+                </Typography>
         
         
       </div>

@@ -64,32 +64,37 @@ export default class WhatWeDo extends React.Component {
                     <div style={{backgroundColor: "#3F3D56", margin: 10, borderRadius: 15}}> 
                         <ListItem>
                             <Button href="/" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6"}}> <b>Home</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/" ? "#6C63FF" : "#E6E6E6"}}> Home  </Typography>
                         </Button>
                         </ListItem>
                         <ListItem>
-                            <Button href="/about" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/about" ? "#6C63FF" : "#E6E6E6"}}> <b>About</b>  </Typography>
+                            <Button href="/how" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/how" ? "#6C63FF" : "#E6E6E6"}}> How it Works  </Typography>
                         </Button>
                         </ListItem>
                         <ListItem>
-                            <Button href="/components" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/components" ? "#6C63FF" : "#E6E6E6"}}> <b>Components</b>  </Typography>
+                            <Button href="/services" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/services" ? "#6C63FF" : "#E6E6E6"}}> Services </Typography>
                             </Button>
                         </ListItem>
                         <ListItem>
                             <Button href="/applications" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/applications" ? "#6C63FF" : "#E6E6E6"}}> <b>Applications</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/applications" ? "#6C63FF" : "#E6E6E6"}}> Applications </Typography>
                             </Button>
                         </ListItem>
                         <ListItem>
-                            <Button href="/pricing" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/pricing" ? "#6C63FF" : "#E6E6E6"}}> <b>Pricing</b>  </Typography>
+                            <Button href="/team" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/team" ? "#6C63FF" : "#E6E6E6"}}> The Team </Typography>
                             </Button>
                         </ListItem>
                         <ListItem>
                             <Button href="/contact" style={{textTransform: "none", width: "100%"}}>
-                            <Typography variant="body1" style={{fontFamily: "MoonBold", color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6"}}> <b>Contact</b>  </Typography>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/contact" ? "#6C63FF" : "#E6E6E6"}}> Contact </Typography>
+                            </Button>
+                        </ListItem>
+                        <ListItem>
+                            <Button href="/future" style={{textTransform: "none", width: "100%"}}>
+                            <Typography variant="body1" style={{fontFamily: "Chango", color: window.location.pathname == "/future" ? "#6C63FF" : "#E6E6E6"}}> Future </Typography>
                             </Button>
                         </ListItem>
                     </div>

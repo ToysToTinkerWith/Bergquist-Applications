@@ -3,12 +3,44 @@ import React from "react"
 import Head from "next/head"
 
 import Contact from "./contact"
-import Animation from "../components/Animation"
+import HomeAni from "../components/Animations/HomeAni"
+import Explain from "../components/Animations/Explain"
+import RocketSmoke from "../components/Animations/RocketSmoke"
 
 
-import { Grid, Card, Modal, Typography } from "@mui/material"
+
+
+import { Grid, Card, Modal, Typography, Button } from "@mui/material"
 
 export default class Index extends React.Component { 
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            width: 0,
+            height: 0
+        };
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
+        
+    }
+
+    updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+      }
+
+
+    componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+
+
+    }
+    
+    
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+        
+    }
      
 
     render() {
@@ -23,198 +55,100 @@ export default class Index extends React.Component {
 
                 
                 </Head>
-                <div style={{padding: 20}}>
+                <div style={{}}>
 
-     
+                    <Grid alignItems="center" container >
+                        <Grid item xs={12} sm={8} md={8} style={{padding: "2%", marginTop: 100, marginBottom: 100}}>
                         
-                            <Animation />
-                            <br />
+                        <Typography variant={this.state.width > 340 ? "h2" : "h4"} align="center" style={{fontFamily: "Chango", color: "#E6E6E6"}}>  Bergquist Applications </Typography>
+                        <Typography variant={this.state.width > 340 ? "h3" : "h5"} align="center" style={{fontFamily: "Chango", color: "#3F3D56"}}>  Web Development </Typography>
+
+                        </Grid>
+                        <Grid item xs={12} sm={4} md={4} style={{paddingRight: "2%"}}>
+
+                        <RocketSmoke />
 
 
-                            <Card style={{
-                                backgroundColor: "#3F3D56",
-                                borderRadius: "15px",
-                                boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                                padding: 10
-                            }}>
-                            <br />
-                            <Typography variant="h4" align="left" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}>  <b>Progressive Web Development</b> </Typography>
-                            <Typography variant="body1" style={{color: "#E6E6E6", padding: 20, fontFamily: "MoonBold"}}> 
-                            Web applications have expanded throughout the development of the internet. Users expect their experience to be fast, reliable, and easy. 
-                            Bergquist Applications is a suite of libraries, built on the cloud, to deliver on these expectations. 
-                            An important part of the architecture and design of our applications, are the interfaces they offer the developer, as they provide them with the flexibility to deliver a wide range of functionality.
-                            </Typography>
-                            <Typography variant="body1" style={{color: "#E6E6E6", padding: 20, fontFamily: "MoonBold"}}> 
-                            As the internet has progressed, so too, have the tools to build more creative, more powerful applications. When better tools become available, Bergquist Applications researches and develops them for use, in future and current Bergquist applications. 
-                            
-                            </Typography>
-                            
-                            
-                            </Card>
-                            <br />
-                            
-                            
-                        <Card style={{
-                            backgroundColor: "#3F3D56",
-                            borderRadius: "15px",
-                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                            padding: 10
-                        }}>
-                            <br />
-                            
-                            
-                            <Grid container >
-                            <Grid item xs={12} sm={12} md={6}>
-                                    <Typography variant="h5" align="left" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}>  <b>User Engagement</b> </Typography>
-                                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                    Keep them interested. Incentivize interactivity between the customer and the business. Store client data on service performance, and collect feedback, to consistently improve on the product, and offer an experience worth
-                                    coming back for.
-                                    </Typography>
-                                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                    Bergquist Applications works off of popular marketing strategies, aiming for simple, yet effective communication. Aesthetic and functional components can be customized until they best serve the business model, and updates can be made live within minutes.
-                                    
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('UserEngage.svg')", backgroundSize: "cover"}}>
-                                <br />
-                                <img src="World.svg" style={{ width: "100%", maxHeight: 200}}/>
 
-                                </Grid>
-                                
-                            </Grid>
+                        </Grid>
+                    </Grid>
 
-                            <br />
-                            <br />
+                    <Typography variant="h4" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", margin: "5%", marginTop: 0}}>  Web applications built on the cloud </Typography>
+                    <Typography variant="h4" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", margin: "5%", marginTop: 0}}>  for business or personal needs. </Typography>
 
-                            <Grid container wrap="reverse">
+
+                    <br />
+
+                    <div style={{backgroundColor: "#3F3D56", padding: "5%"}}>
+
+                  
+                        <Typography variant="h5" align="center" style={{fontFamily: "Chango", color: "#FF6584"}}>  A modern approach to web applications </Typography>
+                        <br />
+                        <Typography variant={this.state.width > 400 ? "h3" : "h5"} align="center" style={{fontFamily: "Chango", color: "#FF6584", background: "-webkit-linear-gradient(90deg, #6C63FF 30%, #FF6584 90%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>  with clear communication of what matters most </Typography>
+                        
+                        <br />
+                     
+                        <Typography variant={this.state.width > 400 ? "h4" : "h5"} align="center" style={{fontFamily: "Chango", color: "#6C63FF"}}>  and an intuitive backend to store and manage all your data </Typography>
+                        <br />
                        
-                                <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('BusinessAuto.svg')", backgroundSize: "cover"}}>
-                                <br />
-                                <img src="Moon.svg" style={{ width: "100%", maxHeight: 200}}/>
 
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} >
-                                    <Typography variant="h5" align="left" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}>  <b>Business Automation</b> </Typography>
-                                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                    Less phone calls. Streamline client processes that lead to sale. Automate scheduling, and introduce client to employee interaction only when necessary. Keep everyone that interacts with the business
-                                    informed on the day to day.
-                                    </Typography>
-                                    <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                    Know that different customers like to interact with the business in different ways. Provide different paths for customers to make appointments or purchase products. 
-                                    Steer the audience member in a way that will best service their particular needs.
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <br />
-                            <br />
+                     
 
-                            <Grid container>
-                            <Grid item xs={12} sm={12} md={6}>
-                                <Typography variant="h5" align="left" style={{fontFamily: "MoonBold", color: "#E6E6E6", paddingLeft: 40, paddingRight: 40}}>  <b>Data Collection</b> </Typography>
-                                <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                Data is power. Businesses with the most data, and the best data, will be able to improve on their services the most, and offer the best products.
-                                We build applications that give complete control over the database. The data is your data, and we're here to help you display and interact with that data in unimaginable ways.
-                                </Typography>
-                                <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", padding: 20}}> 
-                                Collect the right data for business success. Including but not limited to: geographic, time, media (images, audio, video), product, purchasing, and client information.
-                                </Typography>
+                    </div>
 
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} style={{backgroundImage: "url('DataCollect.svg')", backgroundSize: "cover"}}>
-                                <br />
-                                    <img src="Saturn.svg" style={{ width: "100%", maxHeight: 300}}/> 
-                                </Grid>
-                                
-                            </Grid>
+                    <Typography variant="h3" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", margin: "5%"}}>  Dynamic Data </Typography>
+
+                    <Grid alignItems="center" container style={{padding: "5%", paddingTop: 0, paddingBottom: 0}}>
+                        <Grid item xs={12} sm={12} md={6}>
+                        <Explain />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6}>
+                        <Typography variant="h4" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%", paddingTop: 0}}>  The application stores it's data in the cloud   </Typography>
+                        <Typography variant="h3" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%", paddingTop: 0}}>  and listens for changes in the database    </Typography>
+                        <Button onClick={() => window.location.href="/about"} style={{display: "flex", margin: "auto", backgroundColor: "#6C63FF", padding: 10, borderRadius: 15}}> 
+                        <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6"}}> How it works </Typography>
+                        </Button>
+                        <br />
+                        <br />
+
+
+                        </Grid>
+                    </Grid>
+
+                    <div style={{backgroundColor: "#3F3D56", padding: "5%"}}>
+   
+                        <br />
+                        <Typography variant={this.state.width > 400 ? "h3" : "h5"} align="center" style={{fontFamily: "Chango", color: "#FF6584", background: "-webkit-linear-gradient(90deg, #6C63FF 30%, #FF6584 90%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}> Animation - SVG - Charts - Data Grids - Maps - User Authentication - Data Storage - File Storage - Payment Processing - Analytics  </Typography>
+                        <br />
+
+                    </div>
+                    
+
+                    <Typography variant="h3" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", margin: "5%"}}>  Get Started  </Typography>
+
+                    <Grid alignItems="center" container style={{padding: "5%"}}>
+                        <Grid item xs={12} sm={12} md={6}>
+                        <HomeAni />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6}>
+                        <Typography variant="h4" align="center" style={{fontFamily: "Chango", color: "#E6E6E6", padding: "5%"}}>  Contact Bergquist Applications today to explore options for business or personal success  </Typography>
+
+                        <Button onClick={() => window.location.href="/contact"} style={{display: "flex", margin: "auto", backgroundColor: "#6C63FF", padding: 10, borderRadius: 15}}> 
+                        <Typography variant="h6" style={{fontFamily: "Chango", color: "#E6E6E6"}}> Contact </Typography>
+                        </Button>
+
+
+                        </Grid>
+                    </Grid>
+     
                             
-                        </Card>
                         
                       
                 </div>
 
                 
                     
-                <Grid container >
-                    <Grid item xs={12} sm={6} md={6} lg={3} >
-                        <Card style={{
-                            backgroundColor: "#3F3D56",
-                            borderRadius: "15px",
-                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                            padding: 10,
-                            margin: 20,
-                            height: "95%"
-                        }}>
-                        <img src="React.svg" style={{ display: "flex", margin: "auto", marginTop: 20, width: 100}}/>
-                        <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>React</b> </Typography>
-                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 
-                        React is the component-based approach used to build the user interface of the application. This lets us create web components that can be easily reused from project to project.
-                        We couple Next.js with React for more server-side features. With the combination of the two frameworks, we are able to create web applications that are ready for production.
-                        </Typography>
-                        </Card>
-                        
-                        
-                    </Grid>
-                   
-
-                    <Grid item xs={12} sm={6} md={6} lg={3} >
-                    <Card style={{
-                            backgroundColor: "#3F3D56",
-                            borderRadius: "15px",
-                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                            padding: 10,
-                            margin: 20,
-                            height: "95%"
-                        }}>
-                        <img src="MaterialUI.svg" style={{ display: "flex", margin: "auto", marginTop: 20, width: 85}}/>
-                        <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>Material UI</b> </Typography>
-    
-                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 
-                        Material UI is a library of styled React components that we use in our applications. The library is open source and is constantly evolving. We pull components from Material UI
-                        not only for a cleaner look in our applications, but also to save us time in building complex UI components from scratch.
-                        </Typography>
-    
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={3}>
-                    <Card style={{
-                            backgroundColor: "#3F3D56",
-                            borderRadius: "15px",
-                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                            padding: 10,
-                            margin: 20,
-                            height: "95%"
-                        }}>
-                        <img src="Firebase.svg" style={{ display: "flex", margin: "auto", marginTop: 20, width: 60}}/>
-                        <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>Firebase</b> </Typography>
-                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 
-                        Firebase is the backend infrastructure for the application. The service gives us database control, user authentication, deployment, and analytics.
-                        Members can be to each project, allowing business owners access and management over their own database without any coding experience.
-                        The data is stored on the cloud and is backed by Google servers.
-                        </Typography>
-    
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={3}>
-                    <Card style={{
-                            backgroundColor: "#3F3D56",
-                            borderRadius: "15px",
-                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                            padding: 10,
-                            margin: 20,
-                            height: "95%"
-                        }}>
-                        <img src="Stripe.png" style={{ display: "flex", margin: "auto", marginTop: 20, width: 75}}/>
-                        <Typography variant="h6" align="center" style={{fontFamily: "MoonBold", color: "#E6E6E6"}}>  <b>Stripe</b> </Typography>
-                        <Typography variant="body1" style={{fontFamily: "MoonBold", color: "#E6E6E6", margin: 20}}> 
-                        Stripe securely handles all payment processing in the application. The platform keeps reports on earnings, allows payouts to other connected accounts,
-                        and makes it easy to create custom payment flows within the application.
-                        Stripe takes 2.9% plus 30 cents per transaction, but has lower rates for companies making over $80,000 per month.
-                        </Typography>
-    
-                        </Card>
-                    </Grid>
-                </Grid>
-                <br />
+                
 
                 
             </div>
