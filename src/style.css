@@ -1,0 +1,17 @@
+::-webkit-scrollbar {
+    display: none;
+  }
+
+  @font-face {
+    font-family: 'Chango';
+    src: local('Chango'), url("/fonts/Chango.ttf") format('truetype');
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+  }
+
+  @font-face {
+    font-family: 'MoonBold';
+    src: local('MoonBold'), url("/fonts/MoonBold.otf") format('opentype');
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+  }
