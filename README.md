@@ -23,7 +23,7 @@ https://nodejs.org/en/
 Python (For compiling smart contracts)
 https://www.python.org/downloads/
 
-### Running the web app
+## Running the web app
 
 By the end of this tutorial, you should have a web application application running in a local server.
 
@@ -36,4 +36,29 @@ Now in the terminal run "npm run dev". This should run a local server with the b
 If my website popped up then you're all ready to go. The build files are contained in the src folder, and the flow of the web application starts there. Understanding how to build your own applications will come from studying the flow of this application and applying it to your own use cases.
 
 Press CTRL + C if you want to stop the local server so you can type in the terminal again.
+
+## Deploying a smart contract
+
+By the end of this turtorial, you will have deployed an Algorand smart contract to the mainnet Algorand chain.
+
+Change directory into your contracts folder by typing "cd contracts".
+
+Type "python -m venv venv" into the terminal, this should make a venv folder in your contracts folder. 
+
+Run "pip install pyteal" to install the pyteal libraries.
+
+Run "python contracts.py" to execute the contract.py file, this file contains the logic for the smart contract, defining what to do when a wallet performs specific calls to the smart contract. This is the file that you will be creating your own smart contracts in. Running the contracts.py file will compile the pyteal code into teal code.
+
+Now in the deployment.js file copy and paste the mnemonic phrase for the wallet you want to assign as the creator wallet for this contract, in both the "creatorMnemonic" and the "userMnemonic" variables. For example: 
+
+![mnemonic](https://user-images.githubusercontent.com/54189645/188233992-55649367-3fdc-4250-8433-980782357d97.PNG)
+
+Now in the terminal run "node deployment.js". This should run the deployment.js file, which contains a bunch of helpful deployment and testing functions using the algosdk. Running this file runs the main program, which currently calls the createApp function to deploy the contract to the mainnet chain. If all this successfully goes through, you should see an app-id, which represents the app you just deployed to the Algorand chain.
+
+Congratulations, you've just deployed a smart contract! The code in the contracts folder will help you understand how to build and test your own smart contracts for your own use cases.
+
+For more on smart contracts in Pyteal:
+https://pyteal.readthedocs.io/en/stable/overview.html
+
+
 
