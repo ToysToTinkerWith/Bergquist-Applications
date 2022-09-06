@@ -62,9 +62,15 @@ https://pyteal.readthedocs.io/en/stable/overview.html
 
 Bergquist Applications uses Firebase to host the application dynamically. Google provides a managed server for you to host your application on, and syncs well with Google analytics to give insights on how your app is doing. By the end of this tutorial you should have an application that can be accessed on the world wide web.
 
-Create a Firebase account, this can be by using your existing google account. Then create a new project, naming it what you want to and picking all the default settings for project creation. 
+Create a Firebase account, this can be by using your existing google account. Then create a new project, naming it what you want and picking all the default settings for project creation. 
 
-Once inside you project dashboard, click on the cog button next to project overview, click project settings. Now you should be under the general tab for project settings, scroll to the bottom to see the config for the project. Populate the ".env" file in your root directory to eb these values found in the config.
+Once inside you project dashboard, click on the cog button next to project overview, click project settings. Now you should be under the general tab for project settings, scroll to the bottom to see the config for the project. Populate the "env" file in your root directory to be these values found in the config. Rename your "env" file to ".env".
+
+Go to your ".firebaserc" file, and change the default to be the project id of your newly created Firebase project. Make sure your project is is Blaze plan on Firebase, so that you have the rights to deploy.
+
+Now run "npm run build" in your terminal, this should compile the existing build into a production build for deployment. Run "npm run deploy" to deploy the production build to Firebase. this will deploy the "server.js" file to Firebase Functions, which will handle all the requests made to the application. If this all goes through successfully, you should now have a project pushed to deployment.
+
+
 
 
 
