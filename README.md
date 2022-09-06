@@ -8,8 +8,6 @@ Any prior knowledge of crypto and software development will help in understandin
 
 https://discord.gg/76Mrj6WB
 
-
-
 ## Getting started
 
 There are a few things you'll need to have downloaded on your computer:
@@ -59,6 +57,15 @@ Congratulations, you've just deployed a smart contract! The code in the contract
 
 For more on smart contracts in Pyteal:
 https://pyteal.readthedocs.io/en/stable/overview.html
+
+## Deploying to production on Firebase
+
+Bergquist Applications uses Firebase to host the application dynamically. Google provides a managed server for you to host your application on, and syncs well with Google analytics to give insights on how your app is doing. By the end of this tutorial you should have an application that can be accessed on the world wide web.
+
+Create a Firebase account, this can be by using your existing google account. Then create a new project, naming it what you want to and picking all the default settings for project creation. 
+
+Once inside you project dashboard, click on the cog button next to project overview, click project settings. Now you should be under the general tab for project settings, scroll to the bottom to see the config for the project. Populate the ".env" file in your root directory to eb these values found in the config.
+
 
 
 
