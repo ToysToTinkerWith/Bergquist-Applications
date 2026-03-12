@@ -1,18 +1,25 @@
-const { https } = require('firebase-functions');
-const { default: next } = require('next');
+const functions = require("firebase-functions");
+const next = require("next");
 
-const isDev = process.env.NODE_ENV !== "production"
+const isDev = process.env.NODE_ENV !== "production";
 
-const server = next({
-    dev: isDev,
-    conf: { distDir: '.next' },
+const app = next({
+  dev: isDev,
+  dir: __dirname,           // IMPORTANT: treat functions/ as the app root at runtime
+  conf: { distDir: ".next" } // expects functions/.next
 });
 
-const nextjsHandle = server.getRequestHandler();
+const handle = app.getRequestHandler();
 
-exports.nextServer = https.onRequest((req, res) => {
-    return server.prepare()
-        .then(() => {
-            nextjsHandle(req, res)
-        });
-}); 
+// Prepare ONCE per warm instance
+const prepared = app.prepare();
+
+exports.nextServer = functions.https.onRequest(async (req, res) => {
+  try {
+    await prepared;
+    return handle(req, res);
+  } catch (err) {
+    console.error("Next SSR error:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
