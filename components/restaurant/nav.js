@@ -2,7 +2,7 @@ import React from "react"
 import { motion } from "framer-motion"
 
 export default function RestaurantPizzeriaNav({
-  logoSrc = "/restaurant/smalllogo.png",
+  logoSrc = "/restaurant/smallLogo.png",
   restaurantName = "Italiana",
 }) {
   const go = (path) => (e) => {
@@ -15,7 +15,7 @@ export default function RestaurantPizzeriaNav({
     <header className="vpz-navShell">
       <div className="vpz-navInner">
         <motion.a
-          href="/"
+          href="/components/restaurant-ordering"
           className="vpz-brand"
           aria-label={restaurantName}
           initial={{ opacity: 0, y: -10, filter: "blur(10px)" }}
@@ -36,7 +36,7 @@ export default function RestaurantPizzeriaNav({
             className="vpz-navBtn vpz-navPrimary"
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.98 }}
-            onClick={go("restaurant/order")}
+            onClick={go("/components/restaurant-ordering/order")}
           >
             Order Online
           </motion.button>
@@ -46,7 +46,7 @@ export default function RestaurantPizzeriaNav({
             className="vpz-navBtn vpz-navSecondary"
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.98 }}
-            onClick={go("restaurant/menu")}
+            onClick={go("/components/restaurant-ordering/menu")}
           >
             Menu
           </motion.button>
@@ -63,7 +63,7 @@ const css = `
     --vpz-ink:#f4f0e6;
     --vpz-ink2:rgba(244,240,230,.82);
     --vpz-ink3:rgba(244,240,230,.62);
-    --vpz-gold:rgba(214,177,104,.95);
+    --vpz-gold:rgba(176,160,236,.95);
   }
 
   *{ box-sizing:border-box; }
@@ -136,9 +136,9 @@ const css = `
   }
 
   .vpz-navPrimary{
-    border-color: rgba(214,177,104,.55);
+    border-color: rgba(176,160,236,.55);
     background:
-      radial-gradient(circle at 30% 20%, rgba(214,177,104,.20), transparent 52%),
+      radial-gradient(circle at 30% 20%, rgba(176,160,236,.20), transparent 52%),
       linear-gradient(180deg, rgba(26,22,14,.98), rgba(8,8,8,.98));
   }
 
@@ -150,7 +150,7 @@ const css = `
   .vpz-navBtn:focus{
     outline:none;
     box-shadow:
-      0 0 0 3px rgba(214,177,104,.16),
+      0 0 0 3px rgba(176,160,236,.16),
       inset 0 1px 0 rgba(255,255,255,.06),
       0 12px 24px rgba(0,0,0,.32);
   }

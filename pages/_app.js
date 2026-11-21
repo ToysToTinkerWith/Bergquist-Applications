@@ -1,20 +1,20 @@
 import React, { useMemo, useEffect } from "react"
 import { useRouter } from "next/router"
+import Head from "next/head"
+import FloatingAssistant from "../components/FloatingAssistant"
+import { logFirebasePageView } from "../lib/clientAnalytics"
+import { businessGraph, SEARCH_DESCRIPTION } from "../lib/business"
 
 import PropTypes from "prop-types"
 import { ThemeProvider } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import theme from "../theme"
 
-import NavBar from "../components/nav"
+import NavBar from "../components/PublicNavigation"
 import Footer from "../components/footer"
-import ChatBot from "../components/chatBot"
-
-import Script from "next/script"
+import PrimaryPageHierarchy from "../components/PrimaryPageHierarchy"
 
 import "../style.css"
-
-const GA_ID = process.env.NEXT_PUBLIC_ANALYTICS_MEASUREMENT_ID
 
 export default function MyApp(props) {
   const { Component, pageProps } = props
@@ -26,16 +26,11 @@ export default function MyApp(props) {
     return path.includes("restaurant")
   }, [router.pathname])
 
-  // Track SPA navigation pageviews
   useEffect(() => {
-    if (!GA_ID) return
-
-    const handleRouteChange = (url) => {
-      // Send a page_view for the new route
-      window.gtag?.("config", GA_ID, {
-        page_path: url,
-      })
+    const handleRouteChange = url => {
+      logFirebasePageView(url)
     }
+    handleRouteChange()
 
     router.events.on("routeChangeComplete", handleRouteChange)
     return () => {
@@ -45,43 +40,21 @@ export default function MyApp(props) {
 
   return (
     <React.Fragment>
-      {GA_ID && (
-        <>
-          <Script
-            strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          />
-          <Script id="gtag-init" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              // Disable the automatic page_view on initial load
-              // (we'll handle pageviews ourselves to avoid duplicates)
-              gtag('config', '${GA_ID}', {
-                anonymize_ip: true,
-                send_page_view: false
-              });
-
-              // Send the initial page_view
-              gtag('event', 'page_view', {
-                page_path: window.location.pathname + window.location.search
-              });
-            `}
-          </Script>
-        </>
-      )}
-
       <ThemeProvider theme={theme}>
+        <Head><title>Bergquist Applications</title><meta name="description" content={SEARCH_DESCRIPTION} /><meta name="theme-color" content="#050607" /><meta property="og:site_name" content="Bergquist Applications" />
+          <script key="business-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessGraph) }} />
+        </Head>
         <CssBaseline />
+        <PrimaryPageHierarchy path={router.pathname} />
 
+        <div className={hideChrome ? undefined : "siteTypography"}>
         {!hideChrome && <NavBar />}
 
         <Component {...pageProps} />
 
         {!hideChrome && <Footer />}
-        {!hideChrome && <ChatBot />}
+        {!hideChrome && (!pageProps.componentKey || pageProps.componentCategory === "Design") && <FloatingAssistant key={router.pathname} />}
+        </div>
       </ThemeProvider>
     </React.Fragment>
   )

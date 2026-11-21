@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Upgrade Aprons",
+    "logoSrc": "/apps/upgradeaprons.webp",
+    "href": "https://upgradeaprons.com/",
+    "category": "Commerce",
+    "description": "A client website for handmade leather aprons, custom orders, product storytelling, and clear customer inquiries.",
+    "tags": [
+      "Client Website",
+      "Custom Orders",
+      "Product Showcase"
+    ]
+  },
+  {
+    "name": "Island Flourish",
+    "logoSrc": "/apps/islandflourish.svg",
+    "href": "https://islandflourish-c7caa.web.app/",
+    "category": "Portfolio",
+    "description": "A floral portfolio with curated galleries and a direct path to inquiries.",
+    "tags": [
+      "Gallery"
+    ]
+  },
+  {
+    "name": "Dark Coin",
+    "logoSrc": "/apps/darkcoin.webp",
+    "href": "https://dark-coin.com/",
+    "category": "Community",
+    "description": "A community gaming platform with champions, battles, and rewards.",
+    "tags": [
+      "Algorand",
+      "Community",
+      "Game Systems"
+    ]
+  },
+  {
+    "name": "Denise Prints",
+    "logoSrc": "/apps/deniseprints.jpg",
+    "href": "https://deniseprints.web.app/",
+    "category": "Portfolio",
+    "description": "A focused showcase for custom prints, creative work, and new connections.",
+    "tags": [
+      "Gallery"
+    ]
+  },
+  {
+    "name": "ComTree",
+    "logoSrc": "/apps/comtree.svg",
+    "href": "https://tree-38cba.web.app/",
+    "category": "Community",
+    "description": "A shared map for discovering trees and connecting local contributions.",
+    "tags": [
+      "Maps",
+      "Community"
+    ]
+  },
+  {
+    "name": "New Standard",
+    "logoSrc": "/apps/newstandard.png",
+    "href": "https://newstandard710.com/",
+    "category": "Commerce",
+    "description": "A retail showcase built around curated products and clear brand presentation.",
+    "tags": [
+      "Gallery"
+    ]
+  }
+]

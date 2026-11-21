@@ -1,6 +1,17 @@
 {
   "hosting": {
-    "public": "public",
+    "public": ".firebase-hosting",
+    "cleanUrls": true,
+    "headers": [
+      { "source": "/", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, s-maxage=3600, must-revalidate" }] },
+      { "source": "/@(about|components|applications|contact|Design|privacy|terms|finance|events|social-post-creator)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, s-maxage=3600, must-revalidate" }] },
+      { "source": "/components/*", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, s-maxage=3600, must-revalidate" }] },
+      { "source": "/applications/*", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, s-maxage=3600, must-revalidate" }] },
+      { "source": "/_next/static/**", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+      { "source": "/fonts/**", "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }] },
+      { "source": "**/*.@(webp|png|jpg|jpeg|svg|ico|glb)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] },
+      { "source": "**/*.html", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, s-maxage=3600, must-revalidate" }] }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -8,23 +19,28 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "/_next/**",
         "function": "nextServer"
+      },
+      {
+        "source": "**",
+        "function": { "functionId": "nextServer", "region": "us-central1" }
       }
     ]
   },
-  "functions": {
-    "source": ".",
-    "runtime": "nodejs14",
-    "ignore": [
-      "**/src/**",
-      "**/.vscode/**",
-      ".firebase/**",
-      ".firebaserc",
-      "firebase.json",
-      "**/node_modules/**",
-      "**/public/**",
-      "**/.next/cache/**"
-    ]
-  }
+  "functions": [
+    {
+      "source": "functions",
+      "predeploy": ["npm --prefix \"$PROJECT_DIR\" run build:production"],
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".next/cache",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
 }

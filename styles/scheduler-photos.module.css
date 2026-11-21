@@ -1,0 +1,13 @@
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 16px 0; }
+.photo { min-width: 0; margin: 0; }
+.preview { display: block; width: 100%; padding: 0; border: 1px solid #494a56; border-radius: 6px; background: #191b22; cursor: zoom-in; overflow: hidden; }
+.preview img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; }
+.caption { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0; }
+.caption span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview:focus-visible { outline: 2px solid #c6b9ff; outline-offset: 3px; }
+.fullImage { display: block; width: 100%; max-height: 65vh; object-fit: contain; }
+.message { white-space: pre-wrap; overflow-wrap: anywhere; }
+.event { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; }
+.eventTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.time { flex-shrink: 0; }
+@media (max-width: 480px) { .grid { grid-template-columns: minmax(0, 1fr); } }

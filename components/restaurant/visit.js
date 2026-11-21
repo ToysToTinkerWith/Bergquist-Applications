@@ -53,8 +53,8 @@ export default function RestaurantPizzeriaVisit({
       ink: "#f4f0e6",
       ink2: "rgba(244,240,230,0.82)", // match hero
       ink3: "rgba(244,240,230,0.62)", // match hero
-      gold: "rgba(214,177,104,0.95)",
-      goldHover: "rgba(214,177,104,0.60)",
+      gold: "rgba(176,160,236,0.95)",
+      goldHover: "rgba(176,160,236,0.60)",
       shadow: "rgba(0,0,0,0.55)",
     }),
     []
@@ -97,7 +97,7 @@ export default function RestaurantPizzeriaVisit({
         zIndex: 1,
         pointerEvents: "none",
         background:
-          "radial-gradient(900px 420px at 50% 20%, rgba(214,177,104,0.18), transparent 60%), linear-gradient(180deg, rgba(0,0,0,0.70), rgba(0,0,0,0.88))",
+          "radial-gradient(900px 420px at 50% 20%, rgba(176,160,236,0.18), transparent 60%), linear-gradient(180deg, rgba(0,0,0,0.70), rgba(0,0,0,0.88))",
       },
 
       card: {
@@ -179,7 +179,7 @@ export default function RestaurantPizzeriaVisit({
         lineHeight: 1.5,
         color: palette.ink,
         textDecoration: "none",
-        borderBottom: "1px solid rgba(214,177,104,0.35)",
+        borderBottom: "1px solid rgba(176,160,236,0.35)",
         paddingBottom: 2,
       },
 
@@ -292,7 +292,7 @@ export default function RestaurantPizzeriaVisit({
                     <div
                       style={{
                         ...styles.hoursVal,
-                        ...(isClosed ? { color: "rgba(214,177,104,0.85)" } : null),
+                        ...(isClosed ? { color: "rgba(176,160,236,0.85)" } : null),
                       }}
                       role="cell"
                     >

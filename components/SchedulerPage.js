@@ -1,35 +1,12 @@
 // pages/scheduler.jsx
-// Scheduler page (Pages Router) — matches your black + gradient Bemora theme
-// Large calendar with click-to-schedule popup + Firestore persistence
-//
-// Requires:
-//  - @mui/material
-//  - @mui/x-date-pickers
-//  - date-fns
-//  - @fullcalendar/react
-//  - @fullcalendar/daygrid   ✅ includes dayGridMonth/dayGridWeek/dayGridDay
-//  - @fullcalendar/interaction
-//
-// Firebase:
-//  - db export from ../Firebase/FirebaseInit
-//
-// Event schema in Firestore (collection: "scheduleEvents"):
-//  {
-//    title: string,
-//    notes: string,
-//    start: Timestamp,
-//    end: Timestamp,
-//    allDay: boolean,
-//    createdAt: serverTimestamp(),
-//    updatedAt: serverTimestamp(),
-//  }
+// Full code change
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import Head from "next/head"
+import { SOCIAL_IMAGE_URL, SOCIAL_IMAGE_ALT, SOCIAL_IMAGE_WIDTH, SOCIAL_IMAGE_HEIGHT } from "../lib/socialPreview"
 import {
   Box,
   Typography,
-  Divider,
   Stack,
   TextField,
   Button,
@@ -40,40 +17,49 @@ import {
   IconButton,
   FormControlLabel,
   Switch,
+  Card,
+  Chip,
+  Divider,
 } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
+import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded"
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded"
+import PhotoLibraryRoundedIcon from "@mui/icons-material/PhotoLibraryRounded"
+import ImageRoundedIcon from "@mui/icons-material/ImageRounded"
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded"
+import AddRoundedIcon from "@mui/icons-material/AddRounded"
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded"
+import NotesRoundedIcon from "@mui/icons-material/NotesRounded"
 import { motion } from "framer-motion"
 
-import FullCalendar from "@fullcalendar/react"
-import dayGridPlugin from "@fullcalendar/daygrid"
-import interactionPlugin from "@fullcalendar/interaction"
+import dynamic from "next/dynamic"
+const FullCalendar = dynamic(() => import('./SchedulerCalendar'), { ssr: false, loading: () => <div role="status" style={{ minHeight: 500 }}>Loading calendar…</div> })
 
-// MUI pickers
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 
-// Firestore
 import {
-  addDoc,
   collection,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   Timestamp,
-  updateDoc,
-  deleteDoc,
-  doc,
 } from "firebase/firestore"
-import { db } from "../Firebase/FirebaseInit"
+import { PHOTO_ACCEPT, MAX_PHOTOS, MAX_CAPTION_LENGTH, validatePhotoFiles } from "../lib/schedulerPhotos.mjs"
+import { saveSchedulerEvent, deleteSchedulerEvent } from "../lib/schedulerPhotoStorage"
+import SchedulerPhotoIndicator from "../components/scheduler/SchedulerPhotoIndicator"
+import { onAuthStateChanged } from "firebase/auth"
+
+import { auth, db } from "../Firebase/FirebaseInit"
 
 // -------------------------- UI helpers --------------------------
 
 function RevealOnScroll({
   children,
   delay = 0,
-  threshold = 0.25,
+  threshold = 0,
   rootMargin = "0px 0px -12% 0px",
 }) {
   const ref = useRef(null)
@@ -81,7 +67,10 @@ function RevealOnScroll({
 
   useEffect(() => {
     if (shown) return
-    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
+    if (
+      typeof window === "undefined" ||
+      typeof IntersectionObserver === "undefined"
+    ) {
       setShown(true)
       return
     }
@@ -134,7 +123,8 @@ function GradientTitle({ children, variant = "h3", align = "left", sx = {} }) {
         fontFamily: "Bemora",
         letterSpacing: 1.1,
         lineHeight: 1.2,
-        backgroundImage: "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
+        backgroundImage:
+          "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
         WebkitBackgroundClip: "text",
         backgroundClip: "text",
         color: "transparent",
@@ -162,37 +152,385 @@ function SubText({ children, sx = {} }) {
   )
 }
 
-// Basic helper: set time to 9:00 AM local by default
 function atDefaultTime(d, hours = 9, minutes = 0) {
   const x = new Date(d)
   x.setHours(hours, minutes, 0, 0)
   return x
 }
 
-// Format "9:00 AM" etc
 function formatTime(d) {
   try {
-    return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(d)
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(d)
   } catch {
     return ""
   }
 }
 
-// Overlap test: [aStart, aEnd) overlaps [bStart, bEnd) if aStart < bEnd && bStart < aEnd
+function formatDayLabel(d) {
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }).format(d)
+  } catch {
+    return ""
+  }
+}
+
+function isSameDay(a, b) {
+  if (!a || !b) return false
+  const da = new Date(a)
+  const db = new Date(b)
+  return (
+    da.getFullYear() === db.getFullYear() &&
+    da.getMonth() === db.getMonth() &&
+    da.getDate() === db.getDate()
+  )
+}
+
 function rangesOverlap(aStart, aEnd, bStart, bEnd) {
   const aS = new Date(aStart).getTime()
   const aE = new Date(aEnd).getTime()
   const bS = new Date(bStart).getTime()
   const bE = new Date(bEnd).getTime()
-  if (!Number.isFinite(aS) || !Number.isFinite(aE) || !Number.isFinite(bS) || !Number.isFinite(bE))
+  if (
+    !Number.isFinite(aS) ||
+    !Number.isFinite(aE) ||
+    !Number.isFinite(bS) ||
+    !Number.isFinite(bE)
+  ) {
     return false
+  }
   return aS < bE && bS < aE
+}
+
+function makeClientId(prefix = "id") {
+  return `${prefix}_${Math.random().toString(36).slice(2)}_${Date.now().toString(36)}`
+}
+
+function fileToPreview(file) {
+  return URL.createObjectURL(file)
+}
+
+function sanitizeImageMetadata(image) {
+  return {
+    id: String(image?.id || makeClientId("img")),
+    url: String(image?.url || ""),
+    path: String(image?.path || ""),
+    message: String(image?.message || ""),
+    fileName: String(image?.fileName || ""),
+    contentType: String(image?.contentType || ""),
+    size: Number(image?.size || 0),
+    createdAt: image?.createdAt || null,
+  }
+}
+
+// -------------------------- Image card --------------------------
+
+function EventImageCard({
+  image,
+  onRemove,
+  onMessageChange,
+  onPreview,
+  isExisting = false,
+}) {
+  return (
+    <Card
+      sx={{
+        borderRadius: 3,
+        overflow: "hidden",
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))",
+        border: "1px solid rgba(216, 229, 254, 0.12)",
+        boxShadow: "0 16px 45px rgba(0,0,0,0.38)",
+      }}
+    >
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: "16 / 10",
+          background: "rgba(255,255,255,0.03)",
+          borderBottom: "1px solid rgba(216, 229, 254, 0.10)",
+        }}
+      >
+        {image?.preview || image?.url ? (
+          <Box
+            component="button"
+            type="button"
+            onClick={() => onPreview?.(image)}
+            aria-label={`Preview ${image.fileName || "event photo"}`}
+            sx={{
+              appearance: "none",
+              WebkitAppearance: "none",
+              border: "none",
+              "&:focus-visible": { outline: "2px solid #c6b9ff", outlineOffset: "-3px" },
+              padding: 0,
+              margin: 0,
+              background: "transparent",
+              cursor: "pointer",
+              width: "100%",
+              height: "100%",
+              display: "block",
+            }}
+          >
+            <Box
+              component="img"
+              src={image.preview || image.url}
+              alt={image.message || image.fileName || "Event photo"}
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                transition: "transform 0.25s ease",
+                "&:hover": {
+                  transform: "scale(1.02)",
+                },
+              }}
+            />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "rgba(216, 229, 254, 0.52)",
+            }}
+          >
+            <ImageRoundedIcon />
+          </Box>
+        )}
+
+        <IconButton
+          onClick={onRemove}
+          aria-label={`Remove ${image.fileName || "event photo"}`}
+          title="Remove photo"
+          sx={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            backgroundColor: "rgba(0,0,0,0.55)",
+            color: "white",
+            border: "1px solid rgba(255,255,255,0.18)",
+            "&:hover": {
+              backgroundColor: "rgba(0,0,0,0.72)",
+            },
+          }}
+        >
+          <DeleteOutlineRoundedIcon />
+        </IconButton>
+
+        <Box
+          sx={{
+            position: "absolute",
+            left: 10,
+            bottom: 10,
+            display: "flex",
+            gap: 1,
+            flexWrap: "wrap",
+          }}
+        >
+          <Chip
+            size="small"
+            label={isExisting ? "Saved" : "New"}
+            sx={{
+              background: isExisting
+                ? "rgba(34,211,238,0.18)"
+                : "rgba(124,58,237,0.20)",
+              color: "rgba(245, 248, 255, 0.94)",
+              border: "1px solid rgba(216, 229, 254, 0.16)",
+              backdropFilter: "blur(8px)",
+            }}
+          />
+          {image?.fileName ? (
+            <Chip
+              size="small"
+              label={image.fileName}
+              sx={{
+                maxWidth: 180,
+                "& .MuiChip-label": {
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                },
+                background: "rgba(0,0,0,0.40)",
+                color: "rgba(245, 248, 255, 0.90)",
+                border: "1px solid rgba(216, 229, 254, 0.16)",
+                backdropFilter: "blur(8px)",
+              }}
+            />
+          ) : null}
+        </Box>
+      </Box>
+
+      <Box sx={{ p: 1.35 }}>
+        <TextField
+          fullWidth
+          label="Caption (optional)"
+          inputProps={{ maxLength: MAX_CAPTION_LENGTH }}
+          value={image?.message || ""}
+          onChange={(e) => onMessageChange(e.target.value)}
+          InputLabelProps={{ sx: { color: "rgba(245, 248, 255, 0.82)" } }}
+          sx={{
+            "& .MuiInputBase-root": {
+              backgroundColor: "rgba(255,255,255,0.05)",
+              borderRadius: 2,
+            },
+            "&& input": {
+              color: "rgba(255,255,255,0.95) !important",
+              WebkitTextFillColor: "rgba(255,255,255,0.95) !important",
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(216, 229, 254, 0.20)",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(216, 229, 254, 0.30)",
+            },
+          }}
+        />
+      </Box>
+    </Card>
+  )
+}
+
+// -------------------------- Day event card --------------------------
+
+function DayEventCard({ event, onClick }) {
+  const images = Array.isArray(event?.extendedProps?.images)
+    ? event.extendedProps.images
+    : []
+
+  return (
+    <Card
+      onClick={onClick}
+      sx={{
+        cursor: "pointer",
+        borderRadius: 3,
+        overflow: "hidden",
+        background:
+          "linear-gradient(180deg, rgba(124,58,237,0.10), rgba(34,211,238,0.04))",
+        border: "1px solid rgba(216, 229, 254, 0.12)",
+        boxShadow: "0 18px 55px rgba(0,0,0,0.38)",
+        transition: "transform 0.18s ease, border-color 0.18s ease",
+        "&:hover": {
+          transform: "translateY(-2px)",
+          borderColor: "rgba(216, 229, 254, 0.22)",
+        },
+      }}
+    >
+      <Box sx={{ p: { xs: 1.6, sm: 1.9 } }}>
+        <Stack spacing={1.25}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+          >
+            <Typography
+              sx={{
+                color: "rgba(245,248,255,0.96)",
+                fontWeight: 900,
+                fontSize: { xs: 16, sm: 17 },
+              }}
+            >
+              {event.title}
+            </Typography>
+
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip
+                icon={<AccessTimeRoundedIcon />}
+                label={
+                  event.allDay
+                    ? "All day"
+                    : `${formatTime(event.start)} – ${formatTime(event.end)}`
+                }
+                sx={{
+                  color: "rgba(245,248,255,0.94)",
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(216,229,254,0.12)",
+                }}
+              />
+              {images.length ? (
+                <Chip
+                  icon={<PhotoLibraryRoundedIcon />}
+                  label={`${images.length} image${images.length === 1 ? "" : "s"}`}
+                  sx={{
+                    color: "rgba(245,248,255,0.94)",
+                    background: "rgba(34,211,238,0.14)",
+                    border: "1px solid rgba(216,229,254,0.12)",
+                  }}
+                />
+              ) : null}
+            </Stack>
+          </Stack>
+
+          {event.extendedProps?.notes ? (
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              <NotesRoundedIcon
+                sx={{
+                  color: "rgba(216,229,254,0.72)",
+                  mt: "2px",
+                  fontSize: 18,
+                }}
+              />
+              <Typography
+                sx={{
+                  color: "rgba(216,229,254,0.82)",
+                  lineHeight: 1.7,
+                  fontSize: 14.5,
+                }}
+              >
+                {event.extendedProps.notes}
+              </Typography>
+            </Stack>
+          ) : null}
+
+          {images.length ? (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2, minmax(0, 1fr))",
+                  sm: "repeat(4, minmax(0, 1fr))",
+                },
+                gap: 1,
+              }}
+            >
+              {images.slice(0, 4).map((img) => (
+                <Box
+                  key={img.id}
+                  component="img"
+                  src={img.url}
+                  alt={img.fileName || "Event image"}
+                  sx={{
+                    width: "100%",
+                    aspectRatio: "4 / 3",
+                    objectFit: "cover",
+                    borderRadius: 2,
+                    border: "1px solid rgba(216,229,254,0.10)",
+                    display: "block",
+                  }}
+                />
+              ))}
+            </Box>
+          ) : null}
+        </Stack>
+      </Box>
+    </Card>
+  )
 }
 
 // -------------------------- Page --------------------------
 
 export default function SchedulerPage() {
-  // ---- SEO ----
   const SITE_NAME = "Bergquist Applications"
   const SITE_URL = "https://bergquistapplications.com"
   const PAGE_PATH = "/scheduler"
@@ -201,8 +539,8 @@ export default function SchedulerPage() {
   const TITLE = `Scheduler | ${SITE_NAME}`
   const DESCRIPTION = "Schedule events and view them on a calendar."
 
-  const OG_IMAGE = `${SITE_URL}/og/bergquist-applications.jpg`
-  const LAST_UPDATED = "February 22, 2026"
+  const OG_IMAGE = SOCIAL_IMAGE_URL
+  const LAST_UPDATED = "March 22, 2026"
 
   const jsonLdWebPage = {
     "@context": "https://schema.org",
@@ -214,13 +552,21 @@ export default function SchedulerPage() {
       name: SITE_NAME,
       url: SITE_URL,
     },
-    dateModified: "2026-02-22",
+    dateModified: "2026-03-22",
   }
 
-  // ---- Firestore events ----
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
   const [eventsErr, setEventsErr] = useState("")
+  const [currentUser, setCurrentUser] = useState(null)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      setCurrentUser(nextUser || null)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   useEffect(() => {
     const q = query(collection(db, "scheduleEvents"), orderBy("start", "asc"))
@@ -230,9 +576,14 @@ export default function SchedulerPage() {
         const out = []
         snap.forEach((d) => {
           const data = d.data() || {}
+          const ownerUid = data.ownerUid || null
+          if (ownerUid && ownerUid !== currentUser?.uid) return
+
           const start = data.start?.toDate ? data.start.toDate() : null
           const end = data.end?.toDate ? data.end.toDate() : null
           if (!start || !end) return
+
+          const rawImages = Array.isArray(data.images) ? data.images : []
 
           out.push({
             id: d.id,
@@ -242,6 +593,10 @@ export default function SchedulerPage() {
             allDay: !!data.allDay,
             extendedProps: {
               notes: String(data.notes || ""),
+              images: rawImages.map((img) => sanitizeImageMetadata(img)),
+              ownerUid,
+              scheduleKind: data.scheduleKind || "",
+              reminder: data.reminder || null,
             },
           })
         })
@@ -256,11 +611,10 @@ export default function SchedulerPage() {
     )
 
     return () => unsub()
-  }, [])
+  }, [currentUser?.uid])
 
-  // ---- Create/Edit modal state ----
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState("create") // "create" | "edit"
+  const [mode, setMode] = useState("create")
   const [activeId, setActiveId] = useState(null)
 
   const [title, setTitle] = useState("")
@@ -270,10 +624,98 @@ export default function SchedulerPage() {
   const [startDt, setStartDt] = useState(null)
   const [endDt, setEndDt] = useState(null)
 
+  const [existingImages, setExistingImages] = useState([])
+  const [newImages, setNewImages] = useState([])
+  const [removedExistingImages, setRemovedExistingImages] = useState([])
+
   const [saving, setSaving] = useState(false)
   const [saveErr, setSaveErr] = useState("")
+  const fileInputRef = useRef(null)
+  const busyRef = useRef(false)
+  const [preparingPhotos, setPreparingPhotos] = useState(false)
+  const newImagesRef = useRef(newImages)
+  const mountedRef = useRef(false)
+  newImagesRef.current = newImages
+  useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false; revokeNewImagePreviews(newImagesRef.current) }
+  }, [])
+
+  const [imagePreviewOpen, setImagePreviewOpen] = useState(false)
+  const [previewImage, setPreviewImage] = useState(null)
+
+  const [dayZoomOpen, setDayZoomOpen] = useState(false)
+  const [dayZoomDate, setDayZoomDate] = useState(null)
+  const dayZoomScrollYRef = useRef(0)
+  const restoreDayZoomScrollRef = useRef(false)
+
+  function openImagePreview(image) {
+    const src = image?.preview || image?.url || ""
+    if (!src) return
+    setPreviewImage({
+      src,
+      alt: image?.message || image?.fileName || "Event photo",
+      message: image?.message || "",
+    })
+    setImagePreviewOpen(true)
+  }
+
+  function closeImagePreview() {
+    setImagePreviewOpen(false)
+    setPreviewImage(null)
+  }
+
+  function openDayZoom(date) {
+    if (!date) return
+
+    if (typeof window !== "undefined") {
+      dayZoomScrollYRef.current = window.scrollY || window.pageYOffset || 0
+      restoreDayZoomScrollRef.current = true
+    }
+
+    setDayZoomDate(new Date(date))
+    setDayZoomOpen(true)
+  }
+
+  function closeDayZoom() {
+    setDayZoomOpen(false)
+    setDayZoomDate(null)
+  }
+
+  const dayZoomEvents = useMemo(() => {
+    if (!dayZoomDate) return []
+    return [...events]
+      .filter((ev) => isSameDay(ev.start, dayZoomDate))
+      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+  }, [events, dayZoomDate])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if (dayZoomOpen) return
+    if (!restoreDayZoomScrollRef.current) return
+
+    const restoreY = dayZoomScrollYRef.current || 0
+
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: restoreY,
+        left: 0,
+        behavior: "auto",
+      })
+      restoreDayZoomScrollRef.current = false
+    })
+  }, [dayZoomOpen])
+
+  function revokeNewImagePreviews(images) {
+    for (const img of images || []) {
+      try {
+        if (img?.preview) URL.revokeObjectURL(img.preview)
+      } catch {}
+    }
+  }
 
   function resetModal() {
+    revokeNewImagePreviews(newImages)
     setMode("create")
     setActiveId(null)
     setTitle("")
@@ -281,6 +723,9 @@ export default function SchedulerPage() {
     setAllDay(false)
     setStartDt(null)
     setEndDt(null)
+    setExistingImages([])
+    setNewImages([])
+    setRemovedExistingImages([])
     setSaving(false)
     setSaveErr("")
   }
@@ -289,6 +734,9 @@ export default function SchedulerPage() {
     const base = date instanceof Date ? date : new Date()
     const s = atDefaultTime(base, 9, 0)
     const e = atDefaultTime(base, 10, 0)
+
+    revokeNewImagePreviews(newImages)
+
     setMode("create")
     setActiveId(null)
     setTitle("")
@@ -296,6 +744,9 @@ export default function SchedulerPage() {
     setAllDay(false)
     setStartDt(s)
     setEndDt(e)
+    setExistingImages([])
+    setNewImages([])
+    setRemovedExistingImages([])
     setSaveErr("")
     setOpen(true)
   }
@@ -303,20 +754,49 @@ export default function SchedulerPage() {
   function openForEdit(eventInfo) {
     const ev = eventInfo?.event
     if (!ev) return
+
+    revokeNewImagePreviews(newImages)
+
     setMode("edit")
     setActiveId(ev.id)
     setTitle(ev.title || "")
     setNotes(ev.extendedProps?.notes || "")
     setAllDay(!!ev.allDay)
     setStartDt(ev.start ? new Date(ev.start) : null)
-    setEndDt(ev.end ? new Date(ev.end) : (ev.start ? new Date(ev.start) : null))
+    setEndDt(ev.end ? new Date(ev.end) : ev.start ? new Date(ev.start) : null)
+    setExistingImages(
+      (Array.isArray(ev.extendedProps?.images) ? ev.extendedProps.images : []).map(
+        (img) => sanitizeImageMetadata(img)
+      )
+    )
+    setNewImages([])
+    setRemovedExistingImages([])
     setSaveErr("")
     setOpen(true)
   }
 
+  function openExistingEventFromDayZoom(eventItem) {
+    openForEdit({
+      event: {
+        id: eventItem.id,
+        title: eventItem.title,
+        allDay: eventItem.allDay,
+        start: eventItem.start,
+        end: eventItem.end,
+        extendedProps: eventItem.extendedProps || {},
+      },
+    })
+  }
+
+  function openCreateFromDayZoom() {
+    if (!dayZoomDate) return
+    openForCreate(dayZoomDate)
+  }
+
   function closeModal() {
+    if (busyRef.current) return
     setOpen(false)
-    setTimeout(() => resetModal(), 120)
+    resetModal()
   }
 
   const canSubmit = useMemo(() => {
@@ -327,7 +807,6 @@ export default function SchedulerPage() {
     return e > s
   }, [startDt, endDt])
 
-  // ---- conflict detection ----
   const conflictMessage = useMemo(() => {
     if (!startDt || !endDt) return ""
     for (const ev of events) {
@@ -343,7 +822,79 @@ export default function SchedulerPage() {
     return ""
   }, [startDt, endDt, events, mode, activeId])
 
+  function triggerImageSelect() {
+    if (fileInputRef.current) fileInputRef.current.click()
+  }
+
+  async function handleImageFilesSelected(e) {
+    const files = Array.from(e.target.files || [])
+    e.target.value = ""
+    if (!files.length || busyRef.current) return
+    busyRef.current = true
+    setPreparingPhotos(true)
+    try {
+      await validatePhotoFiles(files, existingImages.length + newImages.length)
+    } catch (error) {
+      if (!mountedRef.current) return
+      setSaveErr(error.message || "Could not read these photos.")
+      busyRef.current = false
+      setPreparingPhotos(false)
+      return
+    }
+
+    if (!mountedRef.current) return
+    const mapped = files.map((file) => ({
+      id: makeClientId("newimg"),
+      file,
+      fileName: file.name || "image",
+      contentType: file.type || "",
+      size: Number(file.size || 0),
+      message: "",
+      preview: fileToPreview(file),
+    }))
+
+    setNewImages((prev) => [...prev, ...mapped])
+    newImagesRef.current = [...newImagesRef.current, ...mapped]
+    setSaveErr("")
+    busyRef.current = false
+    setPreparingPhotos(false)
+  }
+
+  function updateNewImageMessage(id, message) {
+    setNewImages((prev) =>
+      prev.map((img) => (img.id === id ? { ...img, message } : img))
+    )
+  }
+
+  function updateExistingImageMessage(id, message) {
+    setExistingImages((prev) =>
+      prev.map((img) => (img.id === id ? { ...img, message } : img))
+    )
+  }
+
+  function removeNewImage(id) {
+    setNewImages((prev) => {
+      const target = prev.find((img) => img.id === id)
+      try {
+        if (target?.preview) URL.revokeObjectURL(target.preview)
+      } catch {}
+      return prev.filter((img) => img.id !== id)
+    })
+  }
+
+  function removeExistingImage(id) {
+    setExistingImages((prev) => {
+      const target = prev.find((img) => img.id === id)
+      if (target) {
+        setRemovedExistingImages((old) => [...old, target])
+      }
+      return prev.filter((img) => img.id !== id)
+    })
+  }
+
+
   async function handleSubmit() {
+    if (busyRef.current) return
     setSaveErr("")
 
     if (!canSubmit) {
@@ -356,50 +907,61 @@ export default function SchedulerPage() {
       return
     }
 
+    busyRef.current = true
     setSaving(true)
+
     try {
-      const payload = {
+      const basePayload = {
         title: String(title || "Scheduled Event"),
         notes: String(notes || ""),
         allDay: !!allDay,
         start: Timestamp.fromDate(new Date(startDt)),
         end: Timestamp.fromDate(new Date(endDt)),
+        ...(currentUser?.uid ? { ownerUid: currentUser.uid } : {}),
+        ...(currentUser?.email ? { ownerEmail: currentUser.email } : {}),
         updatedAt: serverTimestamp(),
       }
 
-      if (mode === "create") {
-        await addDoc(collection(db, "scheduleEvents"), {
-          ...payload,
-          createdAt: serverTimestamp(),
-        })
-      } else if (mode === "edit" && activeId) {
-        await updateDoc(doc(db, "scheduleEvents", activeId), payload)
-      }
+      await saveSchedulerEvent({
+        eventId: mode === "edit" ? activeId : null,
+        payload: { ...basePayload, ...(mode === "create" ? { createdAt: serverTimestamp() } : {}) },
+        existingImages: existingImages.map(sanitizeImageMetadata),
+        newImages,
+        removedImages: removedExistingImages,
+      })
+      busyRef.current = false
 
+      if (!mountedRef.current) return
       setSaving(false)
       closeModal()
     } catch (e) {
+      if (!mountedRef.current) return
       setSaving(false)
+      busyRef.current = false
       setSaveErr(e?.message || "Failed to save event.")
     }
   }
 
   async function handleDelete() {
-    if (!activeId) return
+    if (!activeId || busyRef.current) return
     setSaveErr("")
+    busyRef.current = true
     setSaving(true)
+
     try {
-      await deleteDoc(doc(db, "scheduleEvents", activeId))
+      const imagesToDelete = [...existingImages, ...removedExistingImages]
+      await deleteSchedulerEvent(activeId, imagesToDelete)
+      busyRef.current = false
+      if (!mountedRef.current) return
       setSaving(false)
       closeModal()
     } catch (e) {
       setSaving(false)
-      setSaveErr(e?.message || "Failed to delete event.")
+      busyRef.current = false
+      if (mountedRef.current) setSaveErr(e?.message || "Failed to delete event.")
     }
   }
 
-  // ✅ Keep "+X more" popover open unless the user clicks its own close button,
-  // AND do not break focusing/typing inside the MUI edit dialog.
   useEffect(() => {
     function isMorePopoverOpen() {
       return !!document.querySelector(".fc-more-popover")
@@ -411,15 +973,9 @@ export default function SchedulerPage() {
       const t = e.target
       if (!(t instanceof Element)) return
 
-      // Inside the popover: always allow
       if (t.closest(".fc-more-popover")) return
-
-      // Allow the popover close button
       if (t.closest(".fc-popover-close")) return
 
-      // ✅ If user clicks inside the MUI Dialog (portal), we MUST NOT preventDefault
-      // (preventDefault blocks focus, which blocks typing).
-      // But we still stop propagation so FullCalendar can't auto-close the popover.
       if (
         t.closest(".MuiDialog-root") ||
         t.closest(".MuiDialog-container") ||
@@ -429,11 +985,12 @@ export default function SchedulerPage() {
         t.closest(".MuiModal-root")
       ) {
         e.stopPropagation()
-        if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation()
+        if (typeof e.stopImmediatePropagation === "function") {
+          e.stopImmediatePropagation()
+        }
         return
       }
 
-      // ✅ Allow normal calendar interactions while popover is open
       if (
         t.closest(".fc-event") ||
         t.closest(".fc-daygrid-day") ||
@@ -446,20 +1003,22 @@ export default function SchedulerPage() {
         return
       }
 
-      // Otherwise: blank outside click -> block (prevents auto-close)
       e.preventDefault()
       e.stopPropagation()
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation()
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation()
+      }
     }
 
     function onDocKeyDownCapture(e) {
       if (!isMorePopoverOpen()) return
       if (e.key !== "Escape") return
 
-      // Prevent Escape from closing the popover
       e.preventDefault()
       e.stopPropagation()
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation()
+      if (typeof e.stopImmediatePropagation === "function") {
+        e.stopImmediatePropagation()
+      }
     }
 
     document.addEventListener("mousedown", onDocMouseDownCapture, true)
@@ -471,7 +1030,6 @@ export default function SchedulerPage() {
     }
   }, [])
 
-  // ---- Styles for FullCalendar (theme-match) ----
   const calendarCss = useMemo(
     () => `
       .fc {
@@ -482,12 +1040,10 @@ export default function SchedulerPage() {
         --fc-today-bg-color: rgba(124,58,237,0.14);
       }
 
-      /* ✅ Prevent clipping: allow popovers to escape the calendar bounds */
       .fc, .fc-view-harness, .fc-scroller {
         overflow: visible !important;
       }
 
-      /* ✅ Ensure the popover paints above everything */
       .fc .fc-popover {
         z-index: 9999 !important;
       }
@@ -513,8 +1069,10 @@ export default function SchedulerPage() {
         text-transform: none;
         font-weight: 600;
       }
+
       .fc .fc-button:hover { background: rgba(255,255,255,0.09); }
       .fc .fc-button:disabled { opacity: 0.55; }
+
       .fc .fc-button-primary:not(:disabled).fc-button-active {
         background: linear-gradient(90deg, rgba(124,58,237,0.35), rgba(34,211,238,0.22));
         border-color: rgba(216, 229, 254, 0.18);
@@ -525,12 +1083,16 @@ export default function SchedulerPage() {
         font-weight: 700;
         text-decoration: none;
       }
+
       .fc .fc-daygrid-day-number {
         color: rgba(216, 229, 254, 0.78);
         text-decoration: none;
       }
 
-      /* Calendar events keep their purply style */
+      .fc .fc-daygrid-day {
+        cursor: pointer;
+      }
+
       .fc .fc-daygrid-event {
         border-radius: 10px;
         padding: 2px 8px;
@@ -540,18 +1102,17 @@ export default function SchedulerPage() {
         font-weight: 800;
       }
 
-      /* "+X more" link */
       .fc .fc-more-link {
         color: rgba(216, 229, 254, 0.92);
         font-weight: 800;
         text-decoration: none;
       }
+
       .fc .fc-more-link:hover {
         text-decoration: underline;
         opacity: 0.95;
       }
 
-      /* ✅ Solid background ONLY for the "+X more" popover */
       .fc .fc-more-popover {
         background-color: #070813 !important;
         border: 1px solid rgba(216, 229, 254, 0.16) !important;
@@ -590,15 +1151,12 @@ export default function SchedulerPage() {
     []
   )
 
-  // ✅ Very high-specificity styling so the DateTimePicker value never renders black
   const pickerTextFieldSx = useMemo(
     () => ({
       "& .MuiInputBase-root": {
         backgroundColor: "rgba(255,255,255,0.06)",
         borderRadius: 2,
       },
-
-      // Force the actual input value color
       "&& input": {
         color: "rgba(255,255,255,0.95) !important",
         WebkitTextFillColor: "rgba(255,255,255,0.95) !important",
@@ -607,21 +1165,18 @@ export default function SchedulerPage() {
         color: "rgba(255,255,255,0.95) !important",
         WebkitTextFillColor: "rgba(255,255,255,0.95) !important",
       },
-
       "& .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(216, 229, 254, 0.22)",
       },
       "&:hover .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(216, 229, 254, 0.32)",
       },
-
       "& .MuiInputLabel-root": {
         color: "rgba(245, 248, 255, 0.82)",
       },
       "& .MuiInputLabel-root.Mui-focused": {
         color: "rgba(245, 248, 255, 0.92)",
       },
-
       "& .MuiSvgIcon-root": {
         color: "rgba(245, 248, 255, 0.90)",
       },
@@ -629,21 +1184,39 @@ export default function SchedulerPage() {
     []
   )
 
-  // ✅ Ensure event name shows by using FullCalendar's recommended eventInfo fields
   function renderEventContent(eventInfo) {
+    const images = Array.isArray(eventInfo.event.extendedProps?.images)
+      ? eventInfo.event.extendedProps.images
+      : []
+
     return (
-      <div style={{ display: "flex", gap: 8, alignItems: "baseline", minWidth: 0 }}>
-        {eventInfo.timeText ? (
-          <span style={{ fontWeight: 900, opacity: 0.95, whiteSpace: "nowrap" }}>
-            {eventInfo.timeText}
+      <div style={{ display: "flex", gap: 8, alignItems: "center", minWidth: 0 }}>
+        <SchedulerPhotoIndicator count={images.length} />
+
+        <div
+          style={{ display: "flex", gap: 8, alignItems: "baseline", minWidth: 0 }}
+        >
+          {eventInfo.timeText ? (
+            <span style={{ fontWeight: 900, opacity: 0.95, whiteSpace: "nowrap" }}>
+              {eventInfo.timeText}
+            </span>
+          ) : null}
+          <span
+            style={{
+              fontWeight: 800,
+              minWidth: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {eventInfo.event.title}
           </span>
-        ) : null}
-        <span style={{ fontWeight: 800, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis" }}>
-          {eventInfo.event.title}
-        </span>
+        </div>
       </div>
     )
   }
+
+  const totalImageCount = existingImages.length + newImages.length
 
   return (
     <Box sx={{ width: "100%", backgroundColor: "black", minHeight: "100vh" }}>
@@ -662,10 +1235,14 @@ export default function SchedulerPage() {
         <meta property="og:description" content={DESCRIPTION} />
         <meta property="og:url" content={PAGE_URL} />
         <meta property="og:image" content={OG_IMAGE} />
+        <meta property="og:image:width" content={SOCIAL_IMAGE_WIDTH} />
+        <meta property="og:image:height" content={SOCIAL_IMAGE_HEIGHT} />
+        <meta property="og:image:alt" content={SOCIAL_IMAGE_ALT} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={TITLE} />
         <meta name="twitter:description" content={DESCRIPTION} />
         <meta name="twitter:image" content={OG_IMAGE} />
+        <meta name="twitter:image:alt" content={SOCIAL_IMAGE_ALT} />
         <meta name="theme-color" content="#000000" />
         <script
           type="application/ld+json"
@@ -674,24 +1251,20 @@ export default function SchedulerPage() {
         <style>{calendarCss}</style>
       </Head>
 
-      {/* Hero */}
       <Box
         sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
-          pt: { xs: 10, sm: 12, md: 14 },
-          pb: { xs: 6, sm: 7, md: 8 },
+          width: "100vw",
+          maxWidth: "100%",
+          px: 0,
+          pb: { xs: 2, sm: 2.5, md: 3 },
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
+        <Box sx={{ width: "100%" }}>
           <RevealOnScroll>
-            
             <Typography
               variant="body2"
               align="center"
-              sx={{ mt: 1.5, color: "rgba(216, 229, 254, 0.68)" }}
+              sx={{ mt: 0.25, color: "rgba(216, 229, 254, 0.68)" }}
             >
               Last updated: {LAST_UPDATED}
             </Typography>
@@ -699,29 +1272,26 @@ export default function SchedulerPage() {
         </Box>
       </Box>
 
-      {/* Content */}
       <Box
         sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
-          pb: { xs: 10, sm: 12, md: 14 },
+          width: "100vw",
+          maxWidth: "100%",
+          px: 0,
+          pb: { xs: 8, sm: 10, md: 12 },
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
-          <Stack spacing={{ xs: 2.5, sm: 3 }}>
+        <Box sx={{ width: "100%" }}>
+          <Stack spacing={{ xs: 2, sm: 2.5 }}>
             <RevealOnScroll>
               <Box
                 sx={{
                   position: "relative",
-                  borderRadius: 3,
+                  borderRadius: 0,
                   overflow: "visible",
-                  background:
-                    "linear-gradient(180deg, rgba(124,58,237,0.08) 0%, rgba(34,211,238,0.03) 100%)",
-                  border: "1px solid rgba(216, 229, 254, 0.12)",
-                  boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
-                  p: { xs: 2.0, sm: 2.5, md: 3 },
+                  background: "black",
+                  border: "none",
+                  boxShadow: "none",
+                  p: { xs: 1, sm: 1.25, md: 1.5 },
                 }}
               >
                 <Stack
@@ -729,7 +1299,7 @@ export default function SchedulerPage() {
                   spacing={1.25}
                   alignItems={{ xs: "flex-start", sm: "center" }}
                   justifyContent="space-between"
-                  sx={{ mb: 1.75 }}
+                  sx={{ mb: 1.1 }}
                 >
                   <Box>
                     <GradientTitle
@@ -744,7 +1314,7 @@ export default function SchedulerPage() {
                         ? "Loading events…"
                         : eventsErr
                         ? `Error: ${eventsErr}`
-                        : `Showing ${events.length} event${events.length === 1 ? "" : "s"}.`}
+                        : `Showing ${events.length} event${events.length === 1 ? "" : "s"}. Click any day or event to open the full day view.`}
                     </SubText>
                   </Box>
 
@@ -773,27 +1343,29 @@ export default function SchedulerPage() {
                 <Box
                   sx={{
                     position: "relative",
-                    borderRadius: 3,
-                    border: "1px solid rgba(216, 229, 254, 0.12)",
+                    borderRadius: 0,
+                    border: "none",
                     overflow: "visible",
-                    background: "rgba(0,0,0,0.35)",
-                    px: { xs: 0.75, sm: 1.25 },
-                    py: { xs: 1.0, sm: 1.25 },
+                    background: "black",
+                    px: { xs: 0.35, sm: 0.6 },
+                    py: { xs: 0.35, sm: 0.6 },
                   }}
                 >
                   <FullCalendar
-                    plugins={[dayGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
                     height="auto"
                     headerToolbar={{
                       left: "prev,next today",
                       center: "title",
-                      // ✅ Add week/day view switches (dayGridPlugin already supports these)
                       right: "dayGridMonth,dayGridWeek,dayGridDay",
                     }}
                     events={events}
-                    dateClick={(info) => openForCreate(info.date)}
-                    eventClick={(info) => openForEdit(info)}
+                    dateClick={(info) => openDayZoom(info.date)}
+                    eventClick={(info) => {
+                      info.jsEvent?.preventDefault?.()
+                      info.jsEvent?.stopPropagation?.()
+                      openForEdit(info)
+                    }}
                     dayMaxEvents={3}
                     fixedWeekCount={false}
                     nowIndicator
@@ -805,11 +1377,13 @@ export default function SchedulerPage() {
                       meridiem: "short",
                     }}
                     eventContent={renderEventContent}
+                    eventInteractive
                   />
                 </Box>
 
-                <SubText sx={{ mt: 1.5, fontSize: 14, color: "rgba(216, 229, 254, 0.68)" }}>
-                  Tip: click any day to prefill an event for that date. Click an existing event to edit.
+                <SubText sx={{ mt: 1.1, fontSize: 14, color: "rgba(216, 229, 254, 0.68)" }}>
+                  Click an event to view its details and photos, or a day to see
+                  its schedule.
                 </SubText>
               </Box>
             </RevealOnScroll>
@@ -817,13 +1391,12 @@ export default function SchedulerPage() {
         </Box>
       </Box>
 
-      {/* Create/Edit Dialog */}
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Dialog
           open={open}
           onClose={closeModal}
           fullWidth
-          maxWidth="sm"
+          maxWidth="md"
           sx={{
             "&& input": {
               color: "rgba(255,255,255,0.95) !important",
@@ -863,102 +1436,305 @@ export default function SchedulerPage() {
               <GradientTitle variant="h6" sx={{ textShadow: "none", letterSpacing: 0.9 }}>
                 {mode === "edit" ? "Edit Event" : "Schedule Event"}
               </GradientTitle>
-              <Typography sx={{ mt: 0.5, color: "rgba(216, 229, 254, 0.70)", fontSize: 13.5 }}>
-                Set a start time, end time, and optional details.
+              <Typography
+                sx={{ mt: 0.5, color: "rgba(216, 229, 254, 0.70)", fontSize: 13.5 }}
+              >
+                Add scheduling details, notes, and an image gallery for the event.
               </Typography>
             </Box>
 
-            <IconButton onClick={closeModal} sx={{ color: "rgba(216, 229, 254, 0.90)" }}>
+            <IconButton
+              onClick={closeModal}
+              aria-label="Close event"
+              disabled={saving || preparingPhotos}
+              sx={{ color: "rgba(216, 229, 254, 0.90)" }}
+            >
               <CloseIcon />
             </IconButton>
           </DialogTitle>
 
           <DialogContent sx={{ pt: 2.5 }}>
-            <Stack spacing={2.0}>
+            <fieldset disabled={saving || preparingPhotos} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+            <Stack spacing={2.2}>
               <br />
-              <TextField
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                label="Title"
-                placeholder="e.g. Client call, Delivery, Booking…"
-                fullWidth
-                InputLabelProps={{ sx: { color: "rgba(245, 248, 255, 0.82)" } }}
+
+              <Box
                 sx={{
-                  "& .MuiInputBase-root": {
-                    backgroundColor: "rgba(255,255,255,0.06)",
-                    borderRadius: 2,
-                  },
-                  "&& input": {
-                    color: "rgba(255,255,255,0.95) !important",
-                    WebkitTextFillColor: "rgba(255,255,255,0.95) !important",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(216, 229, 254, 0.20)",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(216, 229, 254, 0.30)",
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgba(245, 248, 255, 0.92)",
-                  },
+                  borderRadius: 3,
+                  border: "1px solid rgba(216, 229, 254, 0.10)",
+                  background: "rgba(255,255,255,0.02)",
+                  p: { xs: 1.4, sm: 1.8 },
                 }}
-              />
+              >
+                <GradientTitle variant="subtitle1" sx={{ textShadow: "none", mb: 1.25 }}>
+                  Event Details
+                </GradientTitle>
 
-              <FormControlLabel
-                control={<Switch checked={allDay} onChange={(e) => setAllDay(e.target.checked)} />}
-                label={<Typography sx={{ color: "rgba(245, 248, 255, 0.82)" }}>All-day event</Typography>}
-              />
+                <Stack spacing={2}>
+                  <TextField
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    label="Title"
+                    placeholder="e.g. Client call, Delivery, Booking…"
+                    fullWidth
+                    InputLabelProps={{ sx: { color: "rgba(245, 248, 255, 0.82)" } }}
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        backgroundColor: "rgba(255,255,255,0.06)",
+                        borderRadius: 2,
+                      },
+                      "&& input": {
+                        color: "rgba(255,255,255,0.95) !important",
+                        WebkitTextFillColor:
+                          "rgba(255,255,255,0.95) !important",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(216, 229, 254, 0.20)",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(216, 229, 254, 0.30)",
+                      },
+                      "& .MuiInputLabel-root.Mui-focused": {
+                        color: "rgba(245, 248, 255, 0.92)",
+                      },
+                    }}
+                  />
 
-              <DateTimePicker
-                label="Start"
-                value={startDt}
-                onChange={(v) => setStartDt(v)}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    sx: pickerTextFieldSx,
-                  },
-                }}
-              />
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={allDay}
+                        onChange={(e) => setAllDay(e.target.checked)}
+                      />
+                    }
+                    label={
+                      <Typography sx={{ color: "rgba(245, 248, 255, 0.82)" }}>
+                        All-day event
+                      </Typography>
+                    }
+                  />
 
-              <DateTimePicker
-                label="End"
-                value={endDt}
-                onChange={(v) => setEndDt(v)}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    sx: pickerTextFieldSx,
-                  },
-                }}
-              />
+                  <DateTimePicker
+                    label="Start"
+                    value={startDt}
+                    onChange={(v) => setStartDt(v)}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        sx: pickerTextFieldSx,
+                      },
+                    }}
+                  />
 
-              <TextField
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                label="Notes (optional)"
-                placeholder="Extra details…"
-                fullWidth
-                multiline
-                minRows={3}
-                InputLabelProps={{ sx: { color: "rgba(245, 248, 255, 0.82)" } }}
+                  <DateTimePicker
+                    label="End"
+                    value={endDt}
+                    onChange={(v) => setEndDt(v)}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        sx: pickerTextFieldSx,
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    label="Notes (optional)"
+                    placeholder="Extra details…"
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    InputLabelProps={{ sx: { color: "rgba(245, 248, 255, 0.82)" } }}
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        backgroundColor: "rgba(255,255,255,0.06)",
+                        borderRadius: 2,
+                      },
+                      "&& textarea": {
+                        color: "rgba(255,255,255,0.95) !important",
+                        WebkitTextFillColor:
+                          "rgba(255,255,255,0.95) !important",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(216, 229, 254, 0.20)",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(216, 229, 254, 0.30)",
+                      },
+                    }}
+                  />
+                </Stack>
+              </Box>
+
+              <Box
                 sx={{
-                  "& .MuiInputBase-root": {
-                    backgroundColor: "rgba(255,255,255,0.06)",
-                    borderRadius: 2,
-                  },
-                  "&& textarea": {
-                    color: "rgba(255,255,255,0.95) !important",
-                    WebkitTextFillColor: "rgba(255,255,255,0.95) !important",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(216, 229, 254, 0.20)",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(216, 229, 254, 0.30)",
-                  },
+                  borderRadius: 3,
+                  border: "1px solid rgba(216, 229, 254, 0.10)",
+                  background: "rgba(255,255,255,0.02)",
+                  p: { xs: 1.4, sm: 1.8 },
                 }}
-              />
+              >
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={1.25}
+                  alignItems={{ xs: "flex-start", sm: "center" }}
+                  justifyContent="space-between"
+                  sx={{ mb: 1.5 }}
+                >
+                  <Box>
+                    <GradientTitle variant="subtitle1" sx={{ textShadow: "none", mb: 0.55 }}>
+                      Event Photos
+                    </GradientTitle>
+                    <Typography
+                      sx={{ color: "rgba(216, 229, 254, 0.68)", fontSize: 13.5 }}
+                    >
+                      JPEG, PNG, or WebP. Up to 8 photos, 5 MB each.
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    onClick={triggerImageSelect}
+                    disabled={saving || preparingPhotos || totalImageCount >= MAX_PHOTOS}
+                    startIcon={<AddPhotoAlternateRoundedIcon />}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: "none",
+                      fontWeight: 800,
+                      px: 1.8,
+                      py: 1,
+                      color: "rgba(245,248,255,0.92)",
+                      border: "1px solid rgba(216, 229, 254, 0.16)",
+                      background: "rgba(255,255,255,0.04)",
+                      "&:hover": {
+                        background: "rgba(255,255,255,0.07)",
+                      },
+                    }}
+                  >
+                    Add photos
+                  </Button>
+                </Stack>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={PHOTO_ACCEPT}
+                  aria-label="Event photos"
+                  multiple
+                  hidden
+                  onChange={handleImageFilesSelected}
+                />
+
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  flexWrap="wrap"
+                  useFlexGap
+                  sx={{ mb: totalImageCount ? 1.5 : 0 }}
+                >
+                  <Chip
+                    label={`${totalImageCount} image${totalImageCount === 1 ? "" : "s"}`}
+                    sx={{
+                      background: "rgba(124,58,237,0.18)",
+                      color: "rgba(245,248,255,0.92)",
+                      border: "1px solid rgba(216, 229, 254, 0.14)",
+                    }}
+                  />
+                  <Chip
+                    label={`${existingImages.length} saved`}
+                    sx={{
+                      background: "rgba(34,211,238,0.16)",
+                      color: "rgba(245,248,255,0.92)",
+                      border: "1px solid rgba(216, 229, 254, 0.14)",
+                    }}
+                  />
+                  <Chip
+                    label={`${newImages.length} pending upload`}
+                    sx={{
+                      background: "rgba(255,255,255,0.08)",
+                      color: "rgba(245,248,255,0.92)",
+                      border: "1px solid rgba(216, 229, 254, 0.14)",
+                    }}
+                  />
+                </Stack>
+
+                {totalImageCount ? (
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(2, minmax(0, 1fr))",
+                      },
+                      gap: 1.4,
+                    }}
+                  >
+                    {existingImages.map((image) => (
+                      <EventImageCard
+                        key={image.id}
+                        image={image}
+                        isExisting
+                        onPreview={openImagePreview}
+                        onRemove={() => removeExistingImage(image.id)}
+                        onMessageChange={(message) =>
+                          updateExistingImageMessage(image.id, message)
+                        }
+                      />
+                    ))}
+
+                    {newImages.map((image) => (
+                      <EventImageCard
+                        key={image.id}
+                        image={image}
+                        onPreview={openImagePreview}
+                        onRemove={() => removeNewImage(image.id)}
+                        onMessageChange={(message) =>
+                          updateNewImageMessage(image.id, message)
+                        }
+                      />
+                    ))}
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      borderRadius: 3,
+                      border: "1px dashed rgba(216, 229, 254, 0.18)",
+                      background: "rgba(255,255,255,0.02)",
+                      minHeight: 170,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                      px: 2,
+                    }}
+                  >
+                    <Box>
+                      <PhotoLibraryRoundedIcon
+                        sx={{
+                          fontSize: 34,
+                          color: "rgba(216, 229, 254, 0.52)",
+                          mb: 0.7,
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          color: "rgba(245,248,255,0.90)",
+                          fontWeight: 700,
+                          mb: 0.4,
+                        }}
+                      >
+                        No images added yet
+                      </Typography>
+                      <Typography
+                        sx={{ color: "rgba(216, 229, 254, 0.62)", fontSize: 13.5 }}
+                      >
+                        Upload event photos, flyers, mockups, or reference images.
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+              </Box>
 
               {conflictMessage ? (
                 <Typography sx={{ color: "rgba(255, 170, 70, 0.95)", fontSize: 13.5 }}>
@@ -966,12 +1742,16 @@ export default function SchedulerPage() {
                 </Typography>
               ) : null}
 
+              {preparingPhotos && <Typography role="status">Preparing photos...</Typography>}
               {saveErr ? (
-                <Typography sx={{ color: "rgba(255, 120, 120, 0.95)", fontSize: 13.5 }}>
-                  {saveErr}
+                <Typography
+                  sx={{ color: "rgba(255, 120, 120, 0.95)", fontSize: 13.5 }}
+                >
+                  <span role="alert">{saveErr}</span>
                 </Typography>
               ) : null}
             </Stack>
+            </fieldset>
           </DialogContent>
 
           <DialogActions
@@ -1022,29 +1802,297 @@ export default function SchedulerPage() {
 
               <Button
                 onClick={handleSubmit}
-                disabled={saving || !canSubmit || !!conflictMessage}
+                disabled={saving || preparingPhotos || !canSubmit || !!conflictMessage}
                 variant="contained"
                 sx={{
                   borderRadius: 2,
                   textTransform: "none",
                   fontWeight: 900,
-                  px: 2,
+                  px: 2.25,
                   background:
-                    "linear-gradient(90deg, rgba(124,58,237,0.85), rgba(34,211,238,0.65))",
-                  boxShadow: "0 18px 55px rgba(0,0,0,0.45)",
+                    "linear-gradient(90deg, rgba(124,58,237,0.88), rgba(34,211,238,0.68))",
+                  boxShadow: "0 16px 45px rgba(0,0,0,0.38)",
                   "&:hover": {
                     background:
-                      "linear-gradient(90deg, rgba(124,58,237,0.92), rgba(34,211,238,0.72))",
+                      "linear-gradient(90deg, rgba(124,58,237,0.94), rgba(34,211,238,0.76))",
                   },
                   "&.Mui-disabled": {
-                    opacity: 0.55,
+                    color: "rgba(255,255,255,0.55)",
+                    background: "rgba(255,255,255,0.10)",
                   },
                 }}
               >
-                {saving ? "Saving…" : mode === "edit" ? "Update" : "Submit"}
+                {saving
+                  ? mode === "edit"
+                    ? "Updating…"
+                    : "Saving…"
+                  : mode === "edit"
+                  ? "Update"
+                  : "Submit"}
               </Button>
             </Box>
           </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={imagePreviewOpen}
+          onClose={closeImagePreview}
+          aria-label="Event photo preview"
+          fullScreen
+          PaperProps={{
+            sx: {
+              width: "100vw",
+              maxWidth: "100vw",
+              height: "100vh",
+              maxHeight: "100vh",
+              margin: 0,
+              borderRadius: 0,
+              background: "rgba(0,0,0,0.96)",
+              boxShadow: "none",
+              overflow: "hidden",
+            },
+          }}
+          BackdropProps={{
+            sx: {
+              backgroundColor: "rgba(0,0,0,0.82)",
+            },
+          }}
+        >
+          <IconButton aria-label="Close photo preview" onClick={closeImagePreview} sx={{ position: "absolute", right: 16, top: 16, zIndex: 2, color: "white", backgroundColor: "rgba(0,0,0,0.7)" }}><CloseIcon /></IconButton>
+          <Box
+            onClick={closeImagePreview}
+            sx={{
+              width: "100vw",
+              height: "100vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              px: 0,
+              py: 0,
+              cursor: "pointer",
+              position: "relative",
+              background: "rgba(0,0,0,0.96)",
+            }}
+          >
+            {previewImage?.src ? (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                }}
+              >
+                <Box
+                  component="img"
+                  src={previewImage.src}
+                  alt={previewImage.alt || "Preview image"}
+                  sx={{
+                    width: "100%",
+                    maxWidth: "100vw",
+                    maxHeight: "100vh",
+                    objectFit: "contain",
+                    display: "block",
+                    userSelect: "none",
+                    pointerEvents: "none",
+                  }}
+                />
+
+                {previewImage?.message ? (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      px: { xs: 2, sm: 3, md: 4 },
+                      py: 2,
+                      background:
+                        "linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.78) 100%)",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "rgba(255,255,255,0.96)",
+                        textAlign: "center",
+                        fontSize: { xs: 14, sm: 15, md: 16 },
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {previewImage.message}
+                    </Typography>
+                  </Box>
+                ) : null}
+              </Box>
+            ) : null}
+          </Box>
+        </Dialog>
+
+        <Dialog
+          open={dayZoomOpen}
+          onClose={(event, reason) => {
+            if (reason === "backdropClick" || reason === "escapeKeyDown") return
+          }}
+          fullScreen
+          disableEscapeKeyDown
+          PaperProps={{
+            sx: {
+              width: "100vw",
+              maxWidth: "100vw",
+              height: "100vh",
+              maxHeight: "100vh",
+              margin: 0,
+              borderRadius: 0,
+              background: "linear-gradient(180deg, #03040A 0%, #070813 100%)",
+              boxShadow: "none",
+              overflow: "hidden",
+            },
+          }}
+          BackdropProps={{
+            sx: {
+              backgroundColor: "rgba(0,0,0,0.82)",
+            },
+          }}
+        >
+          <Box
+            sx={{
+              width: "100vw",
+              height: "100vh",
+              overflowY: "auto",
+              background: "linear-gradient(180deg, #03040A 0%, #070813 100%)",
+            }}
+          >
+            <Box
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 5,
+                backdropFilter: "blur(16px)",
+                background: "rgba(5,6,10,0.78)",
+                borderBottom: "1px solid rgba(216,229,254,0.10)",
+              }}
+            >
+              <Box sx={{ px: { xs: 2, sm: 2.5, md: 3 }, py: { xs: 1.5, sm: 1.8 } }}>
+                <Stack spacing={1.25}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    spacing={1.25}
+                  >
+                    <Stack direction="row" spacing={1.25} alignItems="center">
+                      <IconButton
+                        onClick={closeDayZoom}
+                        sx={{
+                          color: "rgba(245,248,255,0.94)",
+                          border: "1px solid rgba(216,229,254,0.14)",
+                          background: "rgba(255,255,255,0.04)",
+                          "&:hover": {
+                            background: "rgba(255,255,255,0.08)",
+                          },
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+
+                      <Box>
+                        <GradientTitle
+                          variant="h5"
+                          sx={{ textShadow: "none", letterSpacing: 0.8, mb: 0.25 }}
+                        >
+                          {dayZoomDate ? formatDayLabel(dayZoomDate) : "Day View"}
+                        </GradientTitle>
+                        <SubText sx={{ fontSize: 14.5, color: "rgba(216,229,254,0.70)" }}>
+                          {dayZoomEvents.length
+                            ? `${dayZoomEvents.length} event${dayZoomEvents.length === 1 ? "" : "s"} scheduled for this day.`
+                            : "No events scheduled for this day yet."}
+                        </SubText>
+                      </Box>
+                    </Stack>
+
+                    <Button
+                      onClick={openCreateFromDayZoom}
+                      startIcon={<AddRoundedIcon />}
+                      variant="contained"
+                      sx={{
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 900,
+                        px: 2,
+                        py: 1.05,
+                        background:
+                          "linear-gradient(90deg, rgba(124,58,237,0.85), rgba(34,211,238,0.65))",
+                        boxShadow: "0 18px 55px rgba(0,0,0,0.42)",
+                        "&:hover": {
+                          background:
+                            "linear-gradient(90deg, rgba(124,58,237,0.92), rgba(34,211,238,0.72))",
+                        },
+                      }}
+                    >
+                      New Event
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Box>
+            </Box>
+
+            <Box sx={{ px: { xs: 2, sm: 2.5, md: 3 }, py: { xs: 2, sm: 2.5 } }}>
+              {dayZoomEvents.length ? (
+                <Stack spacing={1.6}>
+                  {dayZoomEvents.map((ev, idx) => (
+                    <React.Fragment key={ev.id}>
+                      <DayEventCard
+                        event={ev}
+                        onClick={() => openExistingEventFromDayZoom(ev)}
+                      />
+                      {idx < dayZoomEvents.length - 1 ? (
+                        <Divider sx={{ borderColor: "rgba(216,229,254,0.08)" }} />
+                      ) : null}
+                    </React.Fragment>
+                  ))}
+                </Stack>
+              ) : (
+                <Box
+                  sx={{
+                    minHeight: 280,
+                    borderRadius: 3,
+                    border: "1px dashed rgba(216,229,254,0.16)",
+                    background: "rgba(255,255,255,0.02)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    px: 2,
+                  }}
+                >
+                  <Box>
+                    <CalendarMonthRoundedIcon
+                      sx={{
+                        fontSize: 40,
+                        color: "rgba(216,229,254,0.48)",
+                        mb: 1,
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        color: "rgba(245,248,255,0.92)",
+                        fontWeight: 800,
+                        mb: 0.5,
+                      }}
+                    >
+                      No events for this day
+                    </Typography>
+                    <Typography sx={{ color: "rgba(216,229,254,0.68)", fontSize: 14 }}>
+                      Use the button above to add one.
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          </Box>
         </Dialog>
       </LocalizationProvider>
     </Box>

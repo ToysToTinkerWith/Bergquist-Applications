@@ -1,0 +1,81 @@
+
+.studio { margin-top: 27px; padding: 26px; background: #101017; border: 1px solid #3c3348; border-radius: 12px; min-width: 0; }
+.studioHeading { display: flex; align-items: flex-start; gap: 20px; justify-content: space-between; }
+.studioHeading div > span, .planHeading div > span { color: #b79ddc; font-size: 10px; letter-spacing: .12em; font-weight: 600; }
+.studioHeading h4 { font-size: 27px; font-weight: 500; color: #f0eaf7; margin: 10px 0; letter-spacing: -.03em; }
+.studioHeading p { color: #a297af; font-size: 13px; line-height: 1.7; }
+.privateBadge { color: #b4c6bd; border: 1px solid #3c5148; border-radius: 20px; padding: 7px 11px; font-size: 10px; white-space: nowrap; }
+.modeGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 27px; }
+.modeGrid button { display: grid; justify-items: start; gap: 9px; padding: 19px; background: #16151e; border: 1px solid #36313f; border-radius: 9px; color: #aaa1b6; min-width: 0; text-align: left; cursor: pointer; transition: background .16s,border-color .16s; }
+.modeGrid button:hover:not(:disabled) { background: #211a2d; border-color: #89729d; }
+.modeGrid button[aria-pressed="true"] { color: #ecdefb; border-color: #a084c0; background: linear-gradient(140deg,#30243f,#201a2b); box-shadow: inset 0 1px #d8bbf522; }
+.modeGrid svg { font-size: 25px; color: #bc9fe1; }
+.modeGrid strong { font-size: 14px; font-weight: 500; }
+.modeGrid small { font-size: 11px; color: #92869f; line-height: 1.5; }
+.modeGrid button:disabled { cursor: default; opacity: .45; }
+.modeGrid button[aria-pressed="true"]:disabled { opacity: .8; }
+.disclosure { margin: 20px 0 !important; padding: 11px 14px; background: #261e31; border-left: 2px solid #9c7ebf; color: #c1afd3; font-size: 11px; line-height: 1.7; }
+.workbench { display: grid; grid-template-columns: minmax(260px,.88fr) minmax(0,1.12fr); gap: 30px; margin-top: 27px; align-items: start; }
+.controls, .previewColumn { min-width: 0; }
+.fields { border: 0; min-width: 0; padding: 0; margin: 0 0 22px; display: grid; gap: 15px; }
+.fields legend { color: #dbcee8; font-size: 13px; font-weight: 500; margin-bottom: 17px; padding: 0; }
+.fields label { display: grid; gap: 8px; color: #a99bb8; font-size: 11px; min-width: 0; }
+.fields input:not([type="checkbox"]):not([type="color"]), .fields textarea, .fields select { width: 100%; min-width: 0; background: #0b0b11; color: #e6ddec; border: 1px solid #3c3448; border-radius: 6px; padding: 11px 12px; font-family: inherit; font-size: 12px; color-scheme: dark; line-height: 1.6; }
+.fields textarea { resize: vertical; min-height: 78px; }
+.fields input:focus-visible, .fields textarea:focus-visible, .fields select:focus-visible { outline: 2px solid #a98aca; outline-offset: 2px; }
+.fields:disabled { opacity: .6; }
+.fieldRow, .planGrid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; }
+.photoChoices { display: grid; gap: 8px; }
+.photoChoices label { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid #322b3c; background: #15121b; border-radius: 5px; cursor: pointer; }
+.photoChoices input { margin: 3px 0 0; accent-color: #b094d6; width: 15px; height: 15px; flex-shrink: 0; }
+.photoChoices strong { display: block; color: #c5b4d9; font-size: 11px; font-weight: 500; }
+.photoChoices small { display: block; color: #8b7d9c; font-size: 10px; line-height: 1.6; margin-top: 3px; overflow-wrap: anywhere; }
+.brandDetails { border: 1px solid #383040; border-radius: 7px; padding: 13px; margin-bottom: 20px; }
+.brandDetails summary { font-size: 12px; color: #c6b6d8; cursor: pointer; line-height: 1.7; }
+.brandDetails summary > span { display: block; font-size: 10px; color: #7f728c; margin-left: 13px; }
+.brandDetails .fields { margin: 18px 0 0; }
+.fields .colorLabel { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.colorLabel input { background: none; border: 0; width: 34px; height: 30px; padding: 0; cursor: pointer; }
+.colorLabel span { font-size: 10px; color: #82738f; }
+.logoRow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.logoRow img { width: 46px; height: 46px; object-fit: contain; background: #08080c; border: 1px solid #3b2e49; border-radius: 7px; }
+.logoRow button { min-height: 34px; font-size: 11px !important; }
+.generateRow { display: flex; gap: 10px; flex-wrap: wrap; }
+.generateRow > button:first-child { flex: 1; min-height: 46px; font-size: 12px !important; }
+.status, .notice, .help, .footnote { color: #9788a8; font-size: 11px; line-height: 1.8; margin-top: 13px !important; }
+.status { color: #c1a4de; }
+.notice { color: #a4c6b4; }
+.previewHeading { display: flex; align-items: center; gap: 10px; justify-content: space-between; padding-bottom: 13px; }
+.previewHeading strong { font-size: 12px; font-weight: 500; color: #d3c5df; }
+.previewHeading span { font-size: 10px; color: #7c718a; }
+.previewEmpty { display: flex; min-height: 410px; flex-direction: column; align-items: center; justify-content: center; gap: 17px; text-align: center; padding: 28px; border: 1px dashed #4b3e59; border-radius: 10px; background: radial-gradient(ellipse at 50% 30%,#27203055,#111017 75%); }
+.previewEmpty svg { color: #78628f; font-size: 42px; }
+.previewEmpty strong { color: #bcabcF; font-size: 17px; font-weight: 500; }
+.previewEmpty p { max-width: 270px; color: #7e718e; line-height: 1.8; font-size: 12px; }
+.previewStage { width: 100%; border: 1px solid #44374f; border-radius: 9px; background: #09090d; overflow: hidden; }
+.previewStage img, .previewStage video { display: block; width: 100%; height: auto; aspect-ratio: var(--creative-ratio); object-fit: contain; }
+.exportRow { display: flex; gap: 13px; flex-wrap: wrap; align-items: center; margin-top: 15px; }
+.exportRow button { font-size: 11px !important; }
+.exportRow a { font-size: 11px; color: #c4a2e7; text-underline-offset: 4px; text-decoration: underline; }
+.planEditor { border-top: 1px solid #3d3149; padding-top: 24px; margin-top: 28px; }
+.planHeading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+.planHeading h5 { margin: 8px 0 0; font-size: 21px; font-weight: 500; color: #dfd3e9; }
+.planHeading > span { font-size: 10px; color: #a189b9; }
+.planGrid { gap: 18px; }
+.planEditor button { font-size: 12px !important; }
+.storyboard { margin-top: 26px; }
+.storyboard h5 { color: #b9a5ce; font-size: 13px; font-weight: 500; margin: 0 0 14px; }
+.storyboard ol { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; padding: 0; margin: 0; list-style: none; }
+.storyboard li { display: flex; gap: 12px; padding: 13px; border: 1px solid #342c3d; border-radius: 6px; min-width: 0; }
+.storyboard li > span { color: #806995; font-size: 11px; }
+.storyboard li > div { min-width: 0; }
+.storyboard strong { font-size: 12px; color: #c7b7d8; font-weight: 500; display: block; line-height: 1.6; }
+.storyboard small, .storyboard em { font-size: 10px; color: #8c7d9c; display: block; margin-top: 6px; font-style: normal; line-height: 1.6; overflow-wrap: anywhere; }
+.storyboard em { color: #6b5c7c; }
+.cautions { padding: 13px 16px; background: #231e18; border-left: 2px solid #9c8863; margin-top: 20px; color: #c4b494; font-size: 11px; line-height: 1.7; }
+.cautions strong { font-weight: 500; }
+.cautions ul { margin: 7px 0; padding-left: 17px; }
+.footnote { padding-top: 18px; border-top: 1px solid #2c2435; color: #786b85; margin-top: 25px !important; }
+.empty { color: #9e8db0; font-size: 12px; padding: 22px 0; }
+@media (max-width: 800px) { .workbench { grid-template-columns: minmax(0,1fr); } .previewEmpty { min-height: 280px; } .studio { padding: 19px; } .studioHeading h4 { font-size: 24px; } .previewColumn { max-width: 100%; } }
+@media (max-width: 480px) { .studio { padding: 14px; margin-left: -5px; margin-right: -5px; } .modeGrid { gap: 6px; } .modeGrid button { padding: 11px 8px; gap: 8px; } .modeGrid strong { font-size: 11px; } .modeGrid small { display: none; } .modeGrid svg { font-size: 22px; } .privateBadge { display: none; } .studioHeading h4 { font-size: 22px; } .fieldRow, .planGrid, .storyboard ol { grid-template-columns: minmax(0,1fr); } .planHeading > span { display: none; } .exportRow > button { width: 100%; } }

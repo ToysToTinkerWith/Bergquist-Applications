@@ -228,7 +228,7 @@ export default function ReceiptPage({ maxWidth = 1200, minHeight = "100vh" }) {
 
   const BackToFinanceButton = ({ fullWidth = false }) => (
     <Button
-      onClick={() => router.push("/finance")}
+      onClick={() => router.push("/components")}
       variant="outlined"
       fullWidth={fullWidth}
       sx={{
@@ -284,7 +284,7 @@ export default function ReceiptPage({ maxWidth = 1200, minHeight = "100vh" }) {
             color: "transparent",
           }}
         >
-          Back to Finance
+          Back to Components
         </Box>
       </Box>
     </Button>

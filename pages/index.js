@@ -1,601 +1,235 @@
-// pages/components/SplashVideoHero.jsx
-// Requires: @mui/material, framer-motion, next/head
-
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import Head from "next/head"
-import { Box, Typography } from "@mui/material"
-import { motion } from "framer-motion"
+import dynamic from "next/dynamic"
+import { useRouter } from "next/router"
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded"
+import RocketLaunchRoundedIcon from "@mui/icons-material/RocketLaunchRounded"
+import SatelliteAltRoundedIcon from "@mui/icons-material/SatelliteAltRounded"
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded"
+import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded"
+import InstagramIcon from "@mui/icons-material/Instagram"
+import SiteLink from "../components/SiteLink"
+import { EARTH_MOON_TEXTURES } from "../lib/earthMoonAssets"
+import { SEARCH_TITLE, SEARCH_DESCRIPTION } from "../lib/business"
+import { SOCIAL_IMAGE_URL, SOCIAL_IMAGE_ALT, SOCIAL_IMAGE_WIDTH, SOCIAL_IMAGE_HEIGHT } from "../lib/socialPreview"
+import ProjectStories from "../components/ProjectStories"
+import DeferredContent from "../components/DeferredContent"
+import { developerProfile } from "../lib/developerProfile"
+import styles from "../styles/ai-home.module.css"
 
-function RevealOnScroll({
-  children,
-  delay = 0,
-  threshold = 0.35,
-  rootMargin = "0px 0px -15% 0px",
-}) {
+const EarthMoonMesh = dynamic(() => import("../components/EarthMoonMesh"), { ssr: false })
+const ApproachFlight = dynamic(() => import("../components/ApproachFlight"), { ssr: false })
+const ContactAstronaut = dynamic(() => import("../components/ContactAstronaut"), { ssr: false })
+const ChatBot = dynamic(() => import("../components/chatBot"), { ssr: false })
+const AboutAstronaut = dynamic(() => import("../components/AboutAstronaut"), { ssr: false })
+
+const benefits = [
+  { icon: RocketLaunchRoundedIcon, title: "Ideas into action, sooner.", text: "AI-assisted prototypes help you explore ideas early and find the right direction." },
+  { icon: SatelliteAltRoundedIcon, title: "Designed around your workflow.", text: "Custom components bring design and functionality together." },
+  { icon: AutoAwesomeRoundedIcon, title: "Clear to search. Ready for AI.", text: "Search best practices help search engines and AI tools understand your business, services, and website." },
+]
+const questions = [
+  "What kind of website would work for my business?",
+  "Can you improve the website I already have?",
+  "How can my website bring in more inquiries?",
+  "What do you need from me to get started?",
+]
+const oldSections = new Set(["digital-identity", "new-possibilities", "pioneer-cockpit", "home-ai-assistant", "expand-horizons"])
+
+function ApproachWorld() {
   const ref = useRef(null)
-  const [shown, setShown] = useState(false)
-
+  const [visible, setVisible] = useState(false)
   useEffect(() => {
-    if (shown) return
-
-    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
-      setShown(true)
-      return
-    }
-
-    const el = ref.current
-    if (!el) {
-      setShown(true)
-      return
-    }
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (entry && entry.isIntersecting) {
-          setShown(true)
-          obs.disconnect()
-        }
-      },
-      { threshold, root: null, rootMargin }
-    )
-
-    obs.observe(el)
-
-    return () => {
-      try {
-        obs.disconnect()
-      } catch {}
-    }
-  }, [shown, threshold, rootMargin])
-
-  return (
-    <Box
-      ref={ref}
-      component={motion.div}
-      initial={false}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.85, ease: "easeOut", delay }}
-      sx={{ willChange: "transform, opacity" }}
-    >
-      {children}
-    </Box>
-  )
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); observer.disconnect() }
+    }, { rootMargin: "250px" })
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return <div ref={ref} className={styles.approachWorld}>{visible && <ApproachFlight />}</div>
 }
 
-export default function SplashVideoHero({
-  line1 = "Bergquist Applications",
-  line2 = "Connection Starts Here",
-  videoSrc = "/home/splash.mp4",
-  minHeight = "100vh",
-  maxWidth = 1200,
-  videoFadeDuration = 2,
-  videoFadeDelay = 0.25,
-}) {
-  // ---- SEO constants (adjust if you want) ----
-  const SITE_NAME = "Bergquist Applications"
-  const SITE_URL = "https://bergquistapplications.com"
-  const PAGE_URL = `${SITE_URL}/`
+function ContactWorld() {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); observer.disconnect() }
+    }, { rootMargin: "200px" })
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return <div ref={ref} className={styles.contactWorld}>{visible && <ContactAstronaut />}</div>
+}
 
-  const TITLE = `${SITE_NAME} | Web Applications for the Future`
-  const DESCRIPTION =
-    "Bergquist Applications builds modern web applications with a focus on data, finance, and AI — fast, secure, and built to scale."
+function DeveloperWorld() {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  const [portraitFailed, setPortraitFailed] = useState(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); observer.disconnect() }
+    }, { rootMargin: "200px" })
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return <div ref={ref} className={styles.developerVisual}>
+    <div className={styles.developerWorld}>{visible && <AboutAstronaut />}<noscript><img src="/about/moon-landing-preview.webp" alt="Astronaut beside a spacecraft" width="1200" height="600" /></noscript></div>
+    <div className={styles.developerBadge}>
+      <div className={styles.developerPortrait}>{developerProfile.portrait && !portraitFailed ? <img src={developerProfile.portrait} alt="Anders Bergquist" width="64" height="64" loading="lazy" onError={() => setPortraitFailed(true)} /> : <span aria-label="Anders Bergquist">AB</span>}</div>
+      <div className={styles.developerIdentity}><strong>Anders Bergquist</strong><span>Owner &amp; developer</span></div>
+      <div className={styles.developerSocials} aria-label="Anders on social media">
+        <a href={developerProfile.facebook} target="_blank" rel="noopener noreferrer" aria-label="Anders Bergquist on Facebook (opens in a new tab)" title="Facebook"><FacebookRoundedIcon /></a>
+        {developerProfile.instagram && <a href={developerProfile.instagram} target="_blank" rel="noopener noreferrer" aria-label="Anders Bergquist on Instagram (opens in a new tab)" title="Instagram"><InstagramIcon /></a>}
+      </div>
+    </div>
+  </div>
+}
 
-  const OG_IMAGE = `${SITE_URL}/og/bergquist-applications.jpg`
+function Action({ href, children, secondary = false, subtle = false }) {
+  return <SiteLink href={href} className={`${styles.action} ${subtle ? styles.subtle : secondary ? styles.secondary : styles.primary}`}>
+    {children}<ArrowForwardRoundedIcon fontSize="small" />
+  </SiteLink>
+}
 
-  const jsonLdOrganization = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: SITE_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
-  }
+export default function Home() {
+  const router = useRouter()
+  const [splashReady, setSplashReady] = useState(false)
+  const [mountSplash, setMountSplash] = useState(false)
+  useEffect(() => {
+    // Give the server-rendered heading and controls their first paint before WebGL.
+    let secondFrame
+    const firstFrame = requestAnimationFrame(() => { secondFrame = requestAnimationFrame(() => setMountSplash(true)) })
+    return () => { cancelAnimationFrame(firstFrame); cancelAnimationFrame(secondFrame) }
+  }, [])
+  const handleSplashReady = useCallback(() => setSplashReady(true), [])
+  // Keep previously shared links to the interactive homepage working after its move.
+  useEffect(() => {
+    const hash = window.location.hash.slice(1)
+    if (oldSections.has(hash)) router.replace(`/Design#${hash}`)
+  }, [router.asPath])
 
-  const jsonLdWebSite = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: SITE_NAME,
-    url: SITE_URL,
-  }
+  return <>
+    <Head>
+      <title>{SEARCH_TITLE}</title>
+      <meta name="description" content={SEARCH_DESCRIPTION} />
+      <link rel="canonical" href="https://bergquistapplications.com/" />
+      <meta property="og:title" content={SEARCH_TITLE} />
+      <meta property="og:description" content={SEARCH_DESCRIPTION} />
+      <meta property="og:url" content="https://bergquistapplications.com/" />
+      <meta property="og:type" content="website" />
+      <meta property="og:image" content={SOCIAL_IMAGE_URL} />
+      <meta property="og:image:width" content={SOCIAL_IMAGE_WIDTH} />
+      <meta property="og:image:height" content={SOCIAL_IMAGE_HEIGHT} />
+      <meta property="og:image:alt" content={SOCIAL_IMAGE_ALT} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={SEARCH_TITLE} />
+      <meta name="twitter:description" content={SEARCH_DESCRIPTION} />
+      <meta name="twitter:image" content={SOCIAL_IMAGE_URL} />
+      <meta name="twitter:image:alt" content={SOCIAL_IMAGE_ALT} />
+      <meta name="theme-color" content="#000000" />
+      {EARTH_MOON_TEXTURES.map(({ src }) => <link key={src} rel="preload" as="image" type="image/webp" href={src} crossOrigin="anonymous" />)}
+    </Head>
+    <main className={styles.home}>
+      <section className={styles.hero} aria-labelledby="home-title" data-splash-ready={splashReady}>
+        <div className={styles.liveWorld} data-splash-world aria-hidden={!splashReady} inert={!splashReady ? "" : undefined}>{mountSplash && <EarthMoonMesh cinematic entrance onReady={handleSplashReady} />}</div>
+        <div className={styles.heroShade} />
+        <div className={`${styles.container} ${styles.heroContent}`}>
+          <p className={`${styles.eyebrow} ${styles.arrival}`} style={{ "--delay": "100ms", "--x": "-10px" }}>A Digital World of Possibilities</p>
+          <h1 id="home-title" className={styles.arrival} style={{ "--delay": "350ms", "--x": "-16px" }}>Custom Websites.<br /><span>Web Applications.</span></h1>
+          <p className={`${styles.heroDescription} ${styles.arrival}`} style={{ "--delay": "600ms", "--x": "12px" }}>Thoughtful websites and practical applications, shaped around your goals.</p>
+          <div className={`${styles.actions} ${styles.arrival}`} style={{ "--delay": "850ms", "--x": "-8px" }}>
+            <Action href="/contact">Start a Project</Action>
+            <Action href="/applications" secondary>Explore Applications</Action>
+          </div>
+          <p className={styles.heroNote}>Remote collaboration. In-person meetings on Whidbey Island.</p>
+        </div>
+      </section>
 
-  const categories = useMemo(
-    () => [
-      {
-        title: "Data",
-        video: "/home/data.mp4",
-        desc:
-          "Build a reliable data foundation with clean pipelines, integrations, and dashboards — so you can make faster, informed decisions.",
-      },
-      {
-        title: "Finance",
-        video: "/home/finance.mp4",
-        desc:
-          "Design and deliver secure, auditable financial workflows — payments, reconciliation, and reporting.",
-      },
-      {
-        title: "AI",
-        video: "/home/AI.mp4",
-        desc:
-          "Automate workflows, improve accuracy, and scale operations - free your team to focus on high-value initiatives.",
-      },
-    ],
-    []
-  )
+      <section id="ai-advantages" className={`${styles.section} ${styles.advantages}`} aria-labelledby="advantages-title">
+        <div className={styles.container}>
+          <h2 id="advantages-title" className={styles.visuallyHidden}>A thoughtful foundation for your website</h2>
+          <div className={styles.benefits}>
+            {benefits.map(({ icon: Icon, title, text }) => <article key={title} className={styles.benefit}>
+              <div className={styles.benefitTop}><Icon aria-hidden="true" /><h3>{title}</h3></div><p>{text}</p>
+            </article>)}
+          </div>
+        </div>
+      </section>
 
-  return (
-    <Box sx={{ width: "100%", backgroundColor: "black" }}>
-      {/* SEO HEAD */}
-      <Head>
-        {/* Primary */}
-        <title>{TITLE}</title>
-        <meta name="description" content={DESCRIPTION} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <section id="your-developer" className={styles.section} aria-labelledby="developer-title">
+        <div className={`${styles.container} ${styles.developerGrid}`}>
+          <DeveloperWorld />
+          <div className={styles.developerCopy}><p className={styles.eyebrow}>Your developer</p><h2 id="developer-title">Owned and operated<br />by <span>Anders Bergquist.</span></h2><p>I design, build, and look after your website. You work directly with me, from the first conversation to launch and the updates that follow.</p><p>When you have a question or something needs attention, you have someone to turn to who knows your site and cares about how it works for your business.</p><Action href="/about" secondary>Meet Anders</Action></div>
+        </div>
+      </section>
 
-        {/* Canonical */}
-        <link rel="canonical" href={PAGE_URL} />
+      <section className={styles.section} aria-labelledby="about-title">
+        <div className={`${styles.container} ${styles.aboutGrid}`}>
+          <div><p className={styles.eyebrow}>Our approach</p><h2 id="about-title">Your business<br />on <span>jet fuel.</span></h2><p>Your goals set the course. We use modern web tools to explore ideas and build practical websites and applications that move your business forward.</p></div>
+          <ApproachWorld />
+        </div>
+      </section>
 
-        {/* Robots */}
-        <meta
-          name="robots"
-          content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
-        />
-        <meta name="googlebot" content="index,follow" />
+      <section id="website-pricing" className={`${styles.section} ${styles.pricing}`} aria-labelledby="pricing-title">
+        <div className={styles.container}>
+          <div className={styles.sectionIntro}>
+            <p className={styles.eyebrow}>A simple way to get started</p>
+            <h2 id="pricing-title">Your website.<br /><span>A clear starting price.</span></h2>
+            <p>Start with the essentials: a welcoming home page, your story, your products or services, and a clear way to get in touch.</p>
+          </div>
+          <div className={styles.pricingGrid}>
+            <article aria-labelledby="foundation-title">
+              <p className={styles.eyebrow}>The foundation</p>
+              <h3 id="foundation-title">The essentials. Your brand.</h3>
+              <p>A focused business website, customized with your colors, imagery, and content.</p>
+              <ul className={styles.packageBasics}>
+                <li><strong>Home splash.</strong> Introduce your business with a strong first impression.</li>
+                <li><strong>About.</strong> Share your story and help customers get to know you.</li>
+                <li><strong>Products or services.</strong> Show what you offer with clear descriptions and images.</li>
+                <li><strong>Contact.</strong> Make it easy for visitors to take the next step.</li>
+              </ul>
+              <dl className={styles.priceDetails}>
+                <div><dt>One-time build</dt><dd>$500</dd></div>
+                <div><dt>Ongoing maintenance</dt><dd>$20<span> / month</span></dd></div>
+              </dl>
+              <p className={styles.pricingDetail}>See <SiteLink href="/applications/upgrade-aprons">Upgrade Aprons</SiteLink> for an example of a business website built around a brand and its products. Search and AI discovery foundations are part of your starting point.</p>
+            </article>
+            <article aria-labelledby="custom-pricing-title">
+              <p className={styles.eyebrow}>Specialized components</p>
+              <h3 id="custom-pricing-title">Extra tools. Built for you.</h3>
+              <p>Need custom booking flows, payment integrations, or AI features? Add the components that fit the way you work.</p>
+              <dl className={styles.priceDetails}>
+                <div><dt>Custom development</dt><dd className={styles.variablePrice}>Quoted to scope</dd></div>
+                <div><dt>Monthly costs</dt><dd className={styles.variablePrice}>Based on usage</dd></div>
+              </dl>
+              <p className={styles.pricingDetail}>Build and monthly fees vary with the project scope, integrations, and resources used.</p>
+            </article>
+          </div>
+          <p className={styles.pricingNote}>Prices are in USD. The base package covers the core site structure and brand customization, not every demo or advanced feature shown here. We&apos;ll confirm included pages, features, and any third-party costs before we begin.</p>
+        </div>
+      </section>
 
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content={SITE_NAME} />
-        <meta property="og:title" content={TITLE} />
-        <meta property="og:description" content={DESCRIPTION} />
-        <meta property="og:url" content={PAGE_URL} />
-        <meta property="og:image" content={OG_IMAGE} />
-        <meta property="og:image:secure_url" content={OG_IMAGE} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+      <section className={styles.section} aria-labelledby="work-title">
+        <div className={styles.container}>
+          <div className={styles.workHeading}><div><p className={styles.eyebrow}>Built by Bergquist Applications</p><h2 id="work-title">Made for <span>real businesses.</span></h2></div><SiteLink className={styles.textLink} href="/applications">All applications<ArrowForwardRoundedIcon fontSize="small" /></SiteLink></div>
+          <ProjectStories compact showHeading={false} />
+        </div>
+      </section>
 
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={TITLE} />
-        <meta name="twitter:description" content={DESCRIPTION} />
-        <meta name="twitter:image" content={OG_IMAGE} />
+      <section id="search-discovery" className={styles.section} aria-labelledby="questions-title">
+        <div className={`${styles.container} ${styles.faqStack}`}>
+          <div><h2 id="questions-title">Good questions.<br /><span>Straight answers.</span></h2></div>
+          <DeferredContent minHeight={390}><ChatBot embedded source="homepage-questions" suggestedQuestions={questions} initialPrompt="Hello" initialAnswer="Hello! Tell me about your business or what you would like your website to do." /></DeferredContent>
+        </div>
+      </section>
 
-        {/* Favicons / App Icons */}
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-        {/* Theme Color */}
-        <meta name="theme-color" content="#000000" />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
-        />
-      </Head>
-
-      {/* HERO */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <Box
-          sx={{
-            position: "relative",
-            width: "100%",
-            maxWidth,
-            minHeight,
-            overflow: "hidden",
-            backgroundColor: "black",
-          }}
-        >
-          {/* Background video (fades in) */}
-          <Box
-            component={motion.video}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              duration: videoFadeDuration,
-              ease: "easeOut",
-              delay: videoFadeDelay,
-            }}
-            sx={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              filter: "brightness(0.85) contrast(1.08)",
-              transform: "translateZ(0)",
-            }}
-          >
-            <source src={videoSrc} type="video/mp4" />
-          </Box>
-
-          {/* Full-edge vignette */}
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              pointerEvents: "none",
-              background:
-                "radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 72%)",
-            }}
-          />
-
-          {/* Text layer */}
-          <Box
-            sx={{
-              position: "relative",
-              zIndex: 1,
-              width: "100%",
-              height: "100%",
-              minHeight,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              pt: { xs: 10, sm: 12, md: 14 },
-              px: { xs: 2, sm: 4 },
-              textAlign: "center",
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 120 }}
-              animate={{ opacity: 1, y: 100 }}
-              transition={{ duration: 4, ease: "easeOut", delay: 1.5 }}
-              style={{ width: "100%" }}
-            >
-              <Typography
-                variant="h2"
-                align="center"
-                sx={{
-                  letterSpacing: 2,
-                  fontFamily: "Bemora",
-                  lineHeight: 1.5,
-                  backgroundImage:
-                    "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                }}
-              >
-                {line1}
-              </Typography>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 120 }}
-              transition={{ duration: 2, ease: "easeOut", delay: 3.25 }}
-              style={{ width: "100%" }}
-            >
-              <Typography
-                variant="h5"
-                sx={{
-                  color: "rgba(216, 229, 254, 0.88)",
-                }}
-              >
-                {line2}
-              </Typography>
-            </motion.div>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* DIGITAL IDENTITY */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "black",
-          px: { xs: 2, sm: 3, md: 4 },
-          pt: { xs: 7, sm: 8, md: 9 },
-          pb: { xs: 7, sm: 8, md: 9 },
-        }}
-      >
-        <Box sx={{ width: "100%", maxWidth }}>
-          <Box
-            sx={{
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1.05fr 0.95fr" },
-              gap: { xs: 3, md: 4 },
-              alignItems: "center",
-            }}
-          >
-            {/* Video (circular with radial fade) */}
-            <RevealOnScroll delay={0.08}>
-              <Box
-                sx={{
-                  position: "relative",
-                  width: "100%",
-                  maxWidth: 520,
-                  mx: { xs: "auto", md: 0 },
-                  aspectRatio: "1 / 1",
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  backgroundColor: "black",
-                  boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
-                }}
-              >
-                <Box
-                  component="video"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    filter: "brightness(0.95) contrast(1.05)",
-                    transform: "translateZ(0)",
-                    objectPosition: "center 40%",
-                  }}
-                >
-                  <source src="/home/identity.mp4" type="video/mp4" />
-                </Box>
-
-                {/* Radial fade overlay */}
-                <Box
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    pointerEvents: "none",
-                    background:
-                      "radial-gradient(ellipse at center, rgba(0,0,0,0) 40%,  rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 80%)",
-                  }}
-                />
-              </Box>
-            </RevealOnScroll>
-
-            {/* Text (title ABOVE blurb, smaller) */}
-            <RevealOnScroll delay={0.12}>
-              <Box sx={{ px: { xs: 0, md: 1 } }}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontFamily: "Bemora",
-                    letterSpacing: 1.1,
-                    lineHeight: 1.15,
-                    textAlign: { xs: "center", md: "left" },
-                    backgroundImage:
-                      "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    color: "transparent",
-                    textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                    mb: 1.25,
-                  }}
-                >
-                  Establishing your digital identity
-                </Typography>
-
-                <Typography
-                  variant="h6"
-                  sx={{
-                    textAlign: { xs: "center", md: "left" },
-                    color: "rgba(216, 229, 254, 0.86)",
-                    lineHeight: 1.7,
-                    maxWidth: 720,
-                    mx: { xs: "auto", md: 0 },
-                  }}
-                >
-                  Your digital identity is how customers find you, trust you, and choose you. A polished
-                  website, consistent branding, fast performance, and clear messaging turn a quick visit
-                  into real business — and create a foundation you can build on as you grow.
-                </Typography>
-              </Box>
-            </RevealOnScroll>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* CATEGORIES */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "black",
-          px: { xs: 2, sm: 3, md: 4 },
-          pb: { xs: 8, sm: 10, md: 12 },
-          pt: { xs: 6, sm: 7, md: 8 },
-        }}
-      >
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
-            gap: { xs: 3, sm: 3.5, md: 4 },
-          }}
-        >
-          {categories.map((c, idx) => (
-            <RevealOnScroll key={c.title} delay={0.12 * idx}>
-              {/* Card inner */}
-              <Box sx={{ position: "relative", zIndex: 1, p: { xs: 2, sm: 2.5, md: 3 } }}>
-                <Typography
-                  variant="h5"
-                  align="center"
-                  sx={{
-                    fontFamily: "Bemora",
-                    backgroundImage:
-                      "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    color: "transparent",
-                    letterSpacing: 0.6,
-                    mb: 1.25,
-                  }}
-                >
-                  {c.title}
-                </Typography>
-
-                {/* Video */}
-                <Box
-                  sx={{
-                    width: "100%",
-                    borderRadius: 2,
-                    overflow: "hidden",
-                    backgroundColor: "black",
-                  }}
-                >
-                  <Box
-                    component="video"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    sx={{
-                      display: "block",
-                      width: "100%",
-                      transform: "translateZ(0)",
-                    }}
-                  >
-                    <source src={c.video} type="video/mp4" />
-                  </Box>
-                </Box>
-
-                <Typography
-                  variant="body1"
-                  align="center"
-                  sx={{
-                    mt: 1.5,
-                    color: "rgba(216, 229, 254, 0.82)",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {c.desc}
-                </Typography>
-              </Box>
-            </RevealOnScroll>
-          ))}
-        </Box>
-      </Box>
-
-      {/* EXPAND YOUR HORIZONS */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "black",
-          px: { xs: 2, sm: 3, md: 4 },
-          pb: { xs: 10, sm: 12, md: 14 },
-        }}
-      >
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1.05fr 0.95fr" },
-            gap: { xs: 3, md: 4 },
-            alignItems: "center",
-          }}
-        >
-          {/* Text */}
-          <RevealOnScroll delay={0.05}>
-            <Box sx={{ px: { xs: 0, md: 1 } }}>
-              <Typography
-                variant="h3"
-                sx={{
-                  fontFamily: "Bemora",
-                  letterSpacing: 1.2,
-                  lineHeight: 1.2,
-                  textAlign: { xs: "center", md: "left" },
-                  backgroundImage:
-                    "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                  mb: 1.25,
-                }}
-              >
-                Expand your horizons
-              </Typography>
-
-              <Typography
-                variant="h6"
-                sx={{
-                  textAlign: { xs: "center", md: "left" },
-                  color: "rgba(216, 229, 254, 0.86)",
-                  lineHeight: 1.6,
-                  maxWidth: 720,
-                  mx: { xs: "auto", md: 0 },
-                }}
-              >
-                Contact Bergquist Applications to see what modern web development can do for you.
-              </Typography>
-            </Box>
-          </RevealOnScroll>
-
-          {/* Video (circular with radial fade) */}
-          <RevealOnScroll delay={0.12}>
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 520,
-                mx: { xs: "auto", md: 0 },
-                aspectRatio: "1 / 1",
-                borderRadius: "50%",
-                overflow: "hidden",
-                backgroundColor: "black",
-                boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
-              }}
-            >
-              <Box
-                component="video"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  filter: "brightness(0.95) contrast(1.05)",
-                  transform: "translateZ(0)",
-                }}
-              >
-                <source src="/home/horizons.mp4" type="video/mp4" />
-              </Box>
-
-              {/* Radial fade overlay (keeps center visible, fades edges to black) */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  pointerEvents: "none",
-                  background:
-                    "radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 72%)",
-                }}
-              />
-            </Box>
-          </RevealOnScroll>
-        </Box>
-      </Box>
-    </Box>
-  )
+      <section className={`${styles.section} ${styles.contact}`} aria-labelledby="contact-title">
+        <div className={`${styles.container} ${styles.contactInner}`}>
+          <div><p className={styles.eyebrow}>Your next chapter</p><h2 id="contact-title">What would you<br /><span>like to build?</span></h2><p>Bring your idea. Let&apos;s find the next step.</p><Action href="/contact" subtle>Start a Project</Action></div>
+          <ContactWorld />
+        </div>
+      </section>
+    </main>
+  </>
 }

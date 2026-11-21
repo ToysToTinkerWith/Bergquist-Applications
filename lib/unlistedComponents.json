@@ -1,0 +1,165 @@
+[
+  {
+    "key": "business-notes",
+    "category": "AI",
+    "subcategory": "Business workflow",
+    "title": "Business notes",
+    "description": "Type or dictate a business note, add photos, and organize jobs, schedules, tasks, follow-ups, expenses, map locations, and unpublished social drafts.",
+    "outcome": "Understand your business"
+  },
+  {
+    "key": "space-rocket-game",
+    "category": "Data",
+    "subcategory": "Interaction",
+    "title": "Space Rocket Game",
+    "description": "An interactive space game with live controls and instant feedback."
+  },
+  {
+    "key": "algorand-wallet-financial",
+    "category": "Finance",
+    "subcategory": "Wallets",
+    "title": "Algorand Wallet Workspace",
+    "description": "Manage an Algorand wallet in a focused on-chain workspace."
+  },
+  {
+    "key": "tinyman-candles-financial",
+    "category": "Finance",
+    "subcategory": "Market Data",
+    "title": "Market Signal Candles",
+    "description": "Explore Tinyman pool activity through live candlestick charts."
+  },
+  {
+    "key": "earth-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Earth Mesh",
+    "description": "A detailed globe with surface relief, orbit controls, and OBJ export."
+  },
+  {
+    "key": "moon-mesh",
+    "category": "Design",
+    "subcategory": "Sun & Moon",
+    "title": "Moon Mesh",
+    "description": "Explore cratered lunar terrain with orbit controls and OBJ export."
+  },
+  {
+    "key": "mars-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Mars Mesh",
+    "description": "A textured Mars globe with terrain detail and interactive orbit controls."
+  },
+  {
+    "key": "mercury-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Mercury Mesh",
+    "description": "Explore Mercury's cratered surface as an interactive 3D globe."
+  },
+  {
+    "key": "venus-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Venus Mesh",
+    "description": "A Venus globe with surface relief and a soft atmospheric glow."
+  },
+  {
+    "key": "jupiter-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Jupiter Mesh",
+    "description": "Jupiter's atmospheric bands on a detailed, interactive 3D globe."
+  },
+  {
+    "key": "saturn-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Saturn Mesh",
+    "description": "A ringed Saturn globe with atmospheric detail and orbit controls."
+  },
+  {
+    "key": "uranus-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Uranus Mesh",
+    "description": "An icy blue globe with subtle atmospheric detail and orbit controls."
+  },
+  {
+    "key": "neptune-mesh",
+    "category": "Design",
+    "subcategory": "Planets",
+    "title": "Neptune Mesh",
+    "description": "A deep-blue Neptune globe with atmospheric textures and OBJ export."
+  },
+  {
+    "key": "sun-mesh",
+    "category": "Design",
+    "subcategory": "Sun & Moon",
+    "title": "Sun Mesh",
+    "description": "An emissive solar surface with a glowing atmosphere and orbit controls."
+  },
+  {
+    "key": "applications-graph",
+    "category": "Data",
+    "subcategory": "Visualization",
+    "title": "Applications Graph",
+    "description": "Explore projects by category, tags, and connections."
+  },
+  {
+    "key": "pioneer-flight-deck",
+    "category": "Design",
+    "subcategory": "Interactive Worlds",
+    "title": "Pioneer Flight Deck",
+    "description": "An immersive cockpit with working Data, Finance, and AI dashboards."
+  },
+  {
+    "key": "earth-moon-world",
+    "category": "Design",
+    "subcategory": "Interactive Worlds",
+    "title": "Earth & Moon World",
+    "description": "A rotating Earth and orbiting Moon with atmospheric light and stars."
+  },
+  {
+    "key": "expedition-showcase",
+    "category": "Design",
+    "subcategory": "Interactive Worlds",
+    "title": "Expedition Showcase",
+    "description": "Animated astronaut crews and matching spacecraft with orbit controls."
+  },
+  {
+    "key": "mars-landing",
+    "category": "Design",
+    "subcategory": "Interactive Worlds",
+    "title": "Mars Landing",
+    "description": "A spacecraft lands, opens its cockpit, and sends its astronaut exploring."
+  },
+  {
+    "key": "solar-system-journey",
+    "category": "Design",
+    "subcategory": "Interactive Worlds",
+    "title": "Solar System Journey",
+    "description": "Follow a crew from Earth to the outer planets in a cinematic expedition."
+  },
+  {
+    "key": "team-calendar",
+    "title": "Team calendar",
+    "description": "Manage internal events, attach project photos, and export your schedule.",
+    "category": "Data",
+    "subcategory": "Business workflow",
+    "outcome": "Book services"
+  },
+  {
+    "key": "scheduler",
+    "category": "Data",
+    "subcategory": "Planning",
+    "title": "Team calendar",
+    "description": "Manage events, project photos, and your daily schedule."
+  },
+  {
+    "key": "life-timeline",
+    "category": "Data",
+    "subcategory": "Storytelling",
+    "title": "Life Timeline",
+    "description": "Turn milestones into an interactive story with dates and context."
+  }
+]

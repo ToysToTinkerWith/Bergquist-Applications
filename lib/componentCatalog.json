@@ -1,0 +1,90 @@
+[
+  {
+    "key": "quote-builder",
+    "title": "Quick estimates",
+    "description": "Let customers choose options and request a starting price.",
+    "category": "Data",
+    "subcategory": "Website feature",
+    "outcome": "Get inquiries"
+  },
+  {
+    "key": "appointment-booking",
+    "title": "Online booking",
+    "description": "Let customers choose a day and time, then confirm their appointment.",
+    "category": "Data",
+    "subcategory": "Website feature",
+    "outcome": "Book services"
+  },
+  {
+    "key": "customer-portal",
+    "title": "Customer portal",
+    "description": "Give customers a clear project update and an easy way to approve your work.",
+    "category": "Data",
+    "subcategory": "Website feature",
+    "outcome": "Manage customers"
+  },
+  {
+    "key": "restaurant-ordering",
+    "category": "Finance",
+    "subcategory": "Commerce",
+    "title": "Restaurant Ordering",
+    "description": "Explore Italiana: browse a menu, build an order, and follow the checkout flow in a restaurant demonstration.",
+    "outcome": "Sell online"
+  },
+  {
+    "key": "stripe-catalog-financial",
+    "category": "Finance",
+    "subcategory": "Commerce",
+    "title": "Online store & checkout",
+    "description": "Browse products, manage a shopping cart, and review an order in one place.",
+    "outcome": "Sell online"
+  },
+  {
+    "key": "inquiry-pipeline",
+    "title": "Customer inquiries",
+    "description": "See new inquiries and keep track of who needs a reply.",
+    "category": "Data",
+    "subcategory": "Website feature",
+    "outcome": "Get inquiries"
+  },
+  {
+    "key": "service-configurator",
+    "title": "Product options",
+    "description": "Let customers choose a size and extras, with a price that updates as they go.",
+    "category": "Data",
+    "subcategory": "Website feature",
+    "outcome": "Sell online"
+  },
+  {
+    "key": "document-intake",
+    "title": "Files & approvals",
+    "description": "Share an image or document and get a clear approval.",
+    "category": "Data",
+    "subcategory": "Website feature",
+    "outcome": "Manage customers"
+  },
+  {
+    "key": "stripe-analytics-financial",
+    "category": "Finance",
+    "subcategory": "Reporting",
+    "title": "Sales dashboard",
+    "description": "See sales trends, product performance, and purchase activity at a glance.",
+    "outcome": "Understand your business"
+  },
+  {
+    "key": "ai-chat-bot",
+    "category": "AI",
+    "subcategory": "Assistance",
+    "title": "Customer assistant",
+    "description": "Answer questions and guide visitors toward a useful next step.",
+    "outcome": "Get inquiries"
+  },
+  {
+    "key": "interactive-design",
+    "title": "Interactive design collection",
+    "description": "Explore immersive worlds and ideas for product experiences, education, and storytelling.",
+    "category": "Design",
+    "subcategory": "Interactive experiences",
+    "outcome": "Interactive design"
+  }
+]

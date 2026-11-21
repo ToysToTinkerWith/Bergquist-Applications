@@ -74,7 +74,7 @@ export default async function handler(req, res) {
     // Success URL goes to /order/<orderId> (placeholder replaced)
     const successUrlFinal = String(success_url || "").replace("{ORDER_ID}", orderId)
 
-    // Cancel URL should always go to /applications/restaurant/order on the same origin
+    // Cancel URL should always go to /components/restaurant-ordering/order on the same origin
     const baseOrigin = originFromUrl(cancel_url) || originFromUrl(success_url)
     if (!baseOrigin || !successUrlFinal) {
       return res.status(400).json({
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
       })
     }
 
-    const cancelUrlFinal = `${baseOrigin}/applications/restaurant/order`
+    const cancelUrlFinal = `${baseOrigin}/components/restaurant-ordering/order`
 
     const TAX_RATE = 0.08
 

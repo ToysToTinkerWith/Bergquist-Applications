@@ -1,0 +1,32 @@
+[
+  {
+    "key": "earth-moon-world", "category": "Design", "subcategory": "Interactive Worlds",
+    "title": "Earth & Moon World",
+    "description": "The Design page's rotating Earth and Moon, with detailed planetary surfaces, atmospheric lighting, and a field of stars.",
+    "price": "Custom scope"
+  },
+  {
+    "key": "expedition-showcase", "category": "Design", "subcategory": "Interactive Worlds",
+    "title": "Expedition Showcase",
+    "description": "Three distinctive astronaut and spacecraft pairs, with articulated character animations, landing gear, opening cockpits, and interactive orbit controls.",
+    "price": "Custom scope"
+  },
+  {
+    "key": "mars-landing", "category": "Design", "subcategory": "Interactive Worlds",
+    "title": "Mars Landing",
+    "description": "A spacecraft descends onto Mars, opens its cockpit, and releases its astronaut to explore the surface. Choose a crew and replay the expedition.",
+    "price": "Custom scope"
+  },
+  {
+    "key": "pioneer-flight-deck", "category": "Design", "subcategory": "Interactive Worlds",
+    "title": "Pioneer Flight Deck",
+    "description": "An immersive spacecraft cockpit with interactive Data, Finance, and AI dashboards, an arrival sequence, and Jupiter beyond the glass.",
+    "price": "Custom scope"
+  },
+  {
+    "key": "solar-system-journey", "category": "Design", "subcategory": "Interactive Worlds",
+    "title": "Solar System Journey",
+    "description": "A cinematic expedition from Earth through Mars and the outer planets, featuring a selectable astronaut and ship, planetary encounters, and journey controls.",
+    "price": "Custom scope"
+  }
+]

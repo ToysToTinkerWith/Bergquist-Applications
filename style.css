@@ -1,0 +1,74 @@
+@font-face {
+  font-family: 'Outfit';
+  src: url('/fonts/outfit-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root { --font-site: 'Outfit', Arial, sans-serif; }
+body { font-family: var(--font-site); }
+.siteTypography { font-family: var(--font-site); }
+/* Older demo surfaces set their own fonts; keep the public site consistent. */
+.siteTypography :is(h1,h2,h3,h4,h5,h6,p,a,button,input,textarea,select,label,summary,legend,li,dt,dd,th,td,.MuiTypography-root,.MuiChip-root,.MuiInputBase-root,.MuiTab-root) {
+  font-family: var(--font-site) !important;
+  letter-spacing: 0 !important;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-garamond-600-latin.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbars cross-browser (but keep scrolling) */
+html, body {
+  -ms-overflow-style: none;  /* IE/Edge legacy */
+  scrollbar-width: none;   /* Firefox */
+  overflow-x: hidden;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  display: none;             /* Chrome/Safari/iOS */
+}
+
+
+  @font-face {
+    font-family: 'Bemora';
+    src: local('Bemora'), url("/fonts/Bemora.ttf") format('truetype');
+    font-display: swap;
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+  }
+
+  @font-face {
+    font-family: 'Helmet';
+    src: local('Helmet'), url("/fonts/Helmet.otf") format('opentype');
+    font-display: swap;
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+  }
+
+    @font-face {
+    font-family: 'StarShield';
+    src: local('StarShield'), url("/fonts/StarShield.ttf") format('truetype');
+    font-display: swap;
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+  }

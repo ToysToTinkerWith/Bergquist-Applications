@@ -5,14 +5,14 @@ const algosdk = require('algosdk');
 
 //SMART CONTRACT DEPLOYMENT
   // declare application state storage (immutable)
-  const localInts = 0;
-  const localBytes = 1;
-  const globalInts = 24; //# 4 for setup + 20 for choices. Use a larger number for more choices.
-  const globalBytes = 1;
+  const localInts = 1;
+  const localBytes = 0;
+  const globalInts = 0; //# 4 for setup + 20 for choices. Use a larger number for more choices.
+  const globalBytes = 0;
 
   // get accounts from mnemonic
-  const creatorMnemonic = ""
-  const userMnemonic = ""
+  const creatorMnemonic = process.env.ALGORAND_CREATOR_MNEMONIC
+  const userMnemonic = process.env.ALGORAND_USER_MNEMONIC
   const creatorAccount = algosdk.mnemonicToSecretKey(creatorMnemonic)
   const userAccout =  algosdk.mnemonicToSecretKey(userMnemonic)
   const creatorSecret = creatorAccount.sk
@@ -365,26 +365,27 @@ const main = async () => {
 const approval_program = await compileProgram(client, approvalProgram)
 const clear_program = await  compileProgram(client,clear_state_program )
 
-let status = await client.status().do()
-console.log("Client Status: " + status)
+// let status = await client.status().do()
+// console.log("Client Status: " + status)
 
-let RegBegin = 100
-let RegEnd = 200
-let VoteBegin = 300
-let VoteEnd = 400
+
 // create list of bytes for app args
 let appArgs = [];
 
-console.log(appArgs.push(
-  new Uint8Array(Buffer.from(intToBytes(RegBegin))),
-  new Uint8Array(Buffer.from(intToBytes(RegEnd))),
-  new Uint8Array(Buffer.from(intToBytes(VoteBegin))),
-  new Uint8Array(Buffer.from(intToBytes(VoteEnd))),
- ))
+// console.log(appArgs.push(
+//   new Uint8Array(Buffer.from(intToBytes(RegBegin))),
+//   new Uint8Array(Buffer.from(intToBytes(RegEnd))),
+//   new Uint8Array(Buffer.from(intToBytes(VoteBegin))),
+//   new Uint8Array(Buffer.from(intToBytes(VoteEnd))),
+//  ))
  
 // create new application
-const appId =  await createApp(creatorAddress, approval_program, clear_program , localInts, localBytes, globalInts, globalBytes, appArgs)
+// const appId =  await createApp(creatorAddress, approval_program, clear_program , localInts, localBytes, globalInts, globalBytes, appArgs)
+// console.log("App ID: " + appId)
+
+const updateId = await update(sender, 926199727, approval_program, clear_program)
+
 
 }
-console.log(main())
 
+main()

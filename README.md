@@ -31,7 +31,7 @@ Let this run, the system is installing the modules in package.json, the services
 
 Now in the terminal run "npm run dev". This should run a local server with the build on it. The web app should be able to be accessed by opening up a web browser and typing "localhost:3000".
 
-If my website popped up then you're all ready to go. The build files are contained in the src folder, and the flow of the web application starts there. Understanding how to build your own applications will come from studying the flow of this application and applying it to your own use cases.
+If my website popped up then you're all ready to go. The application routes live in `pages/` and the shared UI lives in `components/`. Understanding how to build your own applications will come from studying the flow of this application and applying it to your own use cases.
 
 Press CTRL + C if you want to stop the local server so you can type in the terminal again.
 
@@ -47,9 +47,7 @@ Run "pip install pyteal" to install the pyteal libraries.
 
 Run "python contracts.py" to execute the contract.py file, this file contains the logic for the smart contract, defining what to do when a wallet performs specific calls to the smart contract. This is the file that you will be creating your own smart contracts in. Running the contracts.py file will compile the pyteal code into teal code.
 
-Now in the deployment.js file copy and paste the mnemonic phrase for the wallet you want to assign as the creator wallet for this contract, in both the "creatorMnemonic" and the "userMnemonic" variables. For example: 
-
-![mnemonic](https://user-images.githubusercontent.com/54189645/188233992-55649367-3fdc-4250-8433-980782357d97.PNG)
+Set the `ALGORAND_CREATOR_MNEMONIC` and `ALGORAND_USER_MNEMONIC` environment variables for the accounts used by `deployment.js`. Keep those values in your local environment.
 
 Now in the terminal run "node deployment.js". This should run the deployment.js file, which contains a bunch of helpful deployment and testing functions using the algosdk. Running this file runs the main program, which currently calls the createApp function to deploy the contract to the mainnet chain. If all this successfully goes through, you should see an app-id, which represents the app you just deployed to the Algorand chain.
 
@@ -68,7 +66,7 @@ Once inside you project dashboard, click on the cog button next to project overv
 
 Go to your ".firebaserc" file, and change the default to be the project id of your newly created Firebase project. Make sure your project is is Blaze plan on Firebase, so that you have the rights to deploy.
 
-Now run "npm run build" in your terminal, this should compile the existing build into a production build for deployment. Run "npm run deploy" to deploy the production build to Firebase. this will deploy the "server.js" file to Firebase Functions, which will handle all the requests made to the application. If this all goes through successfully, you should now have a project pushed to deployment.
+Run `npm run build:production` to build and stage the application for Firebase. Run "npm run deploy" to deploy the production build to Firebase. this will deploy `functions/server.js` to Firebase Functions, which will handle all the requests made to the application. If this all goes through successfully, you should now have a project pushed to deployment.
 
 
 

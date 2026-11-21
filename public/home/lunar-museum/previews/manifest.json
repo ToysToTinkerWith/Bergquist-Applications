@@ -1,0 +1,149 @@
+{
+  "source": "Local live component screenshots; financial API responses and AI conversation use sample fixtures; wallet signed out.",
+  "items": [
+    {
+      "key": "life-timeline",
+      "title": "Life Timeline",
+      "category": "Data",
+      "image": "life-timeline.png"
+    },
+    {
+      "key": "applications-graph",
+      "title": "Applications Graph",
+      "category": "Data",
+      "image": "applications-graph.png"
+    },
+    {
+      "key": "scheduler",
+      "title": "Scheduler",
+      "category": "Data",
+      "image": "scheduler.png"
+    },
+    {
+      "key": "space-rocket-game",
+      "title": "Space Rocket Game",
+      "category": "Data",
+      "image": "space-rocket-game.png"
+    },
+    {
+      "key": "earth-moon-world",
+      "title": "Earth & Moon World",
+      "category": "Design",
+      "image": "earth-moon-world.png"
+    },
+    {
+      "key": "expedition-showcase",
+      "title": "Expedition Showcase",
+      "category": "Design",
+      "image": "expedition-showcase.png"
+    },
+    {
+      "key": "mars-landing",
+      "title": "Mars Landing",
+      "category": "Design",
+      "image": "mars-landing.png"
+    },
+    {
+      "key": "pioneer-flight-deck",
+      "title": "Pioneer Flight Deck",
+      "category": "Design",
+      "image": "pioneer-flight-deck.png"
+    },
+    {
+      "key": "solar-system-journey",
+      "title": "Solar System Journey",
+      "category": "Design",
+      "image": "solar-system-journey.png"
+    },
+    {
+      "key": "moon-mesh",
+      "title": "Moon Mesh",
+      "category": "Design",
+      "image": "moon-mesh.png"
+    },
+    {
+      "key": "earth-mesh",
+      "title": "Earth Mesh",
+      "category": "Design",
+      "image": "earth-mesh.png"
+    },
+    {
+      "key": "mars-mesh",
+      "title": "Mars Mesh",
+      "category": "Design",
+      "image": "mars-mesh.png"
+    },
+    {
+      "key": "mercury-mesh",
+      "title": "Mercury Mesh",
+      "category": "Design",
+      "image": "mercury-mesh.png"
+    },
+    {
+      "key": "venus-mesh",
+      "title": "Venus Mesh",
+      "category": "Design",
+      "image": "venus-mesh.png"
+    },
+    {
+      "key": "jupiter-mesh",
+      "title": "Jupiter Mesh",
+      "category": "Design",
+      "image": "jupiter-mesh.png"
+    },
+    {
+      "key": "saturn-mesh",
+      "title": "Saturn Mesh",
+      "category": "Design",
+      "image": "saturn-mesh.png"
+    },
+    {
+      "key": "uranus-mesh",
+      "title": "Uranus Mesh",
+      "category": "Design",
+      "image": "uranus-mesh.png"
+    },
+    {
+      "key": "neptune-mesh",
+      "title": "Neptune Mesh",
+      "category": "Design",
+      "image": "neptune-mesh.png"
+    },
+    {
+      "key": "sun-mesh",
+      "title": "Sun Mesh",
+      "category": "Design",
+      "image": "sun-mesh.png"
+    },
+    {
+      "key": "stripe-catalog-financial",
+      "title": "Commerce Catalog",
+      "category": "Financial",
+      "image": "stripe-catalog-financial.png"
+    },
+    {
+      "key": "stripe-analytics-financial",
+      "title": "Sales Analytics",
+      "category": "Financial",
+      "image": "stripe-analytics-financial.png"
+    },
+    {
+      "key": "algorand-wallet-financial",
+      "title": "Algorand Wallet Workspace",
+      "category": "Financial",
+      "image": "algorand-wallet-financial.png"
+    },
+    {
+      "key": "tinyman-candles-financial",
+      "title": "Market Signal Candles",
+      "category": "Financial",
+      "image": "tinyman-candles-financial.png"
+    },
+    {
+      "key": "ai-chat-bot",
+      "title": "AI Chat Bot",
+      "category": "AI",
+      "image": "ai-chat-bot.png"
+    }
+  ]
+}

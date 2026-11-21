@@ -1,0 +1,37 @@
+.composer { min-width: 0; padding-top: 18px; border-top: 1px solid #393443; }
+.toolbar { display: flex; justify-content: space-between; gap: 16px; color: #eee9f7; }
+.toolbar strong { font-size: 14px; font-weight: 500; }
+.toolbar p { margin: 6px 0 0; max-width: 520px; color: #b3adbf; font-size: 12px; line-height: 1.6; }
+.toolbar > span { flex-shrink: 0; color: #b5a2dc; font-size: 12px; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.actions small { color: #a9a1b7; font-size: 11px; line-height: 1.5; }
+.action, .retry { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 8px 12px; border: 1px solid #625273; border-radius: 6px; background: #2d243c; color: #f1eafa; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; }
+.action:hover:not(:disabled), .retry:hover { background: #3d2e52; border-color: #ad93d5; }
+.action:disabled { cursor: default; opacity: .5; }
+.action:focus-visible, .retry:focus-visible, .remove:focus-visible, .thumbnail:focus-visible { outline: 2px solid #c2a9ee; outline-offset: 4px; }
+.hidden { display: none; }
+.progress { margin: 12px 0 0; color: #cbb9ed; font-size: 12px; }
+.error { margin: 10px 0 0; color: #ffb9bf; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+.card { min-width: 0; overflow: hidden; border: 1px solid #3a3446; border-radius: 9px; background: #17151e; }
+.thumbnail { position: relative; display: grid; place-items: center; width: 100%; padding: 0; aspect-ratio: 4 / 3; border: 0; background: #0a090d; color: #aaa2bb; cursor: zoom-in; }
+.thumbnail:disabled { cursor: default; }
+.thumbnail img { display: block; width: 100%; height: 100%; max-height: 230px; object-fit: contain; }
+.placeholder { display: grid; justify-items: center; gap: 9px; padding: 18px; font-size: 12px; }
+.viewHint { position: absolute; right: 8px; bottom: 8px; padding: 4px 7px; border: 1px solid #ffffff26; border-radius: 4px; background: #0b0911db; color: #f4eefc; font-size: 10px; }
+.cardBody { padding: 10px 12px 12px; }
+.nameRow { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 0; }
+.nameRow > span { min-width: 0; overflow: hidden; color: #d7d0e2; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.remove { display: grid; place-content: center; flex-shrink: 0; width: 28px; height: 28px; padding: 0; border: 1px solid #4a3a52; border-radius: 4px; background: #241a2b; color: #d9bfdd; cursor: pointer; }
+.remove:disabled { opacity: .5; cursor: default; }
+.captionLabel { display: grid; gap: 6px; margin-top: 8px; color: #bcb1cd; font-size: 11px; }
+.captionLabel textarea { width: 100%; min-height: 70px; resize: vertical; padding: 9px; border: 1px solid #4a4058; border-radius: 5px; background: #100e16; color: #eee8f7; font: inherit; font-size: 12px; line-height: 1.6; }
+.captionLabel textarea:focus { outline: 2px solid #a990d8; outline-offset: 1px; }
+.captionLabel textarea:disabled { opacity: .65; }
+.caption, .description { margin: 9px 0 0; color: #c5bdcf; font-size: 12px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.description { color: #aaa0ba; font-size: 11px; }
+.retry { margin-top: 12px; }
+.viewer img { display: block; width: 100%; max-height: 68vh; object-fit: contain; background: #08070c; border-radius: 5px; }
+.viewerCaption { margin: 16px 0 0; color: #e4d9f2; font-size: 14px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.viewer .action { margin-top: 18px; }
+@media (max-width: 480px) { .grid { grid-template-columns: minmax(0, 1fr); } .thumbnail img { max-height: none; } }

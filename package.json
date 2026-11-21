@@ -1,41 +1,57 @@
 {
-  "name": "functions",
-  "description": "Cloud Functions for Firebase",
+  "name": "bergquist",
+  "main": "functions/server.js",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "dev": "next dev",
+    "build": "next build",
+    "build:production": "node scripts/build-production.cjs",
+    "start": "next start",
+    "out": "next build && next export",
+    "deploy": "firebase deploy --only functions,hosting"
   },
-  "engines": {
-    "node": "24"
-  },
-  "main": "index.js",
   "dependencies": {
-    "@emotion/react": "^11.6.0",
-    "@emotion/styled": "^11.6.0",
-    "@mui/icons-material": "^5.2.5",
-    "@mui/material": "^5.2.3",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "6.1.20",
+    "@fullcalendar/react": "6.1.20",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
+    "@mui/system": "^5.18.0",
+    "@mui/x-date-pickers": "^6.20.2",
     "@opentelemetry/api": "^1.9.0",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@stripe/stripe-js": "^1.23.0",
     "algosdk": "^1.19.0",
     "crypto": "^1.0.1",
+    "date-fns": "^2.30.0",
     "firebase": "^10.8.0",
-    "firebase-admin": "^11.10.1",
+    "firebase-admin": "^11.11.1",
     "firebase-functions": "^7.0.3",
+    "formidable": "^3.5.4",
     "framer-motion": "^4.1.17",
+    "google-auth-library": "^8.9.0",
     "micro": "^9.3.4",
     "next": "^12.2.5",
     "nextjs-cors": "^2.1.1",
-    "openai": "^4.57.3",
+    "nodemailer": "^10.0.11",
+    "openai": "^4.104.0",
+    "qrcode.react": "^4.2.0",
     "raw-body": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "stripe": "^8.203.0"
+    "recharts": "^3.8.0",
+    "sharp": "^0.34.5",
+    "stripe": "^8.203.0",
+    "three": "^0.183.2",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.4.1"
-  },
-  "private": true
+    "@types/markdown-it": "^14.2.0",
+    "markdown-it": "^14.1.0"
+  }
 }

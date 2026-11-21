@@ -1,0 +1,150 @@
+.about { --accent: #b0a0ec; color: #f2f2f5; background: #050607; font-family: var(--font-site); letter-spacing: 0; }
+.about *, .about *::before, .about *::after { box-sizing: border-box; }
+.about h1, .about h2, .about h3, .about p { margin: 0; font-family: var(--font-site); word-break: normal; overflow-wrap: normal; hyphens: none; letter-spacing: 0; }
+.about h1, .about h2, .about h3 { font-weight: 500; }
+.about h1 { font-size: 68px; line-height: 1.08; }
+.about h2 { font-size: 44px; line-height: 1.16; }
+.about h3 { font-size: 25px; line-height: 1.3; }
+.about h1 span, .about h2 span { color: var(--accent); }
+.about h2::after { content: ""; display: block; width: 62px; height: 2px; background: var(--accent); margin-top: 28px; }
+.about p { color: #bfc7d3; font-size: 18px; line-height: 1.8; }
+.about a { color: inherit; text-decoration: none; }
+.about a:focus-visible, .about button:focus-visible, .about [role="tabpanel"]:focus-visible { outline: 2px solid #b0a0ec; outline-offset: 6px; }
+.container { width: 100%; max-width: 1440px; padding-inline: 48px; margin-inline: auto; }
+.about .eyebrow { font-size: 12px; font-weight: 600; line-height: 1.6; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+.hero { position: relative; isolation: isolate; height: min(680px, calc(100svh - 220px)); min-height: 420px; overflow: hidden; display: flex; align-items: center; background: #050607; }
+.heroWorld { position: absolute; right: max(48px, calc((100% - 1344px) / 2)); top: 0; width: min(calc(58% - 72px), 756px); height: 100%; min-width: 0; border-radius: 32px; overflow: hidden; }
+.heroWorld canvas { mask-image: linear-gradient(to right, transparent, #000 9%, #000 97%, transparent), linear-gradient(to bottom, #000 94%, transparent); mask-composite: intersect; }
+.moonFallback { display: block; width: 100%; height: 100%; object-fit: contain; }
+.heroContent { padding-block: 32px; pointer-events: none; }
+.heroContent a { pointer-events: auto; }
+.heroContent h1 { max-width: 44%; }
+.about .heroDescription { color: #d4d9e3; font-size: 20px; line-height: 1.65; margin-top: 30px; max-width: min(39%, 390px); }
+.heroDescription::before { content: ""; display: block; height: 2px; width: 62px; background: var(--accent); margin-bottom: 23px; }
+.textLink { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; max-width: 100%; font-size: 13px; line-height: 1.5; font-weight: 600; text-transform: uppercase; }
+.about .textLink { text-decoration: underline; text-underline-offset: 8px; text-decoration-color: #9282b7; }
+.textLink svg { flex-shrink: 0; color: var(--accent); transition: transform .2s ease; }
+.textLink:hover { color: #c8bafa; }
+.textLink:hover svg { transform: translateX(3px); }
+.heroContent .textLink { margin-top: 25px; }
+.section { padding-block: 100px; scroll-margin-top: 24px; }
+.storyGrid, .introGrid, .contactGrid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 80px; align-items: start; }
+.storyCopy { padding-top: 36px; }
+.biography { margin: 0; }
+.biography p + p { margin-top: 20px; }
+.biography p:first-child::before { content: "\201C"; color: var(--accent); }
+.biography p:last-child::after { content: "\201D"; color: var(--accent); }
+.signature { width: min(100%, 350px); margin-top: 26px; color: #c3b3f5; }
+.signature svg { display: block; width: 100%; height: auto; overflow: visible; }
+.signature path { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.signature[data-signature="waiting"] path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.signature[data-signature="writing"] path { stroke-dasharray: 1; animation: signName .42s ease-out var(--stroke-delay) both; }
+@keyframes signName { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.about .lead { color: #f2f2f5; font-size: 23px; line-height: 1.5; }
+.journey { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); list-style: none; padding: 0; margin: 54px 0 0; border-block: 1px solid #292d38; }
+.journey li { display: flex; align-items: center; gap: 18px; padding: 28px 24px; min-width: 0; }
+.journey li:first-child { padding-left: 0; }
+.journey li + li { border-left: 1px solid #292d38; }
+.journey li > svg { width: 30px; height: 30px; flex-shrink: 0; color: var(--accent); }
+.journey h3 { font-size: 18px; }
+.journey p { font-size: 14px; line-height: 1.6; margin-top: 5px; color: #a0adbf; }
+.exploration { background: #0d0f15; border-block: 1px solid #282c36; }
+.introGrid { align-items: end; margin-bottom: 48px; }
+.introGrid > p { max-width: 550px; }
+.tabs { display: flex; gap: 30px; border-bottom: 1px solid #343642; }
+.tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 12px 6px; color: #a6b1c3; background: transparent; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; font: 500 17px var(--font-site); cursor: pointer; }
+.tabs button[aria-selected="true"] { color: #e2d7ff; border-bottom-color: var(--accent); }
+.tabs button:hover { color: #f2f2f5; }
+.fieldPanel { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); align-items: center; gap: 64px; padding-top: 40px; min-height: 430px; }
+.fieldPanel[hidden] { display: none; }
+.fieldCopy h3 { font-size: 29px; max-width: 390px; }
+.fieldCopy p { font-size: 17px; line-height: 1.75; margin-top: 20px; }
+.fieldCopy .detail { color: #99a6b9; font-size: 15px; }
+.fieldCopy .textLink { margin-top: 22px; }
+.componentPreview { margin: 0; min-width: 0; }
+.componentPreview a { display: block; border-radius: 6px; }
+.componentPreview img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: contain; background: #090a0e; border: 1px solid #30333f; border-radius: 6px; }
+.componentPreview figcaption { display: flex; justify-content: space-between; gap: 16px; margin-top: 13px; color: #a0adbf; font-size: 12px; line-height: 1.6; }
+.componentPreview figcaption span { color: #b4a3de; }
+.process { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); list-style: none; gap: 32px; margin: 0; padding: 0; }
+.process li { border-top: 1px solid #615578; padding-top: 24px; }
+.number { display: block; color: var(--accent); font-size: 13px; margin-bottom: 24px; }
+.process h3 { font-size: 22px; }
+.process p { margin-top: 15px; font-size: 16px; line-height: 1.75; }
+.workLink { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 46px; padding-top: 24px; border-top: 1px solid #292d38; }
+.workLink p { font-size: 16px; }
+.contact { background: #050607; border-block: 1px solid #292d37; }
+.contactGrid { align-items: center; }
+.contactGrid .textLink { margin-top: 22px; }
+@media (max-width: 1100px) {
+  .container { padding-inline: 32px; }
+  .heroWorld { right: 32px; width: calc(58% - 48px); }
+  .about h1 { font-size: 58px; }
+  .about h2 { font-size: 37px; }
+  .storyGrid, .introGrid, .contactGrid { gap: 40px; }
+  .fieldPanel { gap: 36px; }
+  .fieldCopy h3 { font-size: 27px; }
+  .journey li { align-items: flex-start; gap: 13px; padding: 22px 17px; }
+  .journey li > svg { width: 24px; height: 24px; }
+  .journey h3 { font-size: 16px; }
+  .journey p { font-size: 13px; }
+  .process { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 32px; }
+}
+@media (max-width: 899px) {
+  .hero { height: auto; min-height: 0; flex-direction: column; align-items: flex-start; }
+  .heroWorld { position: relative; right: auto; flex: none; width: calc(100% - 64px); margin-inline: auto; height: clamp(270px, 43svh, 400px); }
+  .heroWorld canvas { mask-image: linear-gradient(to bottom, #000 94%, transparent); }
+  .heroContent { order: -1; padding-top: 28px; padding-bottom: 0; }
+  .heroContent h1 { max-width: 100%; font-size: 42px; }
+  .heroContent .eyebrow { font-size: 11px; margin-bottom: 14px; }
+  .about .heroDescription { font-size: 17px; line-height: 1.55; margin-top: 18px; max-width: 100%; }
+  .heroDescription::before { margin-bottom: 16px; width: 50px; }
+  .heroContent .textLink { margin-top: 12px; font-size: 12px; }
+}
+@media (max-width: 767px) {
+  .container { padding-inline: 24px; }
+  .heroWorld { width: calc(100% - 48px); }
+  .section { padding-block: 66px; }
+  .about h2 { font-size: 34px; }
+  .about p { font-size: 17px; }
+  .storyGrid, .introGrid, .contactGrid { grid-template-columns: minmax(0,1fr); gap: 28px; }
+  .storyCopy { padding-top: 0; }
+  .about .lead { font-size: 21px; }
+  .journey { grid-template-columns: minmax(0,1fr); margin-top: 32px; }
+  .journey li, .journey li:first-child { padding: 20px 0; align-items: center; gap: 20px; }
+  .journey li + li { border-left: 0; border-top: 1px solid #292d38; }
+  .journey h3 { font-size: 18px; }
+  .journey p { font-size: 14px; }
+  .introGrid { margin-bottom: 30px; }
+  .tabs { justify-content: flex-start; gap: 28px; }
+  .tabs button { font-size: 16px; gap: 8px; }
+  .fieldPanel { grid-template-columns: minmax(0,1fr); gap: 28px; padding-top: 28px; min-height: 0; }
+  .fieldCopy { min-height: 322px; }
+  .fieldCopy h3 { font-size: 27px; }
+  .fieldCopy p { font-size: 16px; margin-top: 16px; }
+  .fieldCopy .detail { font-size: 15px; }
+  .fieldCopy .textLink { margin-top: 16px; }
+  .componentPreview figcaption { flex-wrap: wrap; gap: 4px 16px; }
+  .workLink { flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 32px; }
+}
+@media (max-width: 380px) {
+  .container { padding-inline: 20px; }
+  .heroWorld { width: calc(100% - 40px); }
+  .heroContent h1 { font-size: 36px; }
+  .heroContent .eyebrow { font-size: 10px; }
+  .heroContent .textLink { margin-top: 8px; }
+  .about h2 { font-size: 30px; }
+  .tabs { gap: 18px; }
+  .tabs button { font-size: 15px; gap: 6px; }
+  .fieldCopy { min-height: 370px; }
+  .process { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-height: 650px) and (min-width: 900px) {
+  .hero { min-height: 370px; height: calc(100svh - 150px); }
+  .about h1 { font-size: 46px; }
+  .heroContent .eyebrow { margin-bottom: 14px; }
+  .about .heroDescription { margin-top: 20px; font-size: 18px; }
+  .heroDescription::before { margin-bottom: 16px; }
+  .heroContent .textLink { margin-top: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .textLink svg { transition: none; } .signature path { animation: none !important; stroke-dashoffset: 0 !important; } }

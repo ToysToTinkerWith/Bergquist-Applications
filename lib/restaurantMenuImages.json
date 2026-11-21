@@ -1,0 +1,457 @@
+[
+  {
+    "key": "neapolitan-pizza-with-one-topping",
+    "name": "Pizza With One Topping",
+    "group": "Create Your Own Neapolitan Pizza",
+    "src": "/restaurant/menu/items/neapolitan-pizza-with-one-topping.webp",
+    "caption": "Example shown with pepperoni."
+  },
+  {
+    "key": "neapolitan-pizza-with-two-toppings",
+    "name": "Pizza With Two Toppings",
+    "group": "Create Your Own Neapolitan Pizza",
+    "src": "/restaurant/menu/items/neapolitan-pizza-with-two-toppings.webp",
+    "caption": "Example shown with pepperoni and mushrooms."
+  },
+  {
+    "key": "neapolitan-pizza-with-three-toppings",
+    "name": "Pizza With Three Toppings",
+    "group": "Create Your Own Neapolitan Pizza",
+    "src": "/restaurant/menu/items/neapolitan-pizza-with-three-toppings.webp",
+    "caption": "Example shown with pepperoni, mushrooms and green peppers."
+  },
+  {
+    "key": "neapolitan-pizza-with-four-toppings",
+    "name": "Pizza With Four Toppings",
+    "group": "Create Your Own Neapolitan Pizza",
+    "src": "/restaurant/menu/items/neapolitan-pizza-with-four-toppings.webp",
+    "caption": "Example shown with pepperoni, mushrooms, green peppers and olives."
+  },
+  {
+    "key": "neapolitan-plain-pizza",
+    "name": "Plain Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-plain-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-italiana-special-pizza",
+    "name": "Italiana Special Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-italiana-special-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-meat-lovers-italian-deli-pizza",
+    "name": "Meat Lovers Italian Deli Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-meat-lovers-italian-deli-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-ham-pineapple-pizza",
+    "name": "Ham Pineapple Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-ham-pineapple-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-clam-garlic-pizza",
+    "name": "Clam Garlic Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-clam-garlic-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-chicken-bacon-ranch-pizza",
+    "name": "Chicken Bacon Ranch Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-chicken-bacon-ranch-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-chicken-caesar-pizza",
+    "name": "Chicken Caesar Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-chicken-caesar-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-bbq-chicken-pizza",
+    "name": "BBQ Chicken Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-bbq-chicken-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-greek-pizza",
+    "name": "Greek Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-greek-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-spinach-feta-pizza",
+    "name": "Spinach Feta Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-spinach-feta-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-veggie-pizza",
+    "name": "Veggie Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-veggie-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-pesto-pizza",
+    "name": "Pesto Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-pesto-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-esta-feta-pizza",
+    "name": "Esta Feta Pizza",
+    "group": "Neapolitan Thin Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/neapolitan-esta-feta-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-plain-pizza",
+    "name": "Plain Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-plain-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-italiana-special-pizza",
+    "name": "Italiana Special Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-italiana-special-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-meat-lovers-italian-deli-pizza",
+    "name": "Meat Lovers Italian Deli Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-meat-lovers-italian-deli-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-ham-pineapple-pizza",
+    "name": "Ham Pineapple Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-ham-pineapple-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-clam-garlic-pizza",
+    "name": "Clam Garlic Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-clam-garlic-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-chicken-bacon-ranch-pizza",
+    "name": "Chicken Bacon Ranch Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-chicken-bacon-ranch-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-bbq-chicken-pizza",
+    "name": "BBQ Chicken Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-bbq-chicken-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-greek-pizza",
+    "name": "Greek Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-greek-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-spinach-feta-pizza",
+    "name": "Spinach Feta Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-spinach-feta-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-veggie-pizza",
+    "name": "Veggie Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-veggie-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-pesto-pizza",
+    "name": "Pesto Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-pesto-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-esta-feta-pizza",
+    "name": "Esta Feta Pizza",
+    "group": "Sicilian Thick Crust Specialty Pizzas",
+    "src": "/restaurant/menu/items/sicilian-esta-feta-pizza.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-create-your-own-sicilian-pizza",
+    "name": "Create Your Own Sicilian Pizza",
+    "group": "Create Your Own Sicilian Pizza",
+    "src": "/restaurant/menu/items/sicilian-create-your-own-sicilian-pizza.webp",
+    "caption": "Cheese base shown; toppings are your choice."
+  },
+  {
+    "key": "slice-plain-pizza-by-the-slice",
+    "name": "Plain Pizza By The Slice",
+    "group": "Pizza by the Slice",
+    "src": "/restaurant/menu/items/slice-plain-pizza-by-the-slice.webp",
+    "caption": ""
+  },
+  {
+    "key": "spaghetti",
+    "name": "Spaghetti",
+    "group": "Pasta Dishes",
+    "src": "/restaurant/menu/items/spaghetti.webp",
+    "caption": "Meatball option shown."
+  },
+  {
+    "key": "jumbo-cheese-ravioli",
+    "name": "Jumbo Cheese Ravioli",
+    "group": "Pasta Dishes",
+    "src": "/restaurant/menu/items/jumbo-cheese-ravioli.webp",
+    "caption": ""
+  },
+  {
+    "key": "greek-pasta",
+    "name": "Greek Pasta",
+    "group": "Pasta Dishes",
+    "src": "/restaurant/menu/items/greek-pasta.webp",
+    "caption": ""
+  },
+  {
+    "key": "pasta-pesto",
+    "name": "Pasta Pesto",
+    "group": "Pasta Dishes",
+    "src": "/restaurant/menu/items/pasta-pesto.webp",
+    "caption": ""
+  },
+  {
+    "key": "spinach-salad",
+    "name": "Spinach Salad",
+    "group": "Salads",
+    "src": "/restaurant/menu/items/spinach-salad.webp",
+    "caption": ""
+  },
+  {
+    "key": "bread-plate",
+    "name": "Bread Plate",
+    "group": "Appetizers",
+    "src": "/restaurant/menu/items/bread-plate.webp",
+    "caption": ""
+  },
+  {
+    "key": "antipasta-plate",
+    "name": "Antipasta Plate",
+    "group": "Appetizers",
+    "src": "/restaurant/menu/items/antipasta-plate.webp",
+    "caption": ""
+  },
+  {
+    "key": "roasted-stuffed-portobella",
+    "name": "Roasted Stuffed Portobella",
+    "group": "Appetizers",
+    "src": "/restaurant/menu/items/roasted-stuffed-portobella.webp",
+    "caption": ""
+  },
+  {
+    "key": "italian-hero",
+    "name": "Italian Hero",
+    "group": "Sandwiches",
+    "src": "/restaurant/menu/items/italian-hero.webp",
+    "caption": "Meatball option shown."
+  },
+  {
+    "key": "european-style-grilled-chicken",
+    "name": "European Style Grilled Chicken",
+    "group": "Sandwiches",
+    "src": "/restaurant/menu/items/european-style-grilled-chicken.webp",
+    "caption": ""
+  },
+  {
+    "key": "vegetarian-sandwich",
+    "name": "Vegetarian Sandwich",
+    "group": "Sandwiches",
+    "src": "/restaurant/menu/items/vegetarian-sandwich.webp",
+    "caption": ""
+  },
+  {
+    "key": "italian-deli-sandwich",
+    "name": "Italian Deli Sandwich",
+    "group": "Sandwiches",
+    "src": "/restaurant/menu/items/italian-deli-sandwich.webp",
+    "caption": ""
+  },
+  {
+    "key": "portobello-sandwich",
+    "name": "Portobello Sandwich",
+    "group": "Sandwiches",
+    "src": "/restaurant/menu/items/portobello-sandwich.webp",
+    "caption": ""
+  },
+  {
+    "key": "steak-sandwich",
+    "name": "Steak Sandwich",
+    "group": "Sandwiches",
+    "src": "/restaurant/menu/items/steak-sandwich.webp",
+    "caption": ""
+  },
+  {
+    "key": "chocolate-decadence-cake",
+    "name": "Chocolate Decadence Cake",
+    "group": "Desserts",
+    "src": "/restaurant/menu/items/chocolate-decadence-cake.webp",
+    "caption": ""
+  },
+  {
+    "key": "brooklyn-cheesecake",
+    "name": "Brooklyn Cheesecake",
+    "group": "Desserts",
+    "src": "/restaurant/menu/items/brooklyn-cheesecake.webp",
+    "caption": ""
+  },
+  {
+    "key": "iced-tea",
+    "name": "Iced Tea",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/iced-tea.webp",
+    "caption": ""
+  },
+  {
+    "key": "coffee",
+    "name": "Coffee",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/coffee.webp",
+    "caption": ""
+  },
+  {
+    "key": "milk",
+    "name": "Milk",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/milk.webp",
+    "caption": ""
+  },
+  {
+    "key": "chocolate-milk",
+    "name": "Chocolate Milk",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/chocolate-milk.webp",
+    "caption": ""
+  },
+  {
+    "key": "hot-chocolate",
+    "name": "Hot Chocolate",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/hot-chocolate.webp",
+    "caption": ""
+  },
+  {
+    "key": "hot-apple-cider",
+    "name": "Hot Apple Cider",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/hot-apple-cider.webp",
+    "caption": ""
+  },
+  {
+    "key": "apple-juice",
+    "name": "Apple Juice",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/apple-juice.webp",
+    "caption": ""
+  },
+  {
+    "key": "cranberry-juice",
+    "name": "Cranberry Juice",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/cranberry-juice.webp",
+    "caption": ""
+  },
+  {
+    "key": "orange-juice",
+    "name": "Orange Juice",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/orange-juice.webp",
+    "caption": ""
+  },
+  {
+    "key": "pellegrino-mineral-water",
+    "name": "Pellegrino Mineral Water",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/pellegrino-mineral-water.webp",
+    "caption": ""
+  },
+  {
+    "key": "limonata-aranciata",
+    "name": "Limonata Aranciata",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/limonata-aranciata.webp",
+    "caption": ""
+  },
+  {
+    "key": "thomas-kemper-root-beer",
+    "name": "Thomas Kemper Root Beer",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/thomas-kemper-root-beer.webp",
+    "caption": ""
+  },
+  {
+    "key": "craft-ginger-beer",
+    "name": "Craft Ginger Beer",
+    "group": "Beverages",
+    "src": "/restaurant/menu/items/craft-ginger-beer.webp",
+    "caption": ""
+  },
+  {
+    "key": "neapolitan-house-special",
+    "name": "Neapolitan House Special",
+    "group": "Favorites",
+    "src": "/restaurant/menu/items/neapolitan-house-special.webp",
+    "caption": ""
+  },
+  {
+    "key": "sicilian-pepperoni",
+    "name": "Sicilian Pepperoni",
+    "group": "Favorites",
+    "src": "/restaurant/menu/items/sicilian-pepperoni.webp",
+    "caption": ""
+  },
+  {
+    "key": "baked-ziti",
+    "name": "Baked Ziti",
+    "group": "Favorites",
+    "src": "/restaurant/menu/items/baked-ziti.webp",
+    "caption": ""
+  },
+  {
+    "key": "classic-caesar",
+    "name": "Classic Caesar",
+    "group": "Favorites",
+    "src": "/restaurant/menu/items/classic-caesar.webp",
+    "caption": ""
+  },
+  {
+    "key": "garden-salad",
+    "name": "Garden Salad",
+    "group": "Favorites",
+    "src": "/restaurant/menu/items/garden-salad.webp",
+    "caption": ""
+  }
+]

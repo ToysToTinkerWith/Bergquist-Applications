@@ -1,12 +1,4 @@
 // components/StripePurchaseAnalytics.jsx
-// Full code change
-// - Similar visual theme to StripeCatalog / ApplicationsBarGraph
-// - Reads aggregated purchase analytics from your backend API
-// - Graph 1: quantity purchased by product
-// - Graph 2: purchases of each item over time
-// - Uses Recharts for responsive charts
-// - Y axes display whole values only
-// - Best seller now uses the actual highest totalQty instead of the first item
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import {
@@ -44,7 +36,7 @@ import {
 function RevealOnScroll({
   children,
   delay = 0,
-  threshold = 0.25,
+  threshold = 0,
   rootMargin = "0px 0px -12% 0px",
 }) {
   const ref = useRef(null)
@@ -307,54 +299,15 @@ export default function StripePurchaseAnalytics({
     <Box
       sx={{
         width: "100%",
-        pt: { xs: 7, sm: 8, md: 10 },
+        pt: { xs: 3, sm: 4, md: 5 },
         pb: { xs: 3, sm: 4 },
         px: { xs: 2, sm: 3, md: 4 },
         display: "flex",
         justifyContent: "center",
+        backgroundColor: "black",
       }}
     >
       <Box sx={{ width: "100%", maxWidth: 1280 }}>
-        <RevealOnScroll>
-          <Stack
-            spacing={1.2}
-            alignItems="center"
-            sx={{ textAlign: "center", mb: 4 }}
-          >
-            <GradientTitle
-              variant="h2"
-              align="center"
-              sx={{
-                fontSize: { xs: "2.15rem", sm: "2.8rem", md: "3.5rem" },
-                mb: 0.5,
-              }}
-            >
-              {title}
-            </GradientTitle>
-
-            <SubText
-              sx={{
-                maxWidth: 860,
-                fontSize: { xs: 15.5, sm: 17 },
-                color: "rgba(216, 229, 254, 0.76)",
-              }}
-            >
-              {subtitle}
-            </SubText>
-
-            <Typography
-              sx={{
-                color: "rgba(216, 229, 254, 0.55)",
-                fontSize: 13,
-                letterSpacing: 0.35,
-                mt: 0.3,
-              }}
-            >
-              Last updated: {lastUpdated}
-            </Typography>
-          </Stack>
-        </RevealOnScroll>
-
         <Stack spacing={{ xs: 2.5, sm: 3 }}>
           <RevealOnScroll delay={0.05}>
             <Box
@@ -362,10 +315,8 @@ export default function StripePurchaseAnalytics({
                 position: "relative",
                 borderRadius: 3,
                 overflow: "hidden",
-                background:
-                  "linear-gradient(180deg, rgba(124,58,237,0.08) 0%, rgba(34,211,238,0.03) 100%)",
-                border: "1px solid rgba(216, 229, 254, 0.12)",
-                boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
+                background: "black",
+                boxShadow: "none",
                 p: { xs: 2, sm: 2.5, md: 3 },
               }}
             >
@@ -377,13 +328,6 @@ export default function StripePurchaseAnalytics({
                 sx={{ mb: 2 }}
               >
                 <Stack spacing={0.75}>
-                  <GradientTitle
-                    variant="h5"
-                    sx={{ letterSpacing: 0.8, textShadow: "none" }}
-                  >
-                    Stripe Product Analytics
-                  </GradientTitle>
-
                   <SubText
                     sx={{ fontSize: 15, color: "rgba(216, 229, 254, 0.72)" }}
                   >
@@ -754,5 +698,5 @@ export default function StripePurchaseAnalytics({
     return <Box sx={{ width: "100%", backgroundColor: "black" }}>{content}</Box>
   }
 
-  return <Box sx={{ width: "100%" }}>{content}</Box>
+  return <Box sx={{ width: "100%", backgroundColor: "black" }}>{content}</Box>
 }

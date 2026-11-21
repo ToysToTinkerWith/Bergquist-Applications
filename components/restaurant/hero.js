@@ -55,7 +55,7 @@ const css = `
     --vpz-ink2:rgba(244,240,230,.82);
     --vpz-ink3:rgba(244,240,230,.62);
     --vpz-line:rgba(244,240,230,.18);
-    --vpz-gold:rgba(214,177,104,.95);
+    --vpz-gold:rgba(176,160,236,.95);
     --vpz-shadow:rgba(0,0,0,.55);
   }
 
@@ -121,7 +121,7 @@ const css = `
     position:absolute;
     inset:-90px;
     background:
-      radial-gradient(circle at 40% 20%, rgba(214,177,104,.12), transparent 58%),
+      radial-gradient(circle at 40% 20%, rgba(176,160,236,.12), transparent 58%),
       radial-gradient(circle at 75% 75%, rgba(244,240,230,.06), transparent 62%);
     pointer-events:none;
     mix-blend-mode: screen;
@@ -191,9 +191,9 @@ const css = `
   }
 
   .vpsz-primary{
-    border-color: rgba(214,177,104,.55);
+    border-color: rgba(176,160,236,.55);
     background:
-      radial-gradient(circle at 30% 20%, rgba(214,177,104,.18), transparent 52%),
+      radial-gradient(circle at 30% 20%, rgba(176,160,236,.18), transparent 52%),
       linear-gradient(180deg, rgba(26,22,14,.98), rgba(8,8,8,.98));
   }
 
@@ -205,7 +205,7 @@ const css = `
   .vpz-btn:focus{
     outline:none;
     box-shadow:
-      0 0 0 3px rgba(214,177,104,.16),
+      0 0 0 3px rgba(176,160,236,.16),
       inset 0 1px 0 rgba(255,255,255,.06),
       0 10px 26px rgba(0,0,0,.35);
   }

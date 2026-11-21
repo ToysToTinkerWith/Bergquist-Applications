@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { restaurantFeaturedImage } from "../../lib/restaurantMenuImages"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 export default function RestaurantFavorites({
@@ -13,13 +14,13 @@ export default function RestaurantFavorites({
           key: "pizza-neapolitan-special",
           title: "Neapolitan House Special",
           desc: "Thin crust, bright tomato sauce, mozzarella, basil, and a finishing drizzle of olive oil.",
-          imageSrc: "",
+          imageSrc: restaurantFeaturedImage("neapolitan-house-special"),
         },
         {
           key: "pizza-sicilian-pepperoni",
           title: "Sicilian Pepperoni",
           desc: "Thick crust, mozzarella, classic pepperoni, and a hearty red sauce—crispy edges, soft center.",
-          imageSrc: "",
+          imageSrc: restaurantFeaturedImage("sicilian-pepperoni"),
         },
       ],
     },
@@ -32,13 +33,13 @@ export default function RestaurantFavorites({
           key: "pasta-baked-ziti",
           title: "Baked Ziti",
           desc: "Penne in marinara with melted mozzarella and ricotta, baked until bubbling and golden.",
-          imageSrc: "",
+          imageSrc: restaurantFeaturedImage("baked-ziti"),
         },
         {
           key: "pasta-spaghetti-meatballs",
           title: "Spaghetti & Meatballs",
           desc: "Classic spaghetti with house marinara and tender meatballs, finished with parmesan.",
-          imageSrc: "",
+          imageSrc: restaurantFeaturedImage("spaghetti"),
         },
       ],
     },
@@ -51,13 +52,13 @@ export default function RestaurantFavorites({
           key: "salad-caesar",
           title: "Classic Caesar",
           desc: "Crisp romaine, parmesan, garlic croutons, and creamy Caesar dressing.",
-          imageSrc: "",
+          imageSrc: restaurantFeaturedImage("classic-caesar"),
         },
         {
           key: "salad-garden",
           title: "Garden Salad",
           desc: "Mixed greens, tomatoes, cucumbers, red onion, and a simple house vinaigrette.",
-          imageSrc: "",
+          imageSrc: restaurantFeaturedImage("garden-salad"),
         },
       ],
     },
@@ -75,7 +76,7 @@ export default function RestaurantFavorites({
       ink: "#f4f0e6",
       ink2: "rgba(244,240,230,.82)",
       ink3: "rgba(244,240,230,.62)",
-      gold: "rgba(214,177,104,.95)",
+      gold: "rgba(176,160,236,.95)",
       shadow: "rgba(0,0,0,.55)",
       // Hero font
       fontFamily: "ui-serif, Georgia, Times New Roman, Times, serif",
@@ -118,8 +119,8 @@ export default function RestaurantFavorites({
         zIndex: 0,
         pointerEvents: "none",
         background:
-          "radial-gradient(circle at 78% 22%, rgba(214,177,104,.20), transparent 55%)," +
-          "radial-gradient(circle at 18% 78%, rgba(214,177,104,.10), transparent 58%)," +
+          "radial-gradient(circle at 78% 22%, rgba(176,160,236,.20), transparent 55%)," +
+          "radial-gradient(circle at 18% 78%, rgba(176,160,236,.10), transparent 58%)," +
           "linear-gradient(180deg, rgba(12,12,12,1), rgba(5,5,5,1))",
         filter: "saturate(1.05) contrast(1.02)",
         opacity: 1,
@@ -129,7 +130,7 @@ export default function RestaurantFavorites({
         inset: "-140px -60px",
         zIndex: 0,
         background:
-          "radial-gradient(circle at 30% 20%, rgba(214,177,104,.10), transparent 60%)," +
+          "radial-gradient(circle at 30% 20%, rgba(176,160,236,.10), transparent 60%)," +
           "radial-gradient(circle at 75% 80%, rgba(244,240,230,.05), transparent 62%)",
         pointerEvents: "none",
         opacity: 0.55,
@@ -203,7 +204,7 @@ export default function RestaurantFavorites({
         height: 1,
         width: "100%",
         background:
-          "linear-gradient(90deg, transparent, rgba(214,177,104,.35), rgba(244,240,230,.10), transparent)",
+          "linear-gradient(90deg, transparent, rgba(176,160,236,.35), rgba(244,240,230,.10), transparent)",
         opacity: 0.9,
       },
 
@@ -221,7 +222,7 @@ export default function RestaurantFavorites({
           "linear-gradient(180deg, rgba(18,18,18,.92), rgba(6,6,6,.92))",
         border: "1px solid rgba(244,240,230,.10)",
         boxShadow: isFocused
-          ? "inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 2px rgba(214,177,104,.28)"
+          ? "inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 2px rgba(176,160,236,.28)"
           : "inset 0 1px 0 rgba(255,255,255,.06)",
         cursor: "pointer",
         userSelect: "none",
@@ -243,9 +244,9 @@ export default function RestaurantFavorites({
         borderRadius: itemMediaRadius,
         flex: "0 0 auto",
         position: "relative",
-        border: "1px dashed rgba(214,177,104,.40)",
+        border: "1px dashed rgba(176,160,236,.40)",
         background:
-          "radial-gradient(circle at 30% 20%, rgba(214,177,104,.10), transparent 60%), rgba(0,0,0,.20)",
+          "radial-gradient(circle at 30% 20%, rgba(176,160,236,.10), transparent 60%), rgba(0,0,0,.20)",
         overflow: "hidden",
         display: "grid",
         placeItems: "center",
@@ -295,10 +296,10 @@ export default function RestaurantFavorites({
         fontSize: 13,
         letterSpacing: ".10em",
         textTransform: "uppercase",
-        color: "rgba(214,177,104,.90)",
+        color: "rgba(176,160,236,.90)",
         borderBottom: "1px solid rgba(244,240,230,.10)",
         background:
-          "linear-gradient(90deg, rgba(214,177,104,.10), rgba(0,0,0,0))",
+          "linear-gradient(90deg, rgba(176,160,236,.10), rgba(0,0,0,0))",
       },
       modalImg: {
         display: "block",
@@ -398,7 +399,7 @@ export default function RestaurantFavorites({
                       {mediaSrc ? (
                         <img
                           style={styles.itemMedia}
-                          src={mediaSrc}
+                          loading="lazy" decoding="async" src={mediaSrc}
                           alt={it.title}
                           draggable="false"
                         />

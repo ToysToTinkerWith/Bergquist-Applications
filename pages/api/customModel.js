@@ -1,5 +1,6 @@
 
 import OpenAI from "openai";
+import { CONTACT_EMAIL } from "../../lib/contactDetails";
 
 const openai = new OpenAI({
     apiKey: process.env.DALLE_KEY
@@ -78,7 +79,7 @@ async function customModel(req, res) {
 
         {
           name: "Online Ordering",
-          href: "./applications/restaurant",
+          href: "/components/restaurant-ordering",
           description:
             "A modern restaurant experience — interactive menu, ordering, and operational workflows designed for speed and clarity.",
           tags: ["Ordering", "Stripe", "Admin Ops"],
@@ -124,7 +125,7 @@ async function customModel(req, res) {
 
         Message Bergquist Applications by phone or email
         360-969-9115
-        abergquist96@gmail.com
+        ${CONTACT_EMAIL}
 
 
         Help Bergquist Applications understand the business model and budget

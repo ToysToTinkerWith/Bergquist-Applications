@@ -1,104 +1,9 @@
-// pages/privacy.jsx
-// Privacy Policy page (Pages Router) — matches your black + gradient Bemora theme
-// Includes next/head SEO + JSON-LD
-// Requires: @mui/material, framer-motion
-
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useMemo } from "react"
 import Head from "next/head"
-import { Box, Typography, Divider, Link, Stack } from "@mui/material"
-import { motion } from "framer-motion"
-
-function RevealOnScroll({
-  children,
-  delay = 0,
-  threshold = 0.25,
-  rootMargin = "0px 0px -12% 0px",
-}) {
-  const ref = useRef(null)
-  const [shown, setShown] = useState(false)
-
-  useEffect(() => {
-    if (shown) return
-    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
-      setShown(true)
-      return
-    }
-
-    const el = ref.current
-    if (!el) {
-      setShown(true)
-      return
-    }
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (entry && entry.isIntersecting) {
-          setShown(true)
-          obs.disconnect()
-        }
-      },
-      { threshold, root: null, rootMargin }
-    )
-
-    obs.observe(el)
-    return () => {
-      try {
-        obs.disconnect()
-      } catch {}
-    }
-  }, [shown, threshold, rootMargin])
-
-  return (
-    <Box
-      ref={ref}
-      component={motion.div}
-      initial={false}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-      transition={{ duration: 0.85, ease: "easeOut", delay }}
-      sx={{ willChange: "transform, opacity" }}
-    >
-      {children}
-    </Box>
-  )
-}
-
-function GradientTitle({ children, variant = "h3", align = "left", sx = {} }) {
-  return (
-    <Typography
-      variant={variant}
-      align={align}
-      sx={{
-        fontFamily: "Bemora",
-        letterSpacing: 1.1,
-        lineHeight: 1.2,
-        backgroundImage: "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
-        WebkitBackgroundClip: "text",
-        backgroundClip: "text",
-        color: "transparent",
-        textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-        ...sx,
-      }}
-    >
-      {children}
-    </Typography>
-  )
-}
-
-function SubText({ children, sx = {} }) {
-  return (
-    <Typography
-      variant="body1"
-      sx={{
-        color: "rgba(216, 229, 254, 0.84)",
-        lineHeight: 1.75,
-        ...sx,
-      }}
-    >
-      {children}
-    </Typography>
-  )
-}
+import { SOCIAL_IMAGE_URL, SOCIAL_IMAGE_ALT, SOCIAL_IMAGE_WIDTH, SOCIAL_IMAGE_HEIGHT } from "../lib/socialPreview"
+import { Box, Link } from "@mui/material"
+import LegalDocument, { LegalText as SubText } from "../components/LegalDocument"
+import { CONTACT_EMAIL } from "../lib/contactDetails"
 
 export default function PrivacyPage() {
   // ---- SEO ----
@@ -111,8 +16,8 @@ export default function PrivacyPage() {
   const DESCRIPTION =
     "Privacy Policy for Bergquist Applications — how we collect, use, and protect information when you visit our site or work with us."
 
-  const OG_IMAGE = `${SITE_URL}/og/bergquist-applications.jpg`
-  const LAST_UPDATED = "February 17, 2026" // update whenever you change this page
+  const OG_IMAGE = SOCIAL_IMAGE_URL
+  const LAST_UPDATED = "September 22, 2026" // update whenever you change this page
 
   const jsonLdWebPage = {
     "@context": "https://schema.org",
@@ -124,7 +29,7 @@ export default function PrivacyPage() {
       name: SITE_NAME,
       url: SITE_URL,
     },
-    dateModified: "2026-02-17",
+    dateModified: "2026-09-22",
   }
 
   // ---- Content ----
@@ -142,11 +47,11 @@ export default function PrivacyPage() {
             <SubText sx={{ mt: 1.5 }}>
               If you have questions, contact us at{" "}
               <Link
-                href="mailto:abergquist96@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 underline="hover"
                 sx={{ color: "rgba(216, 229, 254, 0.92)" }}
               >
-                abergquist96@gmail.com
+                {CONTACT_EMAIL}
               </Link>
               .
             </SubText>
@@ -331,11 +236,11 @@ export default function PrivacyPage() {
             <SubText>
               For privacy questions or requests, contact{" "}
               <Link
-                href="mailto:abergquist96@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 underline="hover"
                 sx={{ color: "rgba(216, 229, 254, 0.92)" }}
               >
-                abergquist96@gmail.com
+                {CONTACT_EMAIL}
               </Link>
               .
             </SubText>
@@ -346,9 +251,8 @@ export default function PrivacyPage() {
     [SITE_NAME, SITE_URL]
   )
 
-  return (
-    <Box sx={{ width: "100%", backgroundColor: "black", minHeight: "100vh" }}>
-      <Head>
+  return <LegalDocument title="Privacy Policy" description="How we handle information when you visit our site or work with us." updated={LAST_UPDATED} sections={sections}>
+    <Head>
         <title>{TITLE}</title>
         <meta name="description" content={DESCRIPTION} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -367,12 +271,16 @@ export default function PrivacyPage() {
         <meta property="og:description" content={DESCRIPTION} />
         <meta property="og:url" content={PAGE_URL} />
         <meta property="og:image" content={OG_IMAGE} />
+        <meta property="og:image:width" content={SOCIAL_IMAGE_WIDTH} />
+        <meta property="og:image:height" content={SOCIAL_IMAGE_HEIGHT} />
+        <meta property="og:image:alt" content={SOCIAL_IMAGE_ALT} />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={TITLE} />
         <meta name="twitter:description" content={DESCRIPTION} />
         <meta name="twitter:image" content={OG_IMAGE} />
+        <meta name="twitter:image:alt" content={SOCIAL_IMAGE_ALT} />
 
         <meta name="theme-color" content="#000000" />
 
@@ -381,97 +289,5 @@ export default function PrivacyPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebPage) }}
         />
       </Head>
-
-      {/* Hero header */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
-          pt: { xs: 10, sm: 12, md: 14 },
-          pb: { xs: 6, sm: 7, md: 8 },
-        }}
-      >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
-          <RevealOnScroll>
-            <GradientTitle variant="h2" align="center" sx={{ letterSpacing: 1.8 }}>
-              Privacy Policy
-            </GradientTitle>
-            <Typography
-              variant="h6"
-              align="center"
-              sx={{
-                mt: 1.25,
-                color: "rgba(216, 229, 254, 0.86)",
-                lineHeight: 1.6,
-                maxWidth: 860,
-                mx: "auto",
-              }}
-            >
-              How we handle information when you visit our site or work with us.
-            </Typography>
-            <Typography
-              variant="body2"
-              align="center"
-              sx={{ mt: 1.5, color: "rgba(216, 229, 254, 0.68)" }}
-            >
-              Last updated: {LAST_UPDATED}
-            </Typography>
-          </RevealOnScroll>
-        </Box>
-      </Box>
-
-      {/* Content */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
-          pb: { xs: 10, sm: 12, md: 14 },
-        }}
-      >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
-          {/* Soft divider */}
-          <Divider
-            sx={{
-              borderColor: "rgba(216, 229, 254, 0.14)",
-              mb: { xs: 3.5, sm: 4.5 },
-            }}
-          />
-
-          <Stack spacing={{ xs: 3.5, sm: 4 }}>
-            {sections.map((s, idx) => (
-              <RevealOnScroll key={s.title} delay={0.05 * idx}>
-                <Box
-                  sx={{
-                    position: "relative",
-                    borderRadius: 3,
-                    overflow: "hidden",
-                    background:
-                      "linear-gradient(180deg, rgba(124,58,237,0.08) 0%, rgba(34,211,238,0.03) 100%)",
-                    border: "1px solid rgba(216, 229, 254, 0.12)",
-                    boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
-                    p: { xs: 2.25, sm: 3, md: 3.25 },
-                  }}
-                >
-                  <GradientTitle
-                    variant="h5"
-                    align="left"
-                    sx={{ mb: 1.25, letterSpacing: 0.8, textShadow: "none" }}
-                  >
-                    {s.title}
-                  </GradientTitle>
-                  {s.body}
-                </Box>
-              </RevealOnScroll>
-            ))}
-          </Stack>
-
-      
-        </Box>
-      </Box>
-    </Box>
-  )
+  </LegalDocument>
 }

@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 export default function RestaurantPizzeriaFooter({
-  logoSrc = "/restaurant/smalllogo.png",
+  logoSrc = "/restaurant/smallLogo.png",
   restaurantName = "Italiana",
   onOrderOnline,
   onMenu,
@@ -18,7 +18,7 @@ export default function RestaurantPizzeriaFooter({
       ink: "#f4f0e6",
       ink2: "rgba(244,240,230,.82)",
       ink3: "rgba(244,240,230,.62)",
-      gold: "rgba(214,177,104,.95)",
+      gold: "rgba(176,160,236,.95)",
       shadow: "rgba(0,0,0,.55)",
       fontFamily: "ui-serif, Georgia, Times New Roman, Times, serif",
     }),
@@ -38,9 +38,9 @@ export default function RestaurantPizzeriaFooter({
         width: "100%",
         padding: shellPad,
         overflow: "hidden",
-        borderTop: "1px solid rgba(214,177,104,.18)",
+        borderTop: "1px solid rgba(176,160,236,.18)",
         background:
-          "radial-gradient(circle at 18% 0%, rgba(214,177,104,.12), transparent 52%)," +
+          "radial-gradient(circle at 18% 0%, rgba(176,160,236,.12), transparent 52%)," +
           "radial-gradient(circle at 90% 40%, rgba(244,240,230,.06), transparent 55%)," +
           "linear-gradient(180deg, rgba(8,8,8,.96), rgba(0,0,0,.98))",
         fontFamily: tokens.fontFamily,
@@ -50,7 +50,7 @@ export default function RestaurantPizzeriaFooter({
         inset: "-120px -80px auto -80px",
         height: 220,
         background:
-          "radial-gradient(circle at 35% 40%, rgba(214,177,104,.16), transparent 62%)," +
+          "radial-gradient(circle at 35% 40%, rgba(176,160,236,.16), transparent 62%)," +
           "radial-gradient(circle at 70% 60%, rgba(244,240,230,.05), transparent 65%)",
         filter: "blur(18px)",
         opacity: 0.55,
@@ -143,9 +143,9 @@ export default function RestaurantPizzeriaFooter({
         WebkitBackdropFilter: "blur(10px)",
       },
       btnPrimary: {
-        borderColor: "rgba(214,177,104,.55)",
+        borderColor: "rgba(176,160,236,.55)",
         background:
-          "radial-gradient(circle at 30% 20%, rgba(214,177,104,.18), transparent 55%), rgba(255,255,255,.04)",
+          "radial-gradient(circle at 30% 20%, rgba(176,160,236,.18), transparent 55%), rgba(255,255,255,.04)",
       },
       btnSecondary: {
         borderColor: "rgba(244,240,230,.16)",
@@ -179,9 +179,9 @@ export default function RestaurantPizzeriaFooter({
       },
       dot: { opacity: 0.55 },
       link: {
-        color: "rgba(214,177,104,.92)",
+        color: "rgba(176,160,236,.92)",
         textDecoration: "none",
-        borderBottom: "1px solid rgba(214,177,104,.28)",
+        borderBottom: "1px solid rgba(176,160,236,.28)",
         paddingBottom: 2,
       },
 
@@ -193,11 +193,11 @@ export default function RestaurantPizzeriaFooter({
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
-        borderBottom: "1px solid rgba(214,177,104,.18)",
+        borderBottom: "1px solid rgba(176,160,236,.18)",
         paddingBottom: 2,
       },
       creditName: {
-        color: "rgba(214,177,104,.92)",
+        color: "rgba(176,160,236,.92)",
         fontWeight: 700,
       },
     }
@@ -205,12 +205,12 @@ export default function RestaurantPizzeriaFooter({
 
   const goOrder = () => {
     if (typeof onOrderOnline === "function") return onOrderOnline()
-    window.location.href = "/applications/restaurant/order"
+    window.location.href = "/components/restaurant-ordering/order"
   }
 
   const goMenu = () => {
     if (typeof onMenu === "function") return onMenu()
-    window.location.href = "/applications/restaurant/menu"
+    window.location.href = "/components/restaurant-ordering/menu"
   }
 
   return (
@@ -281,11 +281,11 @@ export default function RestaurantPizzeriaFooter({
           aria-label="Designed and built by Bergquist Applications"
           onMouseEnter={(e) => {
             e.currentTarget.style.color = "rgba(244,240,230,.78)"
-            e.currentTarget.style.borderBottomColor = "rgba(214,177,104,.55)"
+            e.currentTarget.style.borderBottomColor = "rgba(176,160,236,.55)"
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = "rgba(244,240,230,.56)"
-            e.currentTarget.style.borderBottomColor = "rgba(214,177,104,.18)"
+            e.currentTarget.style.borderBottomColor = "rgba(176,160,236,.18)"
           }}
         >
           Designed &amp; built by{" "}

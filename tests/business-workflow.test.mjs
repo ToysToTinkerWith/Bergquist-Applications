@@ -1,0 +1,66 @@
+import test from "node:test"
+import assert from "node:assert/strict"
+import { freshWorkflow, transition, estimate, validWorkflow, appointmentDates, availableTimes, workflowStatus } from "../lib/businessWorkflow.mjs"
+
+const now = new Date(2026, 9, 29, 12)
+const day = appointmentDates(now)[0]
+const act = (s, action) => transition(s, action, now)
+test("sample pricing uses integer cents and includes each extra once", () => {
+  assert.equal(estimate({ service: "deck", size: 200, extras: [] }), 70000)
+  assert.equal(estimate({ service: "deck", size: 300, extras: ["haul", "report"] }), 116000)
+  assert.equal(estimate({ service: "deck", size: -100, extras: [] }), 0)
+  assert.equal(estimate({ service: "deck", size: 200, extras: ["haul", "haul"] }), 0)
+})
+test("a submitted quote keeps its scope when the configurator changes", () => {
+  let s = act(freshWorkflow(), { type: "submit", name: " Jamie ", notes: "Deck access" })
+  s = act(s, { type: "configure", config: { service: "garden", size: 300, extras: [] } })
+  assert.equal(s.request.name, "Jamie")
+  assert.equal(estimate(s.request.config), 70000)
+  assert.equal(estimate(s.config), 54000)
+})
+test("quote to booking to delivery follows customer and business approvals", () => {
+  let s = freshWorkflow()
+  assert.equal(act(s, { type: "pay" }), s)
+  s = act(s, { type: "submit", name: "Jamie", notes: "Sample" })
+  assert.equal(workflowStatus(s), "New inquiry")
+  s = act(s, { type: "sendQuote" })
+  assert.equal(act(s, { type: "book", date: day, time: "09:00" }), s)
+  s = act(s, { type: "acceptQuote" })
+  s = act(s, { type: "book", date: day, time: "09:00" })
+  assert.equal(workflowStatus(s), "Scheduled")
+  s = act(s, { type: "advance" }); s = act(s, { type: "advance" })
+  assert.equal(workflowStatus(s), "Ready for approval")
+  assert.equal(act(s, { type: "advance" }), s)
+  assert.equal(act(s, { type: "cancelBooking" }), s)
+  s = act(s, { type: "approveWork" }); s = act(s, { type: "pay" })
+  assert.equal(workflowStatus(s), "Paid (demo)")
+  assert.equal(validWorkflow(JSON.parse(JSON.stringify(s))), true)
+})
+test("availability rejects past, weekend, reserved, and out-of-range slots", () => {
+  const dates = appointmentDates(now)
+  assert(!dates.includes("2026-10-31"))
+  assert.deepEqual(availableTimes("2026-10-28", now), [])
+  const s = freshWorkflow()
+  for (const [date, time] of [[day, "11:00"], ["2026-10-31", "09:00"], ["2026-12-01", "09:00"]]) assert.equal(act(s, { type: "book", date, time }), s)
+})
+test("standalone booking, rescheduling, and cancellation preserve the request", () => {
+  let s = act(freshWorkflow(), { type: "book", date: day, time: "09:00", name: "Sam" })
+  s = act(s, { type: "book", date: day, time: "15:00" })
+  assert.equal(s.booking.time, "15:00")
+  s = act(s, { type: "cancelBooking" })
+  assert.equal(s.booking, null)
+  assert.equal(s.request.name, "Sam")
+})
+test("document reviews and reset affect the shared workflow", () => {
+  let s = act(freshWorkflow(), { type: "attach", document: { id: "doc", name: "sample.pdf", kind: "Project brief", status: "Pending review", preview: "" } })
+  s = act(s, { type: "submit", name: "Sam", notes: "" })
+  assert.equal(s.documents.length, 1)
+  s = act(s, { type: "reviewDocument", id: "doc", status: "Replacement requested" })
+  assert.equal(s.documents[0].status, "Replacement requested")
+  assert.deepEqual(act(s, { type: "reset" }), freshWorkflow())
+})
+test("saved state cannot skip completion approval or inject unknown options", () => {
+  assert.equal(validWorkflow({ ...freshWorkflow(), paid: true }), false)
+  assert.equal(validWorkflow({ ...freshWorkflow(), quote: "sent" }), false)
+  assert.equal(validWorkflow({ ...freshWorkflow(), config: { service: "unknown", size: 200, extras: [] } }), false)
+})

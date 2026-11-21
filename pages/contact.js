@@ -1,706 +1,174 @@
-// pages/contact.jsx  (or /pages/contact/index.jsx)
-// Requires: @mui/material, framer-motion, next/head
-// + your existing getStripe helper: /lib/get-stripe
-//
-// Update:
-// - ADD: next/head SEO (title, description, canonical, OG/Twitter, JSON-LD)
-// - CHANGE: comment out the entire "Pay Bergquist Applications" section (Payment card)
-//   (email card remains)
-
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
+import { useRouter } from "next/router"
 import Head from "next/head"
-import { Box, Typography, TextField } from "@mui/material"
-import { motion } from "framer-motion"
-import getStripe from "../lib/get-stripe" // adjust path if needed (e.g. "../../lib/get-stripe")
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded"
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded"
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded"
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded"
+import SiteLink from "../components/SiteLink"
+import styles from "../styles/showcase-pages.module.css"
+import { CONTACT_EMAIL as EMAIL } from "../lib/contactDetails"
+import { SERVICE_AREA } from "../lib/business"
+import { SOCIAL_IMAGE_URL, SOCIAL_IMAGE_ALT, SOCIAL_IMAGE_WIDTH, SOCIAL_IMAGE_HEIGHT } from "../lib/socialPreview"
+import { logFirebaseAnalyticsEvent } from "../lib/clientAnalytics"
+import componentCatalog from "../lib/componentCatalog.json"
+import unlistedExamples from "../lib/unlistedComponents.json"
+import { guideFor } from "../lib/businessExamples"
 
-function RevealOnScroll({
-  children,
-  delay = 0,
-  threshold = 0.25,
-  rootMargin = "0px 0px -12% 0px",
-}) {
-  const ref = useRef(null)
-  const [shown, setShown] = useState(false)
+const initial = { name: "", email: "", company: "", project: "A new website", message: "" }
+const projectTypes = ["A new website", "An application", "Web components", "An existing website", "Let's explore"]
+const examples = [...componentCatalog, ...unlistedExamples]
 
+export default function ContactPage({ emailDeliveryEnabled = false }) {
+  const router = useRouter()
+  const attributed = useRef(false)
+  const [fields, setFields] = useState(initial)
   useEffect(() => {
-    if (shown) return
-
-    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
-      setShown(true)
-      return
-    }
-
-    const el = ref.current
-    if (!el) {
-      setShown(true)
-      return
-    }
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (entry && entry.isIntersecting) {
-          setShown(true)
-          obs.disconnect()
-        }
-      },
-      { threshold, root: null, rootMargin }
-    )
-
-    obs.observe(el)
-    return () => {
-      try {
-        obs.disconnect()
-      } catch {}
-    }
-  }, [shown, threshold, rootMargin])
-
-  return (
-    <Box
-      ref={ref}
-      component={motion.div}
-      initial={false}
-      animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-      transition={{ duration: 0.85, ease: "easeOut", delay }}
-      sx={{ willChange: "transform, opacity" }}
-    >
-      {children}
-    </Box>
-  )
-}
-
-function toMoney(n) {
-  const x = Number(n)
-  if (!Number.isFinite(x)) return "—"
-  return x.toLocaleString(undefined, { style: "currency", currency: "USD" })
-}
-
-// Use integer cents to avoid float rounding issues
-function dollarsToCents(dollars) {
-  const n = Number(dollars)
-  if (!Number.isFinite(n)) return 0
-  return Math.max(0, Math.round(n * 100))
-}
-
-function centsToDollars(cents) {
-  const n = Number(cents)
-  if (!Number.isFinite(n)) return 0
-  return n / 100
-}
-
-export default function ContactPage({
-  maxWidth = 1200,
-  minHeight = "100vh",
-  email = "abergquist96@gmail.com",
-}) {
-  // ---------------- SEO ----------------
-  const SITE_NAME = "Bergquist Applications"
-  const SITE_URL = "https://bergquistapplications.com"
-  const PAGE_PATH = "/contact"
-  const PAGE_URL = `${SITE_URL}${PAGE_PATH}`
-
-  const TITLE = `Contact | ${SITE_NAME}`
-  const DESCRIPTION = "Contact Bergquist Applications for modern website and web application development."
-  const OG_IMAGE = `${SITE_URL}/og/bergquist-applications.jpg`
-
-  const jsonLdContactPage = {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    name: TITLE,
-    url: PAGE_URL,
-    isPartOf: {
-      "@type": "WebSite",
-      name: SITE_NAME,
-      url: SITE_URL,
-    },
-  }
-
-  // -------------- UI / Logic --------------
-  const gradient = "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)"
-  const TAX_RATE = 0.08
-
-  const [amount, setAmount] = useState("")
-  const [paying, setPaying] = useState(false)
-  const [payError, setPayError] = useState("")
-
-  const handleCopy = async () => {
+    if (!router.isReady || attributed.current) return
+    attributed.current = true
+    const project = { "business-websites": "A new website", "custom-web-applications": "An application", "commerce-payments": "An application", "ai-integrations": "Web components", "website-maintenance": "An existing website" }[router.query.service]
+    const example = examples.find(item => item.key === router.query.component)
+    if (example) setFields(current => ({ ...current, project: "Web components", message: current.message || `I'm interested in ${example.title.toLowerCase()} for my business.\n\nThe part of our workflow I'd like to improve is: ` }))
+    else if (project) setFields(current => ({ ...current, project }))
+  }, [router.isReady, router.query.service, router.query.component])
+  const selectedExample = examples.find(item => item.key === router.query.component)
+  const [draft, setDraft] = useState(null)
+  const [copyStatus, setCopyStatus] = useState("")
+  const [draftCopyStatus, setDraftCopyStatus] = useState("")
+  const [deliveryStatus, setDeliveryStatus] = useState("idle")
+  const [deliveryError, setDeliveryError] = useState("")
+  const [website, setWebsite] = useState("")
+  const sending = deliveryStatus === "sending"
+  const focusDraftTitle = useCallback(element => element?.focus(), [])
+  const change = event => setFields(current => ({ ...current, [event.target.name]: event.target.value }))
+  const copy = async (value, setter) => {
     try {
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(email)
-      } else {
-        const ta = document.createElement("textarea")
-        ta.value = email
-        document.body.appendChild(ta)
-        ta.select()
-        document.execCommand("copy")
-        document.body.removeChild(ta)
-      }
+      await navigator.clipboard.writeText(value)
+      setter("Copied")
     } catch {
-      // no-op
+      setter("Copy unavailable. Select and copy the text instead.")
     }
   }
-
-  const clampAmountInput = (raw) => {
-    if (raw === "") return ""
-    const n = Number(raw)
-    if (!Number.isFinite(n)) return ""
-    if (n < 0) return "0"
-    return raw
-  }
-
-  // --- Display-only tax math in cents (Checkout charges subtotal ONLY) ---
-  const subtotalCents = dollarsToCents(amount)
-  const taxCents = Math.round(subtotalCents * TAX_RATE)
-  const totalCents = subtotalCents + taxCents
-
-  const subtotal = centsToDollars(subtotalCents)
-  const tax = centsToDollars(taxCents)
-  const total = centsToDollars(totalCents)
-
-  const redirectToCheckout = async () => {
-    setPayError("")
-
-    if (!(subtotalCents > 0)) {
-      setPayError("Enter an amount greater than $0.")
+  const submit = async event => {
+    event.preventDefault()
+    if (sending) return
+    const form = event.currentTarget
+    const name = form.elements.namedItem("name"), message = form.elements.namedItem("message")
+    name.setCustomValidity(fields.name.trim() ? "" : "Please enter your name.")
+    message.setCustomValidity(fields.message.trim() ? "" : "Please add a message.")
+    if (!form.reportValidity()) return
+    const details = [`Name: ${fields.name.trim()}`, `Email: ${fields.email.trim()}`, fields.company.trim() ? `Business: ${fields.company.trim()}` : null, `Project: ${fields.project}`].filter(Boolean)
+    const body = [...details, "", fields.message.trim()].join("\n")
+    const href = `mailto:${EMAIL}?subject=${encodeURIComponent("Project inquiry: " + fields.project)}&body=${encodeURIComponent(body)}`
+    if (!emailDeliveryEnabled) {
+      setDraft({ body, href })
+      setDraftCopyStatus("")
       return
     }
-
+    setDeliveryStatus("sending"); setDeliveryError("")
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 60000)
     try {
-      setPaying(true)
-
-      const response = await fetch("/api/checkout-sessions/direct", {
-        method: "POST",
-        body: JSON.stringify({
-          success_url: window.location.href,
-          cancel_url: window.location.href,
-          line_items: [
-            {
-              price_data: {
-                currency: "usd",
-                product_data: {
-                  name: "Bergquist Applications Services",
-                  description: `Entered amount: ${toMoney(
-                    subtotal
-                  )}. (8% tax estimate shown on page, not charged in checkout.)`,
-                },
-                unit_amount: subtotalCents, // ✅ ONLY raw amount goes to Stripe
-              },
-              quantity: 1,
-            },
-          ],
-          payment_method_types: ["card"],
-          mode: "payment",
-        }),
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch("/api/contact", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...fields, website }), signal: controller.signal,
       })
-
-      if (!response.ok) {
-        const txt = await response.text().catch(() => "")
-        throw new Error(txt || "Failed to create checkout session.")
+      const result = await response.json()
+      if (!response.ok || result.ok !== true) {
+        setDeliveryStatus("idle")
+        setDeliveryError(result.error || "Your message could not be sent. Please try again or email me directly.")
+        return
       }
-
-      const session = await response.json()
-      if (!session?.id) throw new Error("Missing session id from /api/checkout-sessions response.")
-
-      const stripe = await getStripe()
-      const { error } = await stripe.redirectToCheckout({ sessionId: session.id })
-      if (error) throw error
-    } catch (e) {
-      setPayError(e?.message || "Payment failed. Please try again.")
-      setPaying(false)
-    }
+      setDeliveryStatus("sent")
+      // Only confirmed submissions count as leads; never send form contents to analytics.
+      void logFirebaseAnalyticsEvent("generate_lead", { method: "contact_form", project_type: fields.project }).catch(() => {})
+    } catch (error) {
+      setDeliveryStatus("idle")
+      setDeliveryError("We couldn't confirm that your message was sent. Your details are still here; you can contact me directly by email.")
+    } finally { clearTimeout(timeout) }
   }
+  return <>
+    <Head>
+      <title>Contact | Bergquist Applications</title>
+      <meta name="description" content="Tell Anders about your website idea. Meet remotely or on Whidbey Island by arrangement." />
+      <link rel="canonical" href="https://bergquistapplications.com/contact" />
+      <meta property="og:title" content="Contact | Bergquist Applications" />
+      <meta property="og:description" content="Tell Anders about your website idea. Meet remotely or on Whidbey Island by arrangement." />
+      <meta property="og:url" content="https://bergquistapplications.com/contact" />
+      <meta property="og:type" content="website" />
+      <meta property="og:image" content={SOCIAL_IMAGE_URL} />
+      <meta property="og:image:width" content={SOCIAL_IMAGE_WIDTH} />
+      <meta property="og:image:height" content={SOCIAL_IMAGE_HEIGHT} />
+      <meta property="og:image:alt" content={SOCIAL_IMAGE_ALT} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Contact | Bergquist Applications" />
+      <meta name="twitter:description" content="Tell Anders about your website idea. Meet remotely or on Whidbey Island by arrangement." />
+      <meta name="twitter:image" content={SOCIAL_IMAGE_URL} />
+      <meta name="twitter:image:alt" content={SOCIAL_IMAGE_ALT} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "ContactPage", name: "Contact | Bergquist Applications", url: "https://bergquistapplications.com/contact" }) }} />
+    </Head>
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <section className={styles.contactLayout}>
+          <div className={styles.contactIntro}>
+            <p className={styles.eyebrow}><MailOutlineRoundedIcon fontSize="small" />Get in touch</p>
+            <h1>Let&apos;s build<br /><span>your idea.</span></h1>
+            <div className={styles.rule} />
+            <p className={styles.lead}>Tell me about your website idea or ask a question. We can work out the next step together.</p>
+            <p className={styles.serviceArea}>Work directly with Anders Bergquist.<br />{SERVICE_AREA}</p>
+            <div className={styles.emailBlock}>
+              <p className={styles.eyebrow}>Email directly</p>
+              <div className={styles.emailRow}><a href={`mailto:${EMAIL}`}>{EMAIL}</a><button type="button" className={styles.iconButton} title="Copy email address" aria-label="Copy email address" onClick={() => copy(EMAIL, setCopyStatus)}>{copyStatus === "Copied" ? <CheckRoundedIcon fontSize="small" /> : <ContentCopyRoundedIcon fontSize="small" />}</button></div>
+              <p className={styles.copyStatus} role="status">{copyStatus}</p>
+            </div>
+            <SiteLink className={styles.textLink} href="/components">Explore the components<ArrowForwardRoundedIcon fontSize="small" /></SiteLink>
+          </div>
+          <div className={styles.formPanel}>
+            {deliveryStatus === "sent" ? <section aria-labelledby="message-sent-title">
+              <p className={styles.eyebrow}>Thank you</p>
+              <h2 id="message-sent-title" tabIndex={-1} ref={focusDraftTitle}>Message sent.</h2>
+              <p className={styles.formNote}>Your message has been sent to {EMAIL}. I&apos;ll be in touch.</p>
+              <button type="button" className={styles.textLink} onClick={() => { setFields(initial); setWebsite(""); setDeliveryStatus("idle") }}>Send another message<ArrowForwardRoundedIcon fontSize="small" /></button>
+            </section> : !draft ? <form onSubmit={submit} method="post" action="/api/contact" aria-busy={sending}>
+              <h2>A little about your idea.</h2>
+              {selectedExample && <p className={styles.formNote}>You&apos;re exploring <strong>{selectedExample.title}</strong>. {guideFor(selectedExample).benefit} <SiteLink href={`/components/${selectedExample.key}`}>Back to the example</SiteLink>.</p>}
+              <fieldset disabled={sending} className={styles.formFields}>
+              <div className={styles.formGrid}>
+                <label htmlFor="contact-name">Name<input id="contact-name" name="name" autoComplete="name" required maxLength={100} value={fields.name} onChange={change} onInput={event => event.currentTarget.setCustomValidity("")} placeholder="Your name" /></label>
+                <label htmlFor="contact-email">Email<input id="contact-email" name="email" type="email" autoComplete="email" required maxLength={200} value={fields.email} onChange={change} placeholder="you@example.com" /></label>
+                <label htmlFor="contact-company">Business <span>(optional)</span><input id="contact-company" name="company" autoComplete="organization" maxLength={120} value={fields.company} onChange={change} placeholder="Your business" /></label>
+                <label htmlFor="contact-project">I&apos;m thinking about<select id="contact-project" name="project" value={fields.project} onChange={change}>{projectTypes.map(project => <option key={project}>{project}</option>)}</select></label>
+                <label htmlFor="contact-message" className={styles.messageField}>Your idea<textarea id="contact-message" name="message" required maxLength={1200} rows={6} value={fields.message} onChange={change} onInput={event => event.currentTarget.setCustomValidity("")} placeholder="What would you like to create or improve?" /></label>
+              </div>
+              <div className={styles.trap} aria-hidden="true"><label>Website<input name="website" value={website} onChange={event => setWebsite(event.target.value)} tabIndex={-1} autoComplete="off" /></label></div>
+              <button type="submit" className={styles.prepareButton} disabled={sending}>{sending ? "Sending..." : "Send message"}<ArrowForwardRoundedIcon fontSize="small" /></button>
+              </fieldset>
+              {deliveryError && <p className={styles.formError} role="alert">{deliveryError} <a href={`mailto:${EMAIL}`}>Email {EMAIL}</a></p>}
+              <p className={styles.formNote}>{emailDeliveryEnabled ? `Your message goes directly to ${EMAIL}.` : "Opens a draft in your email app. Review it there and send."}</p>
+              <p className={styles.formNote}>I&apos;ll review your idea and reply by email to discuss fit and next steps. Sending an inquiry does not commit you to a project. <SiteLink href="/privacy">How your information is used</SiteLink>.</p>
+            </form> : <section aria-labelledby="draft-title">
+              <p className={styles.eyebrow}>Ready when you are</p>
+              <h2 id="draft-title" tabIndex={-1} ref={focusDraftTitle}>Your email draft.</h2>
+              <p className={styles.formNote}>Nothing has been sent yet.</p>
+              <p className={styles.formNote}>To: {EMAIL}</p>
+              <pre className={styles.draftBody}>{draft.body}</pre>
+              <a className={styles.prepareButton} href={draft.href}>Open email draft<ArrowForwardRoundedIcon fontSize="small" /></a>
+              <div className={styles.draftActions}><button type="button" className={styles.textLink} onClick={() => setDraft(null)}>Edit message</button><button type="button" className={styles.textLink} onClick={() => copy(draft.body, setDraftCopyStatus)}><ContentCopyRoundedIcon fontSize="small" />Copy message</button></div>
+              <p className={styles.copyStatus} role="status">{draftCopyStatus}</p>
+            </section>}
+          </div>
+        </section>
+        <section className={styles.contactNotes} aria-label="Getting started">
+          <div><span>01</span><h2>I read your message.</h2><p>Tell me about your business, the problem, and any timing or budget you have in mind.</p></div>
+          <div><span>02</span><h2>We talk it through.</h2><p>I reply by email. We can arrange a remote conversation or an in-person meeting on Whidbey Island.</p></div>
+          <div><span>03</span><h2>We agree on a plan.</h2><p>If it&apos;s a good fit, we define scope, costs, ownership, and the next milestone before development begins.</p></div>
+        </section>
+      </div>
+    </main>
+  </>
+}
 
-  const payDisabled = paying || !(subtotalCents > 0)
-
-  return (
-    <Box sx={{ width: "100%", backgroundColor: "black", minHeight }}>
-      {/* SEO HEAD */}
-      <Head>
-        <title>{TITLE}</title>
-        <meta name="description" content={DESCRIPTION} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        <link rel="canonical" href={PAGE_URL} />
-
-        <meta
-          name="robots"
-          content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
-        />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content={SITE_NAME} />
-        <meta property="og:title" content={TITLE} />
-        <meta property="og:description" content={DESCRIPTION} />
-        <meta property="og:url" content={PAGE_URL} />
-        <meta property="og:image" content={OG_IMAGE} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={TITLE} />
-        <meta name="twitter:description" content={DESCRIPTION} />
-        <meta name="twitter:image" content={OG_IMAGE} />
-
-        <meta name="theme-color" content="#000000" />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdContactPage) }}
-        />
-      </Head>
-
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-          minHeight,
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "black",
-          overflow: "hidden",
-        }}
-      >
-        {/* Ambient glow blobs */}
-        <Box
-          component={motion.div}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.25, ease: "easeOut" }}
-          sx={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-          }}
-        >
-          {/* top-left glow */}
-          <Box
-            component={motion.div}
-            animate={{ y: [0, 10, 0], opacity: [0.85, 0.95, 0.85] }}
-            transition={{ duration: 8, ease: "easeInOut", repeat: Infinity }}
-            sx={{
-              position: "absolute",
-              left: "-12%",
-              top: "-18%",
-              width: { xs: 420, sm: 560, md: 720 },
-              height: { xs: 420, sm: 560, md: 720 },
-              borderRadius: "50%",
-              filter: "blur(40px)",
-              background:
-                "radial-gradient(circle at 30% 30%, rgba(124,58,237,0.35) 0%, rgba(79,70,229,0.16) 40%, rgba(0,0,0,0) 70%)",
-            }}
-          />
-          {/* bottom-right glow */}
-          <Box
-            component={motion.div}
-            animate={{ y: [0, -12, 0], opacity: [0.8, 0.92, 0.8] }}
-            transition={{ duration: 9.5, ease: "easeInOut", repeat: Infinity }}
-            sx={{
-              position: "absolute",
-              right: "-18%",
-              bottom: "-22%",
-              width: { xs: 520, sm: 680, md: 860 },
-              height: { xs: 520, sm: 680, md: 860 },
-              borderRadius: "50%",
-              filter: "blur(44px)",
-              background:
-                "radial-gradient(circle at 65% 65%, rgba(34,211,238,0.26) 0%, rgba(79,70,229,0.14) 38%, rgba(0,0,0,0) 72%)",
-            }}
-          />
-          {/* subtle center vignette */}
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse at center, rgba(0,0,0,0) 58%, rgba(0,0,0,0.85) 78%, rgba(0,0,0,1) 100%)",
-            }}
-          />
-        </Box>
-
-        {/* Content */}
-        <Box
-          sx={{
-            position: "relative",
-            zIndex: 1,
-            width: "100%",
-            maxWidth,
-            px: { xs: 2, sm: 4 },
-            pt: { xs: 10, sm: 12, md: 14 },
-            pb: { xs: 10, sm: 12, md: 14 },
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <RevealOnScroll delay={0.05}>
-            <Box sx={{ width: "100%", textAlign: "center" }}>
-              <Typography
-                variant="h2"
-                sx={{
-                  fontFamily: "Bemora",
-                  letterSpacing: 2,
-                  lineHeight: 1.2,
-                  backgroundImage: gradient,
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                  mb: 1.25,
-                }}
-              >
-                Contact
-              </Typography>
-
-              <Typography
-                variant="h6"
-                sx={{
-                  color: "rgba(216, 229, 254, 0.86)",
-                  lineHeight: 1.6,
-                  maxWidth: 760,
-                  mx: "auto",
-                }}
-              >
-                Email is the fastest way to reach Bergquist Applications.
-              </Typography>
-            </Box>
-          </RevealOnScroll>
-
-          {/* Email card */}
-          <RevealOnScroll delay={0.18}>
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: 860,
-                mt: { xs: 4, sm: 5 },
-                borderRadius: 4,
-                overflow: "hidden",
-                border: "1px solid rgba(255,255,255,0.08)",
-                background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 45%, rgba(0,0,0,0.65) 100%)",
-                boxShadow: "0 18px 55px rgba(0,0,0,0.65)",
-              }}
-            >
-              <Box sx={{ height: 3, backgroundImage: gradient, opacity: 0.9 }} />
-
-              <Box sx={{ p: { xs: 2.5, sm: 3.25, md: 4 } }}>
-                <Typography
-                  variant="overline"
-                  sx={{
-                    display: "block",
-                    letterSpacing: 2.4,
-                    color: "rgba(216, 229, 254, 0.72)",
-                    mb: 1,
-                  }}
-                >
-                  EMAIL
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
-                    alignItems: { xs: "stretch", sm: "center" },
-                    justifyContent: "space-between",
-                    gap: 2,
-                  }}
-                >
-                  <Box sx={{ minWidth: 0 }}>
-                    <Typography
-                      component="a"
-                      href={`mailto:${email}`}
-                      sx={{
-                        display: "inline-block",
-                        textDecoration: "none",
-                        fontFamily: "Bemora",
-                        fontSize: { xs: 22, sm: 24, md: 28 },
-                        letterSpacing: 0.6,
-                        backgroundImage: gradient,
-                        WebkitBackgroundClip: "text",
-                        backgroundClip: "text",
-                        color: "transparent",
-                        textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      {email}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mt: 1,
-                        color: "rgba(216, 229, 254, 0.75)",
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      Tap to open your mail client.
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    component={motion.button}
-                    onClick={handleCopy}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    style={{
-                      border: "1px solid rgba(255,255,255,0.14)",
-                      background: "rgba(0,0,0,0.35)",
-                      color: "rgba(216, 229, 254, 0.92)",
-                      borderRadius: 14,
-                      padding: "12px 16px",
-                      cursor: "pointer",
-                      fontFamily: "Bemora",
-                      letterSpacing: 1.2,
-                      boxShadow: "0 14px 36px rgba(0,0,0,0.55)",
-                      backdropFilter: "blur(10px)",
-                      WebkitBackdropFilter: "blur(10px)",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
-                    aria-label="Copy email"
-                    title="Copy email"
-                  >
-                    COPY
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          </RevealOnScroll>
-
-          {/* -------------------------------------------------------------------- */}
-          {/* PAYMENT SECTION (COMMENTED OUT)                                       */}
-          {/* -------------------------------------------------------------------- */}
-          {/*
-          <RevealOnScroll delay={0.24}>
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: 860,
-                mt: { xs: 3, sm: 3.5 },
-                borderRadius: 4,
-                overflow: "hidden",
-                border: "1px solid rgba(255,255,255,0.08)",
-                background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 45%, rgba(0,0,0,0.65) 100%)",
-                boxShadow: "0 18px 55px rgba(0,0,0,0.65)",
-              }}
-            >
-              <Box sx={{ height: 3, backgroundImage: gradient, opacity: 0.9 }} />
-
-              <Box sx={{ p: { xs: 2.5, sm: 3.25, md: 4 } }}>
-                <Typography
-                  variant="overline"
-                  sx={{
-                    display: "block",
-                    letterSpacing: 2.4,
-                    color: "rgba(216, 229, 254, 0.72)",
-                    mb: 1,
-                  }}
-                >
-                  PAYMENT
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: { xs: "column", md: "row" },
-                    alignItems: { xs: "stretch", md: "center" },
-                    justifyContent: "space-between",
-                    gap: 2.25,
-                  }}
-                >
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography
-                      sx={{
-                        fontFamily: "Bemora",
-                        letterSpacing: 0.8,
-                        fontSize: { xs: 20, sm: 22, md: 24 },
-                        backgroundImage: gradient,
-                        WebkitBackgroundClip: "text",
-                        backgroundClip: "text",
-                        color: "transparent",
-                        textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                        mb: 0.75,
-                      }}
-                    >
-                      Pay Bergquist Applications
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "rgba(216, 229, 254, 0.78)",
-                        lineHeight: 1.65,
-                        maxWidth: 620,
-                        mb: 1,
-                      }}
-                    >
-                      Enter an amount in USD and you’ll be redirected to Stripe Checkout to complete payment by card
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "rgba(216, 229, 254, 0.72)",
-                        lineHeight: 1.65,
-                      }}
-                    >
-                      An 8% tax will be added to the total
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      alignItems: "stretch",
-                      gap: 1.25,
-                      minWidth: { xs: "100%", md: 380 },
-                    }}
-                  >
-                    <TextField
-                      value={amount}
-                      onChange={(e) => setAmount(clampAmountInput(e.target.value))}
-                      type="number"
-                      inputProps={{ min: 0, step: "0.01" }}
-                      label="Amount (USD)"
-                      autoComplete="off"
-                      fullWidth
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: 2,
-                          backgroundColor: "rgba(0,0,0,0.28)",
-                          backdropFilter: "blur(10px)",
-                          WebkitBackdropFilter: "blur(10px)",
-                          "& > fieldset": { border: "1px solid rgba(255,255,255,0.14)" },
-                          "&:hover > fieldset": { border: "1px solid rgba(255,255,255,0.22)" },
-                          "&.Mui-focused > fieldset": { border: "1px solid rgba(34,211,238,0.35)" },
-                          "& input": {
-                            color: "rgba(216, 229, 254, 0.92)",
-                            fontFamily: "Bemora",
-                            letterSpacing: 0.8,
-                          },
-                        },
-                        "& .MuiInputLabel-root": { color: "rgba(216, 229, 254, 0.72)" },
-                        "& .MuiInputLabel-root.Mui-focused": { color: "rgba(216, 229, 254, 0.82)" },
-                      }}
-                    />
-
-                    <Box
-                      component={motion.button}
-                      onClick={redirectToCheckout}
-                      disabled={payDisabled}
-                      whileHover={payDisabled ? undefined : { y: -2 }}
-                      whileTap={payDisabled ? undefined : { scale: 0.98 }}
-                      style={{
-                        border: "1px solid rgba(255,255,255,0.14)",
-                        background: payDisabled ? "rgba(0,0,0,0.22)" : "rgba(0,0,0,0.35)",
-                        color: payDisabled ? "rgba(216, 229, 254, 0.45)" : "rgba(216, 229, 254, 0.92)",
-                        borderRadius: 14,
-                        padding: "12px 16px",
-                        cursor: payDisabled ? "not-allowed" : "pointer",
-                        fontFamily: "Bemora",
-                        letterSpacing: 1.2,
-                        boxShadow: "0 14px 36px rgba(0,0,0,0.55)",
-                        backdropFilter: "blur(10px)",
-                        WebkitBackdropFilter: "blur(10px)",
-                        whiteSpace: "nowrap",
-                        width: 160,
-                        minWidth: 160,
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                      aria-label="Pay Bergquist Applications"
-                      title="Pay Bergquist Applications"
-                    >
-                      {paying ? "REDIRECTING…" : "PAY"}
-                    </Box>
-                  </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    mt: 2,
-                    pt: 1.75,
-                    borderTop: "1px solid rgba(255,255,255,0.08)",
-                    display: "grid",
-                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr 1fr" },
-                    gap: 1.25,
-                  }}
-                >
-                  <Box>
-                    <Typography variant="overline" sx={{ letterSpacing: 2.2, color: "rgba(216, 229, 254, 0.6)" }}>
-                      SUBTOTAL
-                    </Typography>
-                    <Typography sx={{ color: "rgba(216, 229, 254, 0.9)", fontFamily: "Bemora" }}>
-                      {toMoney(subtotal)}
-                    </Typography>
-                  </Box>
-
-                  <Box>
-                    <Typography variant="overline" sx={{ letterSpacing: 2.2, color: "rgba(216, 229, 254, 0.6)" }}>
-                      TAX (8%) EST.
-                    </Typography>
-                    <Typography sx={{ color: "rgba(216, 229, 254, 0.9)", fontFamily: "Bemora" }}>
-                      {toMoney(tax)}
-                    </Typography>
-                  </Box>
-
-                  <Box>
-                    <Typography variant="overline" sx={{ letterSpacing: 2.2, color: "rgba(216, 229, 254, 0.6)" }}>
-                      TOTAL EST.
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontFamily: "Bemora",
-                        letterSpacing: 0.6,
-                        backgroundImage: gradient,
-                        WebkitBackgroundClip: "text",
-                        backgroundClip: "text",
-                        color: "transparent",
-                        textShadow: "0 10px 35px rgba(0,0,0,0.55)",
-                      }}
-                    >
-                      {toMoney(total)}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {!!payError && (
-                  <Typography
-                    variant="body2"
-                    sx={{ mt: 1.5, color: "rgba(255, 120, 120, 0.9)", lineHeight: 1.6 }}
-                  >
-                    {payError}
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-          </RevealOnScroll>
-          */}
-
-          {/* Subtle footer line */}
-          <RevealOnScroll delay={0.32}>
-            <Box
-              sx={{
-                mt: { xs: 5, sm: 6 },
-                width: "100%",
-                maxWidth: 860,
-                height: 1,
-                background:
-                  "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(124,58,237,0.35) 20%, rgba(34,211,238,0.28) 50%, rgba(79,70,229,0.35) 80%, rgba(0,0,0,0) 100%)",
-                opacity: 0.9,
-              }}
-            />
-          </RevealOnScroll>
-        </Box>
-      </Box>
-    </Box>
-  )
+export async function getStaticProps() {
+  const { isContactMailConfigured } = await import("../lib/contactMail")
+  return { props: { emailDeliveryEnabled: isContactMailConfigured() } }
 }

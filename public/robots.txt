@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /receipts/
+Disallow: /applications/restaurant/orders
+Disallow: /applications/restaurant/order/
+
+Disallow: /components/restaurant-ordering/orders
+Disallow: /components/restaurant-ordering/order/
+Sitemap: https://bergquistapplications.com/sitemap.xml

@@ -612,8 +612,8 @@ export default function PodcastJobCreator({
     try {
       await addDoc(collection(db, "podcastJobs"), {
         userId: user.uid,
-        userEmail: user.email || null,
-        userName: user.displayName || null,
+        ...(user.email ? { userEmail: user.email } : {}),
+        ...(user.displayName ? { userName: user.displayName } : {}),
         topic: t,
         lengthArg: l,
         status: "queued",

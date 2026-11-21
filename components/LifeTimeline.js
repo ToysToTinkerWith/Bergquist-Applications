@@ -1,11 +1,29 @@
 // components/LifeTimeline.jsx
 // Full code change:
-// - Removes the Type Tags section entirely.
-// - The "selected event" panel now lives in that right-hand slot (next to the video).
-// - On small screens (stacked layout), the video ALWAYS keeps its full 300px height,
-//   and the selected-event panel flows below it (no forced height).
-// - Keeps: radial fade overlay on video, perfectly vertical stems from true node,
-//   bubble clamping, click behavior.
+// - Adds support for event.images and event.links
+// - event.images: array of image paths/urls OR objects like { src, alt }
+// - event.links: array of objects like { href, label }
+// - Selected-event panel now renders responsive image and link sections
+// - Timeline bubbles now show small circular image icons for event images
+// - Timeline bubbles now show a small link icon when links exist
+//
+// Example event shape:
+// {
+//   title: "Built First Product",
+//   date: "2024-08-15",
+//   type: "Project",
+//   summary: "Launched a first version.",
+//   highlights: ["Shipped MVP", "Got first users"],
+//   tags: ["React", "Firebase"],
+//   images: [
+//     "/images/projects/mvp-1.png",
+//     { src: "/images/projects/mvp-2.png", alt: "MVP dashboard" },
+//   ],
+//   links: [
+//     { href: "https://example.com", label: "Live Site" },
+//     { href: "https://github.com/example/repo", label: "Repository" },
+//   ],
+// }
 //
 // Requires: @mui/material
 // Optional: framer-motion
@@ -13,13 +31,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { Box, Typography, Stack, Chip, Button } from "@mui/material"
 import { motion } from "framer-motion"
+import LinkRoundedIcon from "@mui/icons-material/LinkRounded"
 
 // -------------------------- UI helpers --------------------------
 
 function RevealOnScroll({
   children,
   delay = 0,
-  threshold = 0.25,
+  threshold = 0,
   rootMargin = "0px 0px -12% 0px",
 }) {
   const ref = useRef(null)
@@ -134,6 +153,40 @@ function layoutForIndex(i, isXs) {
   return { above, dist, jitter }
 }
 
+function normalizeImageItem(item, idx = 0) {
+  if (typeof item === "string") {
+    const src = normalizeStr(item)
+    if (!src) return null
+    return {
+      src,
+      alt: `Event image ${idx + 1}`,
+    }
+  }
+
+  if (item && typeof item === "object") {
+    const src = normalizeStr(item.src || item.url || item.image)
+    if (!src) return null
+    return {
+      src,
+      alt: normalizeStr(item.alt) || `Event image ${idx + 1}`,
+    }
+  }
+
+  return null
+}
+
+function normalizeLinkItem(item) {
+  if (!item || typeof item !== "object") return null
+
+  const href = normalizeStr(item.href || item.link || item.url)
+  if (!href) return null
+
+  return {
+    href,
+    label: normalizeStr(item.label) || href,
+  }
+}
+
 // -------------------------- Component --------------------------
 
 export default function LifeTimeline({
@@ -242,7 +295,23 @@ export default function LifeTimeline({
 
   const filtered = useMemo(() => {
     return (events || [])
-      .map((e, idx) => ({ ...e, __ms: parseDateMs(e?.date), __idx: idx }))
+      .map((e, idx) => {
+        const normalizedImages = Array.isArray(e?.images)
+          ? e.images.map((img, i) => normalizeImageItem(img, i)).filter(Boolean)
+          : []
+
+        const normalizedLinks = Array.isArray(e?.links)
+          ? e.links.map((l) => normalizeLinkItem(l)).filter(Boolean)
+          : []
+
+        return {
+          ...e,
+          images: normalizedImages,
+          links: normalizedLinks,
+          __ms: parseDateMs(e?.date),
+          __idx: idx,
+        }
+      })
       .filter((e) => {
         if (!Number.isFinite(e.__ms)) return false
         if (e.__ms < startMs || e.__ms > endMs) return false
@@ -280,25 +349,24 @@ export default function LifeTimeline({
   const LINE_PAD = isXs ? 16 : 22
 
   // Bubble sizing assumptions for clamping
-  const bubbleW = isXs ? 132 : 220
-  const bubbleH = isXs ? 44 : 56
+  const bubbleW = isXs ? 140 : 228
+  const bubbleH = isXs ? 72 : 88
   const edgePad = 10
 
   // Controls/video sizing
-  const VIDEO_H = 300 // requested
+  const VIDEO_H = 300
 
   const content = (
     <>
       <Box
         sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
+          width: "100vw",
+          maxWidth: "100%",
+          px: 0,
           pb: { xs: 8, sm: 10, md: 12 },
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
+        <Box sx={{ width: "100%" }}>
           <Stack spacing={{ xs: 2.5, sm: 3 }}>
             <RevealOnScroll>
               <Box
@@ -318,7 +386,6 @@ export default function LifeTimeline({
                   >
                     Anders Bergquist (2020 → Today)
                   </GradientTitle>
-                  {/* (headerSubtitle/lastUpdated are still available if you want to render them) */}
                 </Stack>
 
                 {/* Top row: VIDEO + Selected Event Panel */}
@@ -344,7 +411,7 @@ export default function LifeTimeline({
                         flex: { md: "0 0 520px" },
                         height: VIDEO_H,
                         minHeight: VIDEO_H,
-                        flexShrink: 0, // key: don't let stacking squash the video
+                        flexShrink: 0,
                         overflow: "hidden",
                         backgroundColor: "black",
                         boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
@@ -384,22 +451,16 @@ export default function LifeTimeline({
                     </Box>
                   </RevealOnScroll>
 
-                  {/* Selected event panel (replaces type tags section) */}
+                  {/* Selected event panel */}
                   <Box
                     sx={{
                       flex: 1,
                       minWidth: 0,
-
-                      // IMPORTANT:
-                      // - On md+, lock to video height so it feels like a paired panel.
-                      // - On xs (stacked), let it be auto so the video still shows full height.
                       height: { xs: "auto", md: VIDEO_H },
                       minHeight: { xs: 0, md: VIDEO_H },
                       overflow: { xs: "visible", md: "auto" },
-
                       p: 0,
                       background: "transparent",
-
                       "&::-webkit-scrollbar": { width: 10, height: 10 },
                       "&::-webkit-scrollbar-thumb": {
                         background: "rgba(216, 229, 254, 0.16)",
@@ -535,6 +596,9 @@ export default function LifeTimeline({
                       const titleText = normalizeStr(e?.title) || "Untitled event"
                       const showTitle = !isXs
 
+                      const imageItems = Array.isArray(e?.images) ? e.images : []
+                      const linkItems = Array.isArray(e?.links) ? e.links : []
+
                       // Fallback calc (before measuring width)
                       const nodeLeftFallback = `calc(${LINE_PAD}px + ${(pct * 100).toFixed(
                         4
@@ -611,7 +675,7 @@ export default function LifeTimeline({
                             }}
                           />
 
-                          {/* Bubble (still clamped to stay in-bounds) */}
+                          {/* Bubble */}
                           <Box
                             onClick={() => setSelectedKey(key)}
                             sx={{
@@ -637,7 +701,7 @@ export default function LifeTimeline({
                               userSelect: "none",
                             }}
                           >
-                            <Stack spacing={0.25}>
+                            <Stack spacing={0.4}>
                               {showTitle ? (
                                 <Typography
                                   sx={{
@@ -680,6 +744,99 @@ export default function LifeTimeline({
                               >
                                 {typeText}
                               </Typography>
+
+                              {(imageItems.length || linkItems.length) ? (
+                                <Stack
+                                  direction="row"
+                                  spacing={0.75}
+                                  alignItems="center"
+                                  sx={{
+                                    pt: 0.15,
+                                    minHeight: 18,
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {imageItems.length ? (
+                                    <Stack
+                                      direction="row"
+                                      alignItems="center"
+                                      sx={{ minWidth: 0 }}
+                                    >
+                                      {imageItems.slice(0, 4).map((img, imgIdx) => (
+                                        <Box
+                                          key={`${img.src}-${imgIdx}`}
+                                          sx={{
+                                            width: 18,
+                                            height: 18,
+                                            borderRadius: "50%",
+                                            backgroundImage: `url(${img.src})`,
+                                            backgroundSize: "cover",
+                                            backgroundPosition: "center",
+                                            border: "1px solid rgba(216, 229, 254, 0.22)",
+                                            boxShadow: "0 4px 12px rgba(0,0,0,0.35)",
+                                            ml: imgIdx === 0 ? 0 : -0.45,
+                                            flexShrink: 0,
+                                          }}
+                                          title={img.alt || `Image ${imgIdx + 1}`}
+                                        />
+                                      ))}
+
+                                      {imageItems.length > 4 ? (
+                                        <Box
+                                          sx={{
+                                            ml: -0.45,
+                                            minWidth: 18,
+                                            height: 18,
+                                            px: 0.35,
+                                            borderRadius: 999,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            background: "rgba(255,255,255,0.08)",
+                                            border: "1px solid rgba(216, 229, 254, 0.16)",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              fontSize: 10.5,
+                                              fontWeight: 900,
+                                              color: "rgba(216, 229, 254, 0.85)",
+                                              lineHeight: 1,
+                                            }}
+                                          >
+                                            +{imageItems.length - 4}
+                                          </Typography>
+                                        </Box>
+                                      ) : null}
+                                    </Stack>
+                                  ) : null}
+
+                                  {linkItems.length ? (
+                                    <Box
+                                      sx={{
+                                        width: 18,
+                                        height: 18,
+                                        borderRadius: "50%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        background:
+                                          "linear-gradient(90deg, rgba(124,58,237,0.16), rgba(34,211,238,0.14))",
+                                        border: "1px solid rgba(216, 229, 254, 0.16)",
+                                        flexShrink: 0,
+                                      }}
+                                      title={`${linkItems.length} link${linkItems.length === 1 ? "" : "s"}`}
+                                    >
+                                      <LinkRoundedIcon
+                                        sx={{
+                                          fontSize: 12.5,
+                                          color: "rgba(216, 229, 254, 0.88)",
+                                        }}
+                                      />
+                                    </Box>
+                                  ) : null}
+                                </Stack>
+                              ) : null}
                             </Stack>
                           </Box>
                         </Box>
@@ -707,6 +864,8 @@ function EventDetails({ event, onClear, sx = {} }) {
   const summary = normalizeStr(event?.summary)
   const highlights = Array.isArray(event?.highlights) ? event.highlights.filter(Boolean) : []
   const tags = Array.isArray(event?.tags) ? event.tags.filter(Boolean) : []
+  const images = Array.isArray(event?.images) ? event.images.filter(Boolean) : []
+  const links = Array.isArray(event?.links) ? event.links.filter(Boolean) : []
   const dateLabel = formatMonthYear(event?.date)
 
   return (
@@ -722,7 +881,7 @@ function EventDetails({ event, onClear, sx = {} }) {
         ...sx,
       }}
     >
-      <Stack spacing={0.85}>
+      <Stack spacing={1.05}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1}
@@ -768,8 +927,6 @@ function EventDetails({ event, onClear, sx = {} }) {
               ) : null}
             </Stack>
           </Box>
-
-       
         </Stack>
 
         {summary ? (
@@ -791,8 +948,107 @@ function EventDetails({ event, onClear, sx = {} }) {
           </Stack>
         ) : null}
 
+        {images.length ? (
+          <Stack spacing={0.75}>
+            <Typography
+              sx={{
+                color: "rgba(245, 248, 255, 0.88)",
+                fontWeight: 900,
+                fontSize: 12.75,
+                letterSpacing: 0.3,
+              }}
+            >
+              Images
+            </Typography>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2, minmax(0, 1fr))",
+                  sm: "repeat(3, minmax(0, 1fr))",
+                },
+                gap: 1,
+              }}
+            >
+              {images.map((img, idx) => (
+                <Box
+                  key={`${img.src}-${idx}`}
+                  sx={{
+                    position: "relative",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(216, 229, 254, 0.10)",
+                    minHeight: 92,
+                    aspectRatio: "1 / 1",
+                    boxShadow: "0 10px 28px rgba(0,0,0,0.28)",
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={img.src}
+                    alt={img.alt || `Event image ${idx + 1}`}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Stack>
+        ) : null}
+
+        {links.length ? (
+          <Stack spacing={0.75}>
+            <Typography
+              sx={{
+                color: "rgba(245, 248, 255, 0.88)",
+                fontWeight: 900,
+                fontSize: 12.75,
+                letterSpacing: 0.3,
+              }}
+            >
+              Links
+            </Typography>
+
+            <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", rowGap: 1 }}>
+              {links.map((link, idx) => (
+                <Button
+                  key={`${link.href}-${idx}`}
+                  component="a"
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  startIcon={<LinkRoundedIcon />}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 900,
+                    borderRadius: 999,
+                    px: 1.35,
+                    py: 0.65,
+                    color: "rgba(216, 229, 254, 0.90)",
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(216, 229, 254, 0.14)",
+                    boxShadow: "0 8px 22px rgba(0,0,0,0.22)",
+                    "&:hover": {
+                      background: "rgba(255,255,255,0.10)",
+                      borderColor: "rgba(34,211,238,0.28)",
+                    },
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+            </Stack>
+          </Stack>
+        ) : null}
+
         {tags.length ? (
-          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", rowGap: 1 }}>
             {tags.map((t) => (
               <Chip
                 key={t}

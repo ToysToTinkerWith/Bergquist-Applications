@@ -1,36 +1,20 @@
 // components/WorldStatsMiniChartsDetailed.jsx
-//
-// Full code change:
-// - Fixes chart clipping (top/bottom) by increasing SVG padding + slightly smaller markers
-// - Fixes small-screen overlap/clipping by increasing stage minHeight on xs/sm
-//   and adding top/bottom padding inside the overlay grid (absolute layer)
-// - Keeps: no border around VIDEO+GRAPHS, bordered container ONLY around EVENTS
-//
-// Requires:
-//  - @mui/material
-// Optional:
-//  - framer-motion
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import {
   Box,
   Typography,
   Stack,
-  Divider,
   Chip,
   CircularProgress,
   Link,
-  useMediaQuery,
 } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
 import { motion } from "framer-motion"
-
-// -------------------------- UI helpers --------------------------
 
 function RevealOnScroll({
   children,
   delay = 0,
-  threshold = 0.25,
+  threshold = 0,
   rootMargin = "0px 0px -12% 0px",
 }) {
   const ref = useRef(null)
@@ -88,7 +72,8 @@ function GradientTitle({ children, variant = "h3", align = "left", sx = {} }) {
         fontFamily: "Bemora",
         letterSpacing: 1.1,
         lineHeight: 1.2,
-        backgroundImage: "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
+        backgroundImage:
+          "linear-gradient(90deg, #7C3AED 0%, #4F46E5 35%, #22D3EE 100%)",
         WebkitBackgroundClip: "text",
         backgroundClip: "text",
         color: "transparent",
@@ -100,23 +85,6 @@ function GradientTitle({ children, variant = "h3", align = "left", sx = {} }) {
     </Typography>
   )
 }
-
-function SubText({ children, sx = {} }) {
-  return (
-    <Typography
-      variant="body1"
-      sx={{
-        color: "rgba(216, 229, 254, 0.84)",
-        lineHeight: 1.75,
-        ...sx,
-      }}
-    >
-      {children}
-    </Typography>
-  )
-}
-
-// -------------------------- formatting helpers --------------------------
 
 function fmtCompact(n) {
   const v = Number(n)
@@ -142,7 +110,6 @@ function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n))
 }
 
-// Latest NON-ZERO (and finite) datapoint helper (per series)
 function latestNonZeroPoint(years = [], values = []) {
   for (let i = values.length - 1; i >= 0; i--) {
     const v = Number(values[i])
@@ -151,7 +118,6 @@ function latestNonZeroPoint(years = [], values = []) {
       return { year: y, value: v, index: i }
     }
   }
-  // fallback: latest finite (even if 0)
   for (let i = values.length - 1; i >= 0; i--) {
     const v = Number(values[i])
     const y = Number(years[i])
@@ -161,8 +127,6 @@ function latestNonZeroPoint(years = [], values = []) {
   }
   return { year: null, value: null, index: null }
 }
-
-// -------------------------- Detailed mini chart (SVG + hover + pinned latest) --------------------------
 
 function buildLine(values, w, h, pad) {
   const pts = (values || []).map((v) => (v == null ? null : Number(v)))
@@ -221,17 +185,20 @@ function buildLine(values, w, h, pad) {
 function MiniLineChart({
   years = [],
   values = [],
-  height = 92, // slightly taller to avoid tight top/bottom on small cards
+  height = 92,
   formatValue = (v) => `${v}`,
   ariaLabel = "chart",
-  pinnedPoint = null, // {year,value,index}
+  pinnedPoint = null,
 }) {
   const w = 460
   const h = height
-  const pad = 18 // <-- bigger padding to prevent marker/line clipping
+  const pad = 18
 
   const { line, area, xs, ys } = useMemo(() => buildLine(values, w, h, pad), [values])
-  const hasData = useMemo(() => (values || []).some((v) => Number.isFinite(Number(v))), [values])
+  const hasData = useMemo(
+    () => (values || []).some((v) => Number.isFinite(Number(v))),
+    [values]
+  )
 
   const [hoverIdx, setHoverIdx] = useState(null)
   const hostRef = useRef(null)
@@ -253,18 +220,10 @@ function MiniLineChart({
   const hx = hoverIdx != null && xs?.length ? xs[hoverIdx] : null
   const hvOk = Number.isFinite(Number(hv))
 
-  // Pinned "latest non-zero"
   const pIdx = pinnedPoint?.index
   const pOk = pIdx != null && xs?.length && ys?.length && ys[pIdx] != null
   const px = pOk ? xs[pIdx] : null
   const py = pOk ? ys[pIdx] : null
-  const pLabel = pOk ? `${pinnedPoint?.year ?? ""} • ${formatValue(pinnedPoint?.value)}` : ""
-
-  // Label positioning
-  const labelW = 168
-  const labelH = 20
-  const lx = pOk ? clamp(px + 10, pad, w - pad - labelW) : pad
-  const ly = pOk ? clamp(py - 26, pad, h - pad - labelH) : pad
 
   return (
     <Box
@@ -275,11 +234,10 @@ function MiniLineChart({
         width: "100%",
         position: "relative",
         borderRadius: 2.25,
-        border: "1px solid rgba(216, 229, 254, 0.10)",
-        background: "rgba(255,255,255,0.03)",
         px: 0.8,
         py: 0.6,
         overflow: "hidden",
+        background: "rgba(255,255,255,0.02)",
       }}
       aria-label={ariaLabel}
     >
@@ -329,7 +287,6 @@ function MiniLineChart({
           />
         ) : null}
 
-        {/* Pinned latest non-zero marker */}
         {pOk ? (
           <g>
             <line
@@ -340,7 +297,6 @@ function MiniLineChart({
               stroke="rgba(216,229,254,0.12)"
               strokeWidth="1"
             />
-            {/* slightly smaller outer ring to avoid clipping */}
             <circle
               cx={px}
               cy={py}
@@ -350,12 +306,9 @@ function MiniLineChart({
               strokeWidth="1"
             />
             <circle cx={px} cy={py} r={3.8} fill="rgba(34,211,238,0.95)" opacity={0.98} />
-
-          
           </g>
         ) : null}
 
-        {/* Hover marker points */}
         {hasData
           ? years.map((year, i) => {
               const v = values[i]
@@ -370,7 +323,7 @@ function MiniLineChart({
                     cy={y}
                     r={isHover ? 4.0 : 2.6}
                     fill={isHover ? "rgba(34,211,238,0.95)" : "rgba(245,248,255,0.88)"}
-                    opacity={isHover ? 0.96 : 0.50}
+                    opacity={isHover ? 0.96 : 0.5}
                   />
                 </g>
               )
@@ -378,7 +331,14 @@ function MiniLineChart({
           : null}
 
         {hoverIdx != null && hx != null ? (
-          <line x1={hx} x2={hx} y1={pad} y2={h - pad} stroke="rgba(216,229,254,0.14)" strokeWidth="1" />
+          <line
+            x1={hx}
+            x2={hx}
+            y1={pad}
+            y2={h - pad}
+            stroke="rgba(216,229,254,0.14)"
+            strokeWidth="1"
+          />
         ) : null}
       </svg>
 
@@ -390,10 +350,9 @@ function MiniLineChart({
             left: 8,
             pointerEvents: "none",
             borderRadius: 2,
-            px: 1.0,
+            px: 1,
             py: 0.7,
             background: "rgba(0,0,0,0.70)",
-            border: "1px solid rgba(216,229,254,0.14)",
             boxShadow: "0 16px 50px rgba(0,0,0,0.45)",
             backdropFilter: "blur(8px)",
           }}
@@ -410,32 +369,59 @@ function MiniLineChart({
   )
 }
 
-// -------------------------- World Bank fetching --------------------------
-
-const WB_BASE = "https://api.worldbank.org/v2"
 const IND = {
   population: "SP.POP.TOTL",
   internetPct: "IT.NET.USER.ZS",
   povertyPct: "SI.POV.DDAY",
 }
 
-async function fetchRecentSeries({ country = "WLD", indicator, mrnev = 30, gapfill = "N", signal }) {
-  const qs = new URLSearchParams()
-  qs.set("format", "json")
-  qs.set("mrnev", String(mrnev))
-  qs.set("per_page", "200")
-  qs.set("gapfill", gapfill)
+async function parseResponseSafely(res) {
+  const text = await res.text()
+  if (!text) return { json: null, text: "" }
 
-  const url = `${WB_BASE}/country/${country}/indicator/${indicator}?${qs.toString()}`
-  const res = await fetch(url, { signal })
-  if (!res.ok) throw new Error(`World Bank request failed (${res.status})`)
-  const json = await res.json()
-  const rows = Array.isArray(json) ? json[1] : null
-  if (!Array.isArray(rows)) return []
+  try {
+    return { json: JSON.parse(text), text }
+  } catch {
+    return { json: null, text }
+  }
+}
+
+async function fetchRecentSeries({
+  country = "WLD",
+  indicator,
+  mrnev = 30,
+  gapfill = "N",
+  signal,
+}) {
+  if (!indicator) {
+    throw new Error("World Bank indicator is missing before request is made.")
+  }
+
+  const qs = new URLSearchParams({
+    country: String(country),
+    indicator: String(indicator),
+    mrnev: String(mrnev),
+    gapfill: String(gapfill),
+  })
+
+  const res = await fetch(`/api/worldbank-series?${qs.toString()}`, { signal })
+  const { json, text } = await parseResponseSafely(res)
+
+  if (!res.ok) {
+    throw new Error(
+      json?.error ||
+        json?.message ||
+        json?.upstreamBody ||
+        text ||
+        `World Bank proxy request failed (${res.status})`
+    )
+  }
+
+  const rows = Array.isArray(json) ? json : Array.isArray(json?.rows) ? json.rows : []
 
   return rows
     .map((r) => ({
-      year: Number(r?.date),
+      year: Number(r?.year),
       value: r?.value == null ? null : Number(r.value),
     }))
     .filter((r) => Number.isFinite(r.year))
@@ -461,8 +447,6 @@ function prettyIsoDate(iso) {
   return String(iso).slice(0, 10)
 }
 
-// -------------------------- Component --------------------------
-
 export default function WorldStatsMiniChartsDetailed({
   country = "WLD",
   headerTitle = "World Stats",
@@ -471,9 +455,6 @@ export default function WorldStatsMiniChartsDetailed({
   lastUpdatedLabel = "Live (World Bank API)",
   points = 30,
 }) {
-  const theme = useTheme()
-  const isMdDown = useMediaQuery(theme.breakpoints.down("md"))
-
   const [pt, setPt] = useState(points)
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState("")
@@ -495,10 +476,29 @@ export default function WorldStatsMiniChartsDetailed({
       setErr("")
       try {
         const [population, internetPct, povertyPct] = await Promise.all([
-          fetchRecentSeries({ country, indicator: IND.population, mrnev: pt, gapfill: "N", signal: ac.signal }),
-          fetchRecentSeries({ country, indicator: IND.internetPct, mrnev: pt, gapfill: "N", signal: ac.signal }),
-          fetchRecentSeries({ country, indicator: IND.povertyPct, mrnev: pt, gapfill: "Y", signal: ac.signal }),
+          fetchRecentSeries({
+            country,
+            indicator: IND.population,
+            mrnev: pt,
+            gapfill: "N",
+            signal: ac.signal,
+          }),
+          fetchRecentSeries({
+            country,
+            indicator: IND.internetPct,
+            mrnev: pt,
+            gapfill: "N",
+            signal: ac.signal,
+          }),
+          fetchRecentSeries({
+            country,
+            indicator: IND.povertyPct,
+            mrnev: pt,
+            gapfill: "Y",
+            signal: ac.signal,
+          }),
         ])
+
         const merged = mergeByYear({ population, povertyPct, internetPct })
         if (mounted) setRows(merged)
       } catch (e) {
@@ -527,10 +527,22 @@ export default function WorldStatsMiniChartsDetailed({
       setEventsLoading(true)
       setEventsErr("")
       try {
-        const r = await fetch(`/api/news-sci-tech?max=5&days=14`, { signal: ac.signal })
-        if (!r.ok) throw new Error(`Events request failed (${r.status})`)
-        const json = await r.json()
+        const res = await fetch(`/api/news-sci-tech?max=5&days=14`, {
+          signal: ac.signal,
+        })
+        const { json, text } = await parseResponseSafely(res)
+
+        if (!res.ok) {
+          throw new Error(
+            json?.error ||
+              json?.message ||
+              text ||
+              `Events request failed (${res.status})`
+          )
+        }
+
         const list = Array.isArray(json?.events) ? json.events : []
+
         if (mounted) {
           setEvents(list)
           setEventsStale(Boolean(json?.stale))
@@ -555,23 +567,29 @@ export default function WorldStatsMiniChartsDetailed({
   }, [])
 
   const years = useMemo(() => rows.map((r) => r.year), [rows])
-  const populationVals = useMemo(() => rows.map((r) => (r.population ?? null)), [rows])
-  const povertyVals = useMemo(() => rows.map((r) => (r.povertyPct ?? null)), [rows])
-  const internetVals = useMemo(() => rows.map((r) => (r.internetPct ?? null)), [rows])
+  const populationVals = useMemo(() => rows.map((r) => r.population ?? null), [rows])
+  const povertyVals = useMemo(() => rows.map((r) => r.povertyPct ?? null), [rows])
+  const internetVals = useMemo(() => rows.map((r) => r.internetPct ?? null), [rows])
 
-  // Per-series latest NON-ZERO
-  const latestPop = useMemo(() => latestNonZeroPoint(years, populationVals), [years, populationVals])
-  const latestPov = useMemo(() => latestNonZeroPoint(years, povertyVals), [years, povertyVals])
-  const latestNet = useMemo(() => latestNonZeroPoint(years, internetVals), [years, internetVals])
+  const latestPop = useMemo(
+    () => latestNonZeroPoint(years, populationVals),
+    [years, populationVals]
+  )
+  const latestPov = useMemo(
+    () => latestNonZeroPoint(years, povertyVals),
+    [years, povertyVals]
+  )
+  const latestNet = useMemo(
+    () => latestNonZeroPoint(years, internetVals),
+    [years, internetVals]
+  )
 
   const StatCard = ({ title, subtitle, hint, years, series, formatValue, pinnedPoint }) => (
     <Box
       sx={{
         borderRadius: 3,
         overflow: "hidden",
-        background: "rgba(0,0,0,0.44)",
-        border: "1px solid rgba(216, 229, 254, 0.14)",
-        boxShadow: "0 16px 45px rgba(0,0,0,0.45)",
+        background: "rgba(0,0,0,0.28)",
         p: { xs: 1.15, sm: 1.3 },
         backdropFilter: "blur(10px)",
       }}
@@ -597,14 +615,19 @@ export default function WorldStatsMiniChartsDetailed({
               fontWeight: 900,
               color: "rgba(216, 229, 254, 0.90)",
               background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(216, 229, 254, 0.14)",
               height: 24,
             }}
           />
         </Stack>
 
         {subtitle ? (
-          <Typography sx={{ color: "rgba(216, 229, 254, 0.70)", fontSize: 12.5, lineHeight: 1.35 }}>
+          <Typography
+            sx={{
+              color: "rgba(216, 229, 254, 0.70)",
+              fontSize: 12.5,
+              lineHeight: 1.35,
+            }}
+          >
             {subtitle}
           </Typography>
         ) : null}
@@ -628,7 +651,13 @@ export default function WorldStatsMiniChartsDetailed({
           ) : null}
         </Stack>
 
-        <MiniLineChart years={years} values={series} formatValue={formatValue} ariaLabel={title} pinnedPoint={pinnedPoint} />
+        <MiniLineChart
+          years={years}
+          values={series}
+          formatValue={formatValue}
+          ariaLabel={title}
+          pinnedPoint={pinnedPoint}
+        />
 
         <Typography sx={{ color: "rgba(216, 229, 254, 0.55)", fontSize: 12 }}>
           {years.length ? `${years[0]} – ${years[years.length - 1]}` : "No data"}
@@ -638,330 +667,326 @@ export default function WorldStatsMiniChartsDetailed({
   )
 
   const content = (
-    <>
-      {/* Hero */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
-          pt: { xs: 6, sm: 7, md: 8 },
-          pb: { xs: 4.5, sm: 5.5, md: 6 },
-        }}
-      >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        px: 0,
+        pb: { xs: 0, sm: 0, md: 0 },
+      }}
+    >
+      <Box sx={{ width: "100%" }}>
+        <Stack spacing={0}>
           <RevealOnScroll>
-            
-
-            <Typography variant="body2" align="center" sx={{ mt: 1.5, color: "rgba(216, 229, 254, 0.68)" }}>
-              {lastUpdatedLabel} • Aggregate: {country}
-            </Typography>
-          </RevealOnScroll>
-        </Box>
-      </Box>
-
-      {/* Content */}
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          px: { xs: 2, sm: 3, md: 4 },
-          pb: { xs: 8, sm: 10, md: 12 },
-        }}
-      >
-        <Box sx={{ width: "100%", maxWidth: 1200 }}>
-          <Stack spacing={{ xs: 2.5, sm: 3 }}>
-            <RevealOnScroll>
+            <Box
+              sx={{
+                position: "relative",
+                borderRadius: 0,
+                overflow: "hidden",
+                p: 0,
+                width: "100%",
+              }}
+            >
               <Box
                 sx={{
                   position: "relative",
-                  borderRadius: 3,
                   overflow: "hidden",
-                  boxShadow: "0 18px 55px rgba(0,0,0,0.55)",
-                  p: { xs: 2.0, sm: 2.5, md: 3 },
+                  minHeight: {
+                    xs: 860,
+                    sm: 760,
+                    md: 860,
+                    lg: 920,
+                    xl: 980,
+                  },
+                  width: "100%",
                 }}
               >
-                {/* VIDEO + GRAPHS (NO BORDERING BOX HERE) */}
+                <Box
+                  component="video"
+                  src="/data/earth.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center 45%",
+                    filter: "brightness(0.95) contrast(1.05)",
+                    transform: "translateZ(0)",
+                    zIndex: 0,
+                  }}
+                />
+
                 <Box
                   sx={{
-                    position: "relative",
-                    borderRadius: 3,
-                    overflow: "hidden",
-                    // Key fix: more vertical room on small screens where cards stack
-                    minHeight: {
-                      xs: 860,
-                      sm: 760,
-                      md: 860,  // was 740
-                      lg: 920,  // was 780
-                      xl: 980,  // optional (prevents edge cases on very tall/wide)
-                    },
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                    background:
+                      "radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 72%)",
+                    zIndex: 1,
                   }}
-                >
-                  <Box
-                    component="video"
-                    src="/data/earth.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    sx={{
-                      position: "absolute",
-                      inset: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center 45%",
-                      filter: "brightness(0.95) contrast(1.05)",
-                      transform: "translateZ(0)",
-                      zIndex: 0,
-                    }}
-                  />
+                />
 
-                  {/* Radial fade overlay */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                    background:
+                      "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.70) 100%)",
+                    opacity: 0.55,
+                    zIndex: 1,
+                  }}
+                />
+
+                {loading ? (
                   <Box
                     sx={{
                       position: "absolute",
-                      inset: 0,
-                      pointerEvents: "none",
-                      background: "radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 72%)",
-                      zIndex: 1,
-                    }}
-                  />
-
-                  {/* Vignette */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      inset: 0,
-                      pointerEvents: "none",
-                      background:
-                        "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.70) 100%)",
-                      opacity: 0.55,
-                      zIndex: 1,
-                    }}
-                  />
-
-                  {/* Error banner */}
-                  {err ? (
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 14,
-                        left: 14,
-                        right: 14,
-                        zIndex: 3,
-                        borderRadius: 2.5,
-                        border: "1px solid rgba(255,160,160,0.30)",
-                        background: "rgba(0,0,0,0.72)",
-                        px: 1.25,
-                        py: 1,
-                        backdropFilter: "blur(8px)",
-                      }}
-                    >
-                      <Typography sx={{ color: "rgba(255,160,160,0.92)", fontWeight: 900 }}>{err}</Typography>
-                    </Box>
-                  ) : null}
-
-                  {/* Overlay grid */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      inset: 0,
-                      zIndex: 2,
-
-                      // Key fix: give top/bottom breathing room so cards never touch stage edges
-                      pt: { xs: 2.25, sm: 2.25, md: 2.0 },
-                      pb: { xs: 2.75, sm: 2.75, md: 3.0 }, // was 1.5 on md
-                      px: { xs: 1.0, sm: 1.25, md: 1.5 },
-
-                      display: "grid",
-                      gap: { xs: 1.2, sm: 1.3, md: 1.2 },
-
-                      gridTemplateColumns: { xs: "1fr", md: "repeat(12, 1fr)" },
-                      gridTemplateRows: { xs: "auto", md: "auto auto auto" },
-
-                      // Key fix: DO NOT center-stack on small screens (that increases chance of clipping)
-                      alignContent: "start",
-                      justifyItems: { xs: "center", md: "stretch" },
+                      top: 14,
+                      left: 14,
+                      zIndex: 3,
+                      borderRadius: 2.5,
+                      background: "rgba(0,0,0,0.72)",
+                      px: 1.25,
+                      py: 1,
+                      backdropFilter: "blur(8px)",
                     }}
                   >
-                    {/* Population (top-left) */}
-                    <Box
-                      sx={{
-                        gridColumn: { xs: "1 / -1", md: "1 / span 5" },
-                        gridRow: { xs: "auto", md: "1" },
-                        width: "100%",
-                        maxWidth: { xs: 520, md: 410 },
-                      }}
-                    >
-                      <StatCard
-                        title="Population"
-                        subtitle="Total population (SP.POP.TOTL)."
-                        hint="People"
-                        years={years}
-                        series={populationVals}
-                        formatValue={fmtCompact}
-                        pinnedPoint={latestPop}
-                      />
-                    </Box>
-
-                    {/* Internet Users (middle-right) */}
-                    <Box
-                      sx={{
-                        gridColumn: { xs: "1 / -1", md: "8 / span 5" },
-                        gridRow: { xs: "auto", md: "2" },
-                        width: "100%",
-                        maxWidth: { xs: 520, md: 410 },
-                        justifySelf: { xs: "center", md: "end" },
-                      }}
-                    >
-                      <StatCard
-                        title="Internet Users"
-                        subtitle="Individuals using the Internet % (IT.NET.USER.ZS)."
-                        hint="%"
-                        years={years}
-                        series={internetVals}
-                        formatValue={fmtPct}
-                        pinnedPoint={latestNet}
-                      />
-                    </Box>
-
-                    {/* World Poverty (bottom-left) */}
-                    <Box
-                      sx={{
-                        gridColumn: { xs: "1 / -1", md: "1 / span 5" },
-                        gridRow: { xs: "auto", md: "3" },
-                        width: "100%",
-                        maxWidth: { xs: 520, md: 410 },
-                      }}
-                    >
-                      <StatCard
-                        title="World Poverty"
-                        subtitle="Poverty headcount $2.15/day % (SI.POV.DDAY) — sparse; gapfill enabled."
-                        hint="%"
-                        years={years}
-                        series={povertyVals}
-                        formatValue={fmtPct}
-                        pinnedPoint={latestPov}
-                      />
-                    </Box>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <CircularProgress size={16} />
+                      <Typography sx={{ color: "rgba(245,248,255,0.92)", fontWeight: 900 }}>
+                        Loading World Bank data…
+                      </Typography>
+                    </Stack>
                   </Box>
-                </Box>
-                <br />
-                <br />
-                <br />
+                ) : null}
 
-                {/* EVENTS SECTION (BORDERED ONLY HERE) */}
+                {err ? (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 14,
+                      left: 14,
+                      right: 14,
+                      zIndex: 3,
+                      borderRadius: 2.5,
+                      background: "rgba(0,0,0,0.72)",
+                      px: 1.25,
+                      py: 1,
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <Typography sx={{ color: "rgba(255,160,160,0.92)", fontWeight: 900 }}>
+                      {err}
+                    </Typography>
+                  </Box>
+                ) : null}
+
                 <Box
                   sx={{
-                    borderRadius: 3,
-                    border: "1px solid rgba(216, 229, 254, 0.12)",
-                    background: "rgba(0,0,0,0.35)",
-                    boxShadow: "0 18px 55px rgba(0,0,0,0.40)",
-                    p: { xs: 1.5, sm: 1.75 },
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 2,
+                    pt: { xs: 2.25, sm: 2.25, md: 2.0 },
+                    pb: { xs: 2.75, sm: 2.75, md: 3.0 },
+                    px: { xs: 1.0, sm: 1.25, md: 1.5 },
+                    display: "grid",
+                    gap: { xs: 1.2, sm: 1.3, md: 1.2 },
+                    gridTemplateColumns: { xs: "1fr", md: "repeat(12, 1fr)" },
+                    gridTemplateRows: { xs: "auto", md: "auto auto auto" },
+                    alignContent: "start",
+                    justifyItems: { xs: "center", md: "stretch" },
                   }}
                 >
-                  <Stack spacing={1.15}>
-                    <Stack
-                      direction={{ xs: "column", sm: "row" }}
-                      alignItems={{ xs: "flex-start", sm: "center" }}
-                      justifyContent="space-between"
-                      spacing={1}
+                  <Box
+                    sx={{
+                      gridColumn: { xs: "1 / -1", md: "1 / span 5" },
+                      gridRow: { xs: "auto", md: "1" },
+                      width: "100%",
+                      maxWidth: { xs: 520, md: 410 },
+                    }}
+                  >
+                    <StatCard
+                      title="Population"
+                      subtitle="Total population (SP.POP.TOTL)."
+                      hint="People"
+                      years={years}
+                      series={populationVals}
+                      formatValue={fmtCompact}
+                      pinnedPoint={latestPop}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      gridColumn: { xs: "1 / -1", md: "8 / span 5" },
+                      gridRow: { xs: "auto", md: "2" },
+                      width: "100%",
+                      maxWidth: { xs: 520, md: 410 },
+                      justifySelf: { xs: "center", md: "end" },
+                    }}
+                  >
+                    <StatCard
+                      title="Internet Users"
+                      subtitle="Individuals using the Internet % (IT.NET.USER.ZS)."
+                      hint="%"
+                      years={years}
+                      series={internetVals}
+                      formatValue={fmtPct}
+                      pinnedPoint={latestNet}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      gridColumn: { xs: "1 / -1", md: "1 / span 5" },
+                      gridRow: { xs: "auto", md: "3" },
+                      width: "100%",
+                      maxWidth: { xs: 520, md: 410 },
+                    }}
+                  >
+                    <StatCard
+                      title="World Poverty"
+                      subtitle="Poverty headcount $2.15/day % (SI.POV.DDAY) — sparse; gapfill enabled."
+                      hint="%"
+                      years={years}
+                      series={povertyVals}
+                      formatValue={fmtPct}
+                      pinnedPoint={latestPov}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  background: "rgba(0,0,0,0.35)",
+                  p: { xs: 1.5, sm: 1.75 },
+                  width: "100%",
+                }}
+              >
+                <Stack spacing={1.15}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    alignItems={{ xs: "flex-start", sm: "center" }}
+                    justifyContent="space-between"
+                    spacing={1}
+                  >
+                    <GradientTitle
+                      variant="h6"
+                      align="left"
+                      sx={{ letterSpacing: 0.9, textShadow: "none" }}
                     >
-                      <GradientTitle variant="h6" align="left" sx={{ letterSpacing: 0.9, textShadow: "none" }}>
-                        Recent Global Tech & Economy Events
-                      </GradientTitle>
+                      Recent Global Tech & Economy Events
+                    </GradientTitle>
 
-                      <Chip
-                        label={eventsStale ? "Stale cache" : "Live (NewsAPI)"}
-                        size="small"
-                        sx={{
-                          borderRadius: 999,
-                          fontWeight: 900,
-                          color: "rgba(216, 229, 254, 0.90)",
-                          background: "rgba(255,255,255,0.06)",
-                          border: "1px solid rgba(216, 229, 254, 0.14)",
-                        }}
-                      />
-                    </Stack>
+                    <Chip
+                      label={eventsStale ? "Stale cache" : "Live (NewsAPI)"}
+                      size="small"
+                      sx={{
+                        borderRadius: 999,
+                        fontWeight: 900,
+                        color: "rgba(216, 229, 254, 0.90)",
+                        background: "rgba(255,255,255,0.06)",
+                      }}
+                    />
+                  </Stack>
 
-                    <Typography sx={{ color: "rgba(216,229,254,0.68)", fontSize: 13.25, lineHeight: 1.55 }}>
-                      Headlines from the last ~2 weeks, filtered for science & technology.
+                  <Typography
+                    sx={{
+                      color: "rgba(216,229,254,0.68)",
+                      fontSize: 13.25,
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    Headlines from the last ~2 weeks, filtered for science & technology.
+                  </Typography>
+
+                  {eventsErr ? (
+                    <Typography sx={{ color: "rgba(255,160,160,0.92)", fontWeight: 900 }}>
+                      {eventsErr}
                     </Typography>
+                  ) : null}
 
-                    {eventsErr ? (
-                      <Typography sx={{ color: "rgba(255,160,160,0.92)", fontWeight: 900 }}>{eventsErr}</Typography>
-                    ) : null}
-
-                    {eventsLoading ? (
-                      <Stack direction="row" spacing={1} alignItems="center" sx={{ py: 0.75 }}>
-                        <CircularProgress size={16} />
-                        <Typography sx={{ color: "rgba(216,229,254,0.68)", fontSize: 12.5 }}>Loading events…</Typography>
-                      </Stack>
-                    ) : (
-                      <Stack spacing={1}>
-                        {events?.length ? (
-                          events.map((ev, i) => {
-                            const date = prettyIsoDate(ev.publishedAt) || "—"
-                            const src = ev.source || "source"
-                            return (
-                              <Box
-                                key={`${ev.url}-${i}`}
+                  {eventsLoading ? (
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ py: 0.75 }}>
+                      <CircularProgress size={16} />
+                      <Typography sx={{ color: "rgba(216,229,254,0.68)", fontSize: 12.5 }}>
+                        Loading events…
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    <Stack spacing={1}>
+                      {events?.length ? (
+                        events.map((ev, i) => {
+                          const date = prettyIsoDate(ev.publishedAt) || "—"
+                          const src = ev.source || "source"
+                          return (
+                            <Box
+                              key={`${ev.url}-${i}`}
+                              sx={{
+                                borderRadius: 2.5,
+                                background: "rgba(255,255,255,0.03)",
+                                px: 1.25,
+                                py: 1,
+                              }}
+                            >
+                              <Typography
                                 sx={{
-                                  borderRadius: 2.5,
-                                  border: "1px solid rgba(216,229,254,0.12)",
-                                  background: "rgba(255,255,255,0.03)",
-                                  px: 1.25,
-                                  py: 1.0,
+                                  color: "rgba(245,248,255,0.92)",
+                                  fontWeight: 950,
+                                  fontSize: 14.25,
+                                  lineHeight: 1.35,
                                 }}
                               >
-                                <Typography
+                                <Link
+                                  href={ev.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  underline="hover"
                                   sx={{
                                     color: "rgba(245,248,255,0.92)",
-                                    fontWeight: 950,
-                                    fontSize: 14.25,
-                                    lineHeight: 1.35,
+                                    "&:hover": { color: "rgba(34,211,238,0.95)" },
                                   }}
                                 >
-                                  <Link
-                                    href={ev.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    underline="hover"
-                                    sx={{
-                                      color: "rgba(245,248,255,0.92)",
-                                      "&:hover": { color: "rgba(34,211,238,0.95)" },
-                                    }}
-                                  >
-                                    {ev.title}
-                                  </Link>
-                                </Typography>
+                                  {ev.title}
+                                </Link>
+                              </Typography>
 
-                                <Typography sx={{ mt: 0.5, color: "rgba(216,229,254,0.62)", fontSize: 12.5 }}>
-                                  {date} • {src}
-                                </Typography>
-                              </Box>
-                            )
-                          })
-                        ) : (
-                          <Typography sx={{ color: "rgba(216,229,254,0.68)", fontSize: 13 }}>
-                            No recent events found in the current window.
-                          </Typography>
-                        )}
-                      </Stack>
-                    )}
-                  </Stack>
-                </Box>
-
+                              <Typography
+                                sx={{
+                                  mt: 0.5,
+                                  color: "rgba(216,229,254,0.62)",
+                                  fontSize: 12.5,
+                                }}
+                              >
+                                {date} • {src}
+                              </Typography>
+                            </Box>
+                          )
+                        })
+                      ) : (
+                        <Typography sx={{ color: "rgba(216,229,254,0.68)", fontSize: 13 }}>
+                          No recent events found in the current window.
+                        </Typography>
+                      )}
+                    </Stack>
+                  )}
+                </Stack>
               </Box>
-            </RevealOnScroll>
-          </Stack>
-        </Box>
+            </Box>
+          </RevealOnScroll>
+        </Stack>
       </Box>
-    </>
+    </Box>
   )
 
   return showPageSection ? (
